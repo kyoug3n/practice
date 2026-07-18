@@ -18,6 +18,32 @@ header "Set-Cookie" contains "recall_session="
 header "Set-Cookie" contains "HttpOnly"
 header "Set-Cookie" contains "SameSite=lax"
 
+# A registered user can obtain a fresh session by logging in.
+POST {{base}}/auth/login
+Content-Type: application/json
+{
+  "username": "{{username}}",
+  "password": "correct-horse-battery-staple"
+}
+HTTP 200
+[Asserts]
+jsonpath "$.id" == "{{user_id}}"
+jsonpath "$.username" == "{{username}}"
+header "Set-Cookie" contains "recall_session="
+header "Set-Cookie" contains "HttpOnly"
+header "Set-Cookie" contains "SameSite=lax"
+
+# A wrong password never creates a session.
+POST {{base}}/auth/login
+Content-Type: application/json
+{
+  "username": "{{username}}",
+  "password": "wrong-password"
+}
+HTTP 401
+[Asserts]
+header "Set-Cookie" not exists
+
 # Logins are unique.
 POST {{base}}/auth/register
 Content-Type: application/json

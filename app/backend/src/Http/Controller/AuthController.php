@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Recall\Domain\Session;
 use Recall\Domain\User;
+use Recall\Http\Input\LoginInput;
 use Recall\Http\Input\RegistrationInput;
 use Recall\Http\Json;
 use Recall\Http\SessionCookie;
@@ -37,6 +38,20 @@ final readonly class AuthController
         $this->sessions->save($credentials->session);
 
         return $this->cookie->add(Json::write($response, $this->profile($user), 201), $credentials);
+    }
+
+    public function login(Request $request, Response $response): Response
+    {
+        $input = LoginInput::fromArray($this->body($request));
+        $user = $this->users->findByUsername($input->username);
+        if ($user === null || !$user->verifiesPassword($input->password)) {
+            return Json::error($response, 'неверный логин или пароль', 401);
+        }
+
+        $credentials = Session::start($user->id, $this->now);
+        $this->sessions->save($credentials->session);
+
+        return $this->cookie->add(Json::write($response, $this->profile($user)), $credentials);
     }
 
     /** @return array<array-key, mixed> */

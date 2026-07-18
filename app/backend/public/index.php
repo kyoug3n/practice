@@ -91,6 +91,7 @@ $app->post('/reviews/{id}', $reviews->grade(...));
 $app->get('/stats', $stats->index(...));
 
 $app->post('/auth/register', $auth->register(...));
+$app->post('/auth/login', $auth->login(...));
 
 $app->options('/{routes:.+}', static fn(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface => $response->withStatus(204));
 
