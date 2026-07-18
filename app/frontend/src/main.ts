@@ -83,6 +83,17 @@ function cardItem(card: Card): HTMLDivElement {
   const back = document.createElement("p");
   back.className = "back";
   back.textContent = card.back;
+  back.hidden = true;
+
+  const reveal = document.createElement("button");
+  reveal.type = "button";
+  reveal.className = "reveal-answer";
+  reveal.textContent = "Показать ответ";
+  reveal.dataset.testid = "reveal-answer";
+  reveal.addEventListener("click", () => {
+    back.hidden = false;
+    reveal.hidden = true;
+  });
 
   const buttons = document.createElement("div");
   buttons.className = "grade-buttons";
@@ -99,7 +110,7 @@ function cardItem(card: Card): HTMLDivElement {
     buttons.append(button);
   }
 
-  wrap.append(front, back, buttons);
+  wrap.append(front, reveal, back, buttons);
   return wrap;
 }
 

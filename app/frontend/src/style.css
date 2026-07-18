@@ -88,6 +88,10 @@ button:hover {
   color: #555;
 }
 
+.card .reveal-answer {
+  margin-top: 0.5rem;
+}
+
 .card .grade-buttons {
   display: flex;
   gap: 0.5rem;
