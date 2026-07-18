@@ -57,6 +57,15 @@ function noteItem(note: Note): HTMLLIElement {
   tags.className = "note-tags";
   tags.textContent = tagLabel(note.tags);
 
+  const edit = document.createElement("button");
+  edit.type = "button";
+  edit.textContent = "изменить";
+  edit.dataset.testid = "edit-note";
+  edit.setAttribute("aria-label", `Изменить заметку: ${note.title}`);
+  edit.addEventListener("click", () => {
+    item.replaceChildren(noteEditForm(note));
+  });
+
   const remove = document.createElement("button");
   remove.type = "button";
   remove.textContent = "удалить";
@@ -67,8 +76,62 @@ function noteItem(note: Note): HTMLLIElement {
     await refreshNotes();
   });
 
-  item.append(title, tags, remove);
+  item.append(title, tags, edit, remove);
   return item;
+}
+
+function noteEditForm(note: Note): HTMLFormElement {
+  const form = document.createElement("form");
+  form.className = "note-edit";
+  form.dataset.testid = "edit-note-form";
+
+  const title = document.createElement("input");
+  title.name = "title";
+  title.value = note.title;
+  title.required = true;
+  title.setAttribute("aria-label", "Заголовок заметки");
+
+  const tags = document.createElement("input");
+  tags.name = "tags";
+  tags.value = note.tags.join(", ");
+  tags.setAttribute("aria-label", "Теги через запятую");
+
+  const body = document.createElement("textarea");
+  body.name = "body";
+  body.value = note.body;
+  body.setAttribute("aria-label", "Текст заметки");
+
+  const actions = document.createElement("div");
+  actions.className = "note-edit-actions";
+  const save = document.createElement("button");
+  save.type = "submit";
+  save.textContent = "сохранить";
+  const cancel = document.createElement("button");
+  cancel.type = "button";
+  cancel.textContent = "отмена";
+  cancel.addEventListener("click", () => {
+    void refreshNotes().catch(showError);
+  });
+  actions.append(save, cancel);
+
+  form.append(title, tags, body, actions);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    save.disabled = true;
+    clearStatus();
+    void api
+      .updateNote(note.id, {
+        title: title.value,
+        body: body.value,
+        tags: parseTags(tags.value),
+        links: note.links,
+      })
+      .then(() => refreshNotes())
+      .catch(showError)
+      .finally(() => (save.disabled = false));
+  });
+
+  return form;
 }
 
 function updateCardNoteOptions(notes: Note[]): void {

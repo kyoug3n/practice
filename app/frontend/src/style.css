@@ -68,6 +68,16 @@ button:hover {
   gap: 0.5rem;
 }
 
+.note-edit {
+  width: 100%;
+  margin: 0;
+}
+
+.note-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .note-tags {
   color: #595959;
   font-size: 0.85rem;
