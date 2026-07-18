@@ -35,6 +35,10 @@ paths:
       responses:
         "201":
           description: Registered user
+          headers:
+            Set-Cookie:
+              description: HttpOnly session cookie.
+              schema: { type: string }
           content:
             application/json:
               schema: { $ref: "#/components/schemas/User" }

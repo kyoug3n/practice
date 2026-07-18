@@ -3,7 +3,7 @@ algorithm: blake3
 groups:
   api-surface:
     source:
-      spec/api/openapi.yaml: 42966134b003d6109548b0bf8f0e43638ff0e9fd5b98e8996aa3745eff4cb96d
+      spec/api/openapi.yaml: 76e8166e40785b6429f253872a5d4cae5545f6b3bbfbf76988462b05e7e5bde0
     dependents:
       www/content/task.typ: ebf6e0b273d849e2cf1a276ed5502ed8b9c2f8bb05f814d8e83e653087f2521d
       www/utils/glossary.typ: 26c7e80019b4f737ee8f359fab52f268018a370051c8c86818b156e558c05892
@@ -16,7 +16,7 @@ groups:
       www/content/task.typ: ebf6e0b273d849e2cf1a276ed5502ed8b9c2f8bb05f814d8e83e653087f2521d
   commands:
     source:
-      Justfile: ef1c6f7a372a855277bee5f724a31bdefd1368f1baf24f2f08f3e6a5984e599a
+      Justfile: 66f6b078f9d6b26ab2d5c72107137ef331145c544b63fda5b4d20a0f8d8b1646
     dependents:
       www/content/index.typ: 8cd9d3668f05e8e02ec0008b8b280df43d07e058c1c5a91abdf9b78a19033210
       www/content/task.typ: ebf6e0b273d849e2cf1a276ed5502ed8b9c2f8bb05f814d8e83e653087f2521d
@@ -41,7 +41,7 @@ groups:
       www/content/task.typ: ebf6e0b273d849e2cf1a276ed5502ed8b9c2f8bb05f814d8e83e653087f2521d
   repo-layout:
     source:
-      Justfile: ef1c6f7a372a855277bee5f724a31bdefd1368f1baf24f2f08f3e6a5984e599a
+      Justfile: 66f6b078f9d6b26ab2d5c72107137ef331145c544b63fda5b4d20a0f8d8b1646
       compose.yaml: 620a520be1cafed7b84e3a3de3cc79189cdba0e972d8e5f53db51a097a34b285
       devbox.json: 66bbcef55a4654318df272586c8b12ed0d79e3b70242dd25af77e22cff3e1c13
     dependents:

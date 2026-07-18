@@ -13,6 +13,7 @@ use Recall\Http\Controller\ReviewsController;
 use Recall\Http\Controller\StatsController;
 use Recall\Http\Json;
 use Recall\Http\Serializer;
+use Recall\Http\SessionCookie;
 use Recall\Http\ValidationException;
 use Recall\Infrastructure\Persistence\CardRepository;
 use Recall\Infrastructure\Persistence\NoteRepository;
@@ -20,6 +21,7 @@ use Recall\Infrastructure\Persistence\Orm;
 use Recall\Infrastructure\Persistence\QueryCounter;
 use Recall\Infrastructure\Persistence\ReviewRepository;
 use Recall\Infrastructure\Persistence\Seeder;
+use Recall\Infrastructure\Persistence\SessionRepository;
 use Recall\Infrastructure\Persistence\UserRepository;
 use Slim\Exception\HttpMethodNotAllowedException;
 use Slim\Exception\HttpNotFoundException;
@@ -41,6 +43,7 @@ if ($driver instanceof LoggerAwareInterface) {
 $noteRepo = new NoteRepository($boot->orm);
 $cardRepo = new CardRepository($boot->orm);
 $reviewRepo = new ReviewRepository($boot->orm);
+$sessionRepo = new SessionRepository($boot->orm);
 $userRepo = new UserRepository($boot->orm);
 
 (new Seeder($noteRepo, $cardRepo))->seedIfEmpty($now);
@@ -50,7 +53,7 @@ $notes = new NotesController($noteRepo, $serializer, $now);
 $cards = new CardsController($cardRepo, $noteRepo, $serializer, $now);
 $reviews = new ReviewsController($cardRepo, $reviewRepo, $serializer, $now);
 $stats = new StatsController($cardRepo, $reviewRepo, $serializer, $now);
-$auth = new AuthController($userRepo);
+$auth = new AuthController($userRepo, $sessionRepo, new SessionCookie(), $now);
 
 $app = AppFactory::create();
 $app->addBodyParsingMiddleware();

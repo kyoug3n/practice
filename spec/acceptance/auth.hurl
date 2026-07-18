@@ -3,7 +3,7 @@
 POST {{base}}/auth/register
 Content-Type: application/json
 {
-  "username": "reader_01",
+  "username": "{{username}}",
   "password": "correct-horse-battery-staple"
 }
 HTTP 201
@@ -11,15 +11,18 @@ HTTP 201
 user_id: jsonpath "$.id"
 [Asserts]
 jsonpath "$.id" exists
-jsonpath "$.username" == "reader_01"
+jsonpath "$.username" == "{{username}}"
 jsonpath "$.created_at" exists
 jsonpath "$.password_hash" not exists
+header "Set-Cookie" contains "recall_session="
+header "Set-Cookie" contains "HttpOnly"
+header "Set-Cookie" contains "SameSite=lax"
 
 # Logins are unique.
 POST {{base}}/auth/register
 Content-Type: application/json
 {
-  "username": "reader_01",
+  "username": "{{username}}",
   "password": "another-correct-password"
 }
 HTTP 409

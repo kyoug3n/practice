@@ -7,14 +7,22 @@ namespace Recall\Http\Controller;
 use DateTimeImmutable;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Recall\Domain\Session;
 use Recall\Domain\User;
 use Recall\Http\Input\RegistrationInput;
 use Recall\Http\Json;
+use Recall\Http\SessionCookie;
+use Recall\Infrastructure\Persistence\SessionRepository;
 use Recall\Infrastructure\Persistence\UserRepository;
 
 final readonly class AuthController
 {
-    public function __construct(private UserRepository $users) {}
+    public function __construct(
+        private UserRepository $users,
+        private SessionRepository $sessions,
+        private SessionCookie $cookie,
+        private DateTimeImmutable $now,
+    ) {}
 
     public function register(Request $request, Response $response): Response
     {
@@ -25,8 +33,10 @@ final readonly class AuthController
 
         $user = User::register($input->username, $input->password);
         $this->users->save($user);
+        $credentials = Session::start($user->id, $this->now);
+        $this->sessions->save($credentials->session);
 
-        return Json::write($response, $this->profile($user), 201);
+        return $this->cookie->add(Json::write($response, $this->profile($user), 201), $credentials);
     }
 
     /** @return array<array-key, mixed> */
