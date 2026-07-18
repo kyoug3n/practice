@@ -54,6 +54,26 @@ final readonly class AuthController
         return $this->cookie->add(Json::write($response, $this->profile($user)), $credentials);
     }
 
+    public function currentUser(Request $request, Response $response): Response
+    {
+        $token = $this->cookie->token($request);
+        if ($token === null) {
+            return Json::error($response, 'необходима авторизация', 401);
+        }
+
+        $session = $this->sessions->findByToken($token, $this->now);
+        if ($session === null) {
+            return Json::error($response, 'необходима авторизация', 401);
+        }
+
+        $user = $this->users->find($session->userId);
+        if ($user === null) {
+            return Json::error($response, 'необходима авторизация', 401);
+        }
+
+        return Json::write($response, $this->profile($user));
+    }
+
     /** @return array<array-key, mixed> */
     private function body(Request $request): array
     {

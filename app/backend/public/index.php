@@ -92,6 +92,7 @@ $app->get('/stats', $stats->index(...));
 
 $app->post('/auth/register', $auth->register(...));
 $app->post('/auth/login', $auth->login(...));
+$app->get('/auth/me', $auth->currentUser(...));
 
 $app->options('/{routes:.+}', static fn(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface => $response->withStatus(204));
 

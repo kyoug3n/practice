@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Recall\Http;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Recall\Domain\SessionCredentials;
+use Recall\Domain\ValueObject\SessionToken;
 use Slim\Psr7\Cookies;
 
 /** Устанавливает непрозрачный токен сессии в безопасной browser-cookie. */
@@ -31,5 +34,19 @@ final class SessionCookie
         }
 
         return $response;
+    }
+
+    public function token(Request $request): ?SessionToken
+    {
+        $value = $request->getCookieParams()[self::NAME] ?? null;
+        if (!is_string($value)) {
+            return null;
+        }
+
+        try {
+            return SessionToken::fromString($value);
+        } catch (InvalidArgumentException) {
+            return null;
+        }
     }
 }

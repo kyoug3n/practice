@@ -18,6 +18,13 @@ header "Set-Cookie" contains "recall_session="
 header "Set-Cookie" contains "HttpOnly"
 header "Set-Cookie" contains "SameSite=lax"
 
+# The cookie identifies the current user.
+GET {{base}}/auth/me
+HTTP 200
+[Asserts]
+jsonpath "$.id" == "{{user_id}}"
+jsonpath "$.username" == "{{username}}"
+
 # A registered user can obtain a fresh session by logging in.
 POST {{base}}/auth/login
 Content-Type: application/json

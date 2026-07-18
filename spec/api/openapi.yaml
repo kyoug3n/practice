@@ -75,6 +75,22 @@ paths:
               schema: { $ref: "#/components/schemas/Error" }
         "422": { $ref: "#/components/responses/ValidationError" }
 
+  /auth/me:
+    get:
+      tags: [auth]
+      summary: Return the user of the current session
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "401":
+          description: Missing, expired, or invalid session
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
   /notes:
     get:
       tags: [notes]
