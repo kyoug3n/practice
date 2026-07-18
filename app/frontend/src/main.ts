@@ -18,6 +18,7 @@ function field(form: FormData, name: string): string {
 }
 
 const statusBar = need("#status");
+let activeTag: string | undefined;
 
 function showError(error: unknown): void {
   statusBar.textContent =
@@ -145,7 +146,7 @@ async function refreshStats(): Promise<void> {
 }
 
 async function refreshNotes(): Promise<void> {
-  const notes = await api.listNotes();
+  const notes = await api.listNotes(activeTag);
   const list = need("#note-list");
   list.replaceChildren(...notes.map(noteItem));
   updateCardNoteOptions(notes);
@@ -226,6 +227,29 @@ cardForm.addEventListener("submit", (event) => {
     })
     .catch(showError)
     .finally(() => (submit.disabled = false));
+});
+
+const tagFilterForm = need("#tag-filter-form");
+if (!(tagFilterForm instanceof HTMLFormElement)) {
+  throw new Error("нет формы фильтра тегов");
+}
+tagFilterForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const data = new FormData(tagFilterForm);
+  const tag = field(data, "tag").trim();
+  activeTag = tag === "" ? undefined : tag;
+  clearStatus();
+  void refreshNotes().catch(showError);
+});
+
+const clearTagFilter = need("#clear-tag-filter");
+onClick(clearTagFilter as HTMLButtonElement, async () => {
+  const input = tagFilterForm.elements.namedItem("tag");
+  if (input instanceof HTMLInputElement) {
+    input.value = "";
+  }
+  activeTag = undefined;
+  await refreshNotes();
 });
 
 statusBar.textContent = "Загрузка…";

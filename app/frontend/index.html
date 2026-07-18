@@ -38,6 +38,15 @@
           ></textarea>
           <button type="submit">Добавить заметку</button>
         </form>
+        <form id="tag-filter-form">
+          <input
+            name="tag"
+            placeholder="Фильтр по тегу"
+            aria-label="Фильтр по тегу"
+          />
+          <button type="submit">Применить фильтр</button>
+          <button type="button" id="clear-tag-filter">Сбросить</button>
+        </form>
         <ul id="note-list"></ul>
       </section>
 
