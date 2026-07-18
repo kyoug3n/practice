@@ -14,8 +14,11 @@ use Recall\Domain\ValueObject\Interval;
 use Recall\Domain\ValueObject\NoteId;
 use Recall\Domain\ValueObject\NoteIdList;
 use Recall\Domain\ValueObject\ReviewId;
+use Recall\Domain\ValueObject\SessionId;
 use Recall\Domain\ValueObject\TagList;
 use Recall\Domain\ValueObject\Title;
+use Recall\Domain\ValueObject\UserId;
+use Recall\Domain\ValueObject\Username;
 
 /**
  * Единая точка перевода значений между БД и доменными value-объектами.
@@ -95,6 +98,18 @@ final class ValueObjectTypecast implements CastableInterface, UncastableInterfac
             ReviewId::class => [
                 static fn(mixed $v): ReviewId => ReviewId::fromString(self::str($v)),
                 static fn(mixed $v): string => $v instanceof ReviewId ? $v->toString() : self::str($v),
+            ],
+            UserId::class => [
+                static fn(mixed $v): UserId => UserId::fromString(self::str($v)),
+                static fn(mixed $v): string => $v instanceof UserId ? $v->toString() : self::str($v),
+            ],
+            SessionId::class => [
+                static fn(mixed $v): SessionId => SessionId::fromString(self::str($v)),
+                static fn(mixed $v): string => $v instanceof SessionId ? $v->toString() : self::str($v),
+            ],
+            Username::class => [
+                static fn(mixed $v): Username => new Username(self::str($v)),
+                static fn(mixed $v): string => $v instanceof Username ? $v->value : self::str($v),
             ],
             Title::class => [
                 static fn(mixed $v): Title => new Title(self::str($v)),

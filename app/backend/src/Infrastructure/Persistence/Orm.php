@@ -21,6 +21,8 @@ use Recall\Domain\Card;
 use Recall\Domain\Grade;
 use Recall\Domain\Note;
 use Recall\Domain\Review;
+use Recall\Domain\Session;
+use Recall\Domain\User;
 use Recall\Domain\ValueObject\CardId;
 use Recall\Domain\ValueObject\CardText;
 use Recall\Domain\ValueObject\Day;
@@ -29,8 +31,11 @@ use Recall\Domain\ValueObject\Interval;
 use Recall\Domain\ValueObject\NoteId;
 use Recall\Domain\ValueObject\NoteIdList;
 use Recall\Domain\ValueObject\ReviewId;
+use Recall\Domain\ValueObject\SessionId;
 use Recall\Domain\ValueObject\TagList;
 use Recall\Domain\ValueObject\Title;
+use Recall\Domain\ValueObject\UserId;
+use Recall\Domain\ValueObject\Username;
 
 /**
  * Сборка Cycle ORM: подключение к SQLite, схема (заданная массивом, без
@@ -77,6 +82,21 @@ final readonly class Orm
     private static function migrate(DatabaseInterface $db): void
     {
         $db->execute(
+            "CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY,
+                username TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL
+            )",
+        );
+        $db->execute(
+            "CREATE TABLE IF NOT EXISTS sessions (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                token_hash TEXT NOT NULL UNIQUE,
+                expires_at TEXT NOT NULL
+            )",
+        );
+        $db->execute(
             "CREATE TABLE IF NOT EXISTS notes (
                 id TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
@@ -114,7 +134,7 @@ final readonly class Orm
     {
         $handler = [ValueObjectTypecast::class, Typecast::class];
 
-        return [
+        return self::authenticationMap($handler) + [
             Note::class => [
                 SchemaInterface::ROLE => 'note',
                 SchemaInterface::DATABASE => 'default',
@@ -187,6 +207,54 @@ final readonly class Orm
                     'interval' => Interval::class,
                     'ease' => Ease::class,
                     'nextDue' => Day::class,
+                ],
+                SchemaInterface::SCHEMA => [],
+                SchemaInterface::RELATIONS => [],
+            ],
+        ];
+    }
+
+    /**
+     * @param  list<class-string> $handler
+     * @return array<class-string, array<int, mixed>>
+     */
+    private static function authenticationMap(array $handler): array
+    {
+        return [
+            User::class => [
+                SchemaInterface::ROLE => 'user',
+                SchemaInterface::DATABASE => 'default',
+                SchemaInterface::TABLE => 'users',
+                SchemaInterface::PRIMARY_KEY => 'id',
+                SchemaInterface::TYPECAST_HANDLER => $handler,
+                SchemaInterface::COLUMNS => [
+                    'id' => 'id',
+                    'username' => 'username',
+                    'passwordHash' => 'password_hash',
+                ],
+                SchemaInterface::TYPECAST => [
+                    'id' => UserId::class,
+                    'username' => Username::class,
+                ],
+                SchemaInterface::SCHEMA => [],
+                SchemaInterface::RELATIONS => [],
+            ],
+            Session::class => [
+                SchemaInterface::ROLE => 'session',
+                SchemaInterface::DATABASE => 'default',
+                SchemaInterface::TABLE => 'sessions',
+                SchemaInterface::PRIMARY_KEY => 'id',
+                SchemaInterface::TYPECAST_HANDLER => $handler,
+                SchemaInterface::COLUMNS => [
+                    'id' => 'id',
+                    'userId' => 'user_id',
+                    'tokenHash' => 'token_hash',
+                    'expiresAt' => 'expires_at',
+                ],
+                SchemaInterface::TYPECAST => [
+                    'id' => SessionId::class,
+                    'userId' => UserId::class,
+                    'expiresAt' => 'datetime',
                 ],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],
