@@ -16,12 +16,35 @@ servers:
     description: Local backend (php -S / compose)
 
 tags:
+  - name: auth
   - name: notes
   - name: cards
   - name: reviews
   - name: stats
 
 paths:
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Register a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegistrationInput" }
+      responses:
+        "201":
+          description: Registered user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "409":
+          description: Username already exists
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "422": { $ref: "#/components/responses/ValidationError" }
+
   /notes:
     get:
       tags: [notes]
@@ -212,6 +235,23 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
 
   schemas:
+    User:
+      type: object
+      required: [id, username, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        username: { type: string }
+        created_at: { type: string, format: date-time }
+
+    RegistrationInput:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          pattern: "^[a-z0-9][a-z0-9_-]{2,31}$"
+        password: { type: string, minLength: 12, maxLength: 72 }
+
     Note:
       type: object
       required: [id, title, body, tags, links, created_at, updated_at]

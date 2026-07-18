@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
+use Recall\Http\Controller\AuthController;
 use Recall\Http\Controller\CardsController;
 use Recall\Http\Controller\NotesController;
 use Recall\Http\Controller\ReviewsController;
@@ -19,6 +20,7 @@ use Recall\Infrastructure\Persistence\Orm;
 use Recall\Infrastructure\Persistence\QueryCounter;
 use Recall\Infrastructure\Persistence\ReviewRepository;
 use Recall\Infrastructure\Persistence\Seeder;
+use Recall\Infrastructure\Persistence\UserRepository;
 use Slim\Exception\HttpMethodNotAllowedException;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
@@ -39,6 +41,7 @@ if ($driver instanceof LoggerAwareInterface) {
 $noteRepo = new NoteRepository($boot->orm);
 $cardRepo = new CardRepository($boot->orm);
 $reviewRepo = new ReviewRepository($boot->orm);
+$userRepo = new UserRepository($boot->orm);
 
 (new Seeder($noteRepo, $cardRepo))->seedIfEmpty($now);
 
@@ -47,6 +50,7 @@ $notes = new NotesController($noteRepo, $serializer, $now);
 $cards = new CardsController($cardRepo, $noteRepo, $serializer, $now);
 $reviews = new ReviewsController($cardRepo, $reviewRepo, $serializer, $now);
 $stats = new StatsController($cardRepo, $reviewRepo, $serializer, $now);
+$auth = new AuthController($userRepo);
 
 $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
@@ -82,6 +86,8 @@ $app->get('/reviews/queue', $reviews->queue(...));
 $app->post('/reviews/{id}', $reviews->grade(...));
 
 $app->get('/stats', $stats->index(...));
+
+$app->post('/auth/register', $auth->register(...));
 
 $app->options('/{routes:.+}', static fn(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface => $response->withStatus(204));
 
