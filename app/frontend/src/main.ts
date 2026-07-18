@@ -70,6 +70,29 @@ function noteItem(note: Note): HTMLLIElement {
   return item;
 }
 
+function updateCardNoteOptions(notes: Note[]): void {
+  const select = document.querySelector<HTMLSelectElement>(
+    "#card-form select[name='note_id']",
+  );
+  if (!select) {
+    throw new Error("нет списка заметок для карточки");
+  }
+  const options = notes.map((note) => {
+    const option = document.createElement("option");
+    option.value = note.id;
+    option.textContent = note.title;
+    return option;
+  });
+  select.replaceChildren(
+    Object.assign(document.createElement("option"), {
+      value: "",
+      textContent: "Выберите заметку",
+    }),
+    ...options,
+  );
+  select.disabled = notes.length === 0;
+}
+
 function cardItem(card: Card): HTMLDivElement {
   const wrap = document.createElement("div");
   wrap.className = "card";
@@ -125,6 +148,7 @@ async function refreshNotes(): Promise<void> {
   const notes = await api.listNotes();
   const list = need("#note-list");
   list.replaceChildren(...notes.map(noteItem));
+  updateCardNoteOptions(notes);
 }
 
 async function refreshQueue(): Promise<void> {
@@ -168,6 +192,37 @@ form.addEventListener("submit", (event) => {
     .then(() => {
       form.reset();
       return refreshNotes();
+    })
+    .catch(showError)
+    .finally(() => (submit.disabled = false));
+});
+
+const cardForm = need("#card-form");
+if (!(cardForm instanceof HTMLFormElement)) {
+  throw new Error("нет формы #card-form");
+}
+cardForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const submit = cardForm.querySelector<HTMLButtonElement>(
+    "button[type='submit']",
+  );
+  if (!submit) {
+    return;
+  }
+  const data = new FormData(cardForm);
+  const input = {
+    note_id: field(data, "note_id"),
+    front: field(data, "front"),
+    back: field(data, "back"),
+  };
+
+  submit.disabled = true;
+  clearStatus();
+  void api
+    .createCard(input)
+    .then(() => {
+      cardForm.reset();
+      return Promise.all([refreshStats(), refreshQueue()]);
     })
     .catch(showError)
     .finally(() => (submit.disabled = false));

@@ -82,6 +82,8 @@ export const api = {
     http<Note[]>(`/notes${tag ? `?tag=${encodeURIComponent(tag)}` : ""}`),
   createNote: (input: { title: string; body: string; tags: string[] }) =>
     http<Note>("/notes", { method: "POST", body: JSON.stringify(input) }),
+  createCard: (input: { note_id: string; front: string; back: string }) =>
+    http<Card>("/cards", { method: "POST", body: JSON.stringify(input) }),
   deleteNote: async (id: string): Promise<void> => {
     await http(`/notes/${id}`, { method: "DELETE" });
   },

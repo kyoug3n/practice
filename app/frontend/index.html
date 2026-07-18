@@ -41,6 +41,28 @@
         <ul id="note-list"></ul>
       </section>
 
+      <section aria-label="Карточки">
+        <h2>Новая карточка</h2>
+        <form id="card-form">
+          <select name="note_id" aria-label="Заметка для карточки" required>
+            <option value="">Выберите заметку</option>
+          </select>
+          <input
+            name="front"
+            placeholder="Вопрос"
+            aria-label="Вопрос карточки"
+            required
+          />
+          <textarea
+            name="back"
+            placeholder="Ответ"
+            aria-label="Ответ карточки"
+            required
+          ></textarea>
+          <button type="submit">Создать карточку</button>
+        </form>
+      </section>
+
       <section aria-label="Повторение">
         <h2>Очередь повторения</h2>
         <div id="queue"></div>
