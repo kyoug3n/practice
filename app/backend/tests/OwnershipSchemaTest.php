@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Recall\Tests;
 
 use PDO;
-use Recall\Infrastructure\Persistence\Orm;
+use Recall\Infrastructure\Persistence\DatabaseContext;
 use RuntimeException;
 use Testo\Assert;
 use Testo\Test;
@@ -22,7 +22,7 @@ final class OwnershipSchemaTest
 
         try {
             $this->createLegacySchema($path);
-            $database = Orm::boot($path)->dbal->database('default');
+            $database = DatabaseContext::boot($path)->dbal->database('default');
 
             foreach (['notes', 'cards', 'reviews'] as $table) {
                 $schema = $database->table($table);

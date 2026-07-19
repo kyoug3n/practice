@@ -7,7 +7,7 @@ namespace Recall\Tests;
 use DateTimeImmutable;
 use Recall\Domain\Session;
 use Recall\Domain\ValueObject\UserId;
-use Recall\Infrastructure\Persistence\Orm;
+use Recall\Infrastructure\Persistence\DatabaseContext;
 use Recall\Infrastructure\Persistence\SessionRepository;
 use Testo\Assert;
 use Testo\Test;
@@ -17,7 +17,7 @@ final class SessionRepositoryTest
     #[Test]
     public function readsAnActiveSessionByItsOpaqueToken(): void
     {
-        $repo = new SessionRepository(Orm::boot(':memory:')->orm);
+        $repo = new SessionRepository(DatabaseContext::boot(':memory:')->orm);
         $now = new DateTimeImmutable('2026-07-18T12:00:00+00:00');
         $credentials = Session::start(UserId::generate(), $now);
         $repo->save($credentials->session);
@@ -32,7 +32,7 @@ final class SessionRepositoryTest
     #[Test]
     public function removesExpiredSessions(): void
     {
-        $repo = new SessionRepository(Orm::boot(':memory:')->orm);
+        $repo = new SessionRepository(DatabaseContext::boot(':memory:')->orm);
         $now = new DateTimeImmutable('2026-07-18T12:00:00+00:00');
         $credentials = Session::start(UserId::generate(), $now);
         $repo->save($credentials->session);

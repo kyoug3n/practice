@@ -18,8 +18,8 @@ use Recall\Http\Serializer;
 use Recall\Http\SessionCookie;
 use Recall\Http\ValidationException;
 use Recall\Infrastructure\Persistence\CardRepository;
+use Recall\Infrastructure\Persistence\DatabaseContext;
 use Recall\Infrastructure\Persistence\NoteRepository;
-use Recall\Infrastructure\Persistence\Orm;
 use Recall\Infrastructure\Persistence\QueryCounter;
 use Recall\Infrastructure\Persistence\ReviewRepository;
 use Recall\Infrastructure\Persistence\Seeder;
@@ -35,7 +35,7 @@ $envDb = getenv('RECALL_DB');
 $databasePath = $envDb === false || $envDb === '' ? dirname(__DIR__) . '/var/recall.sqlite' : $envDb;
 $now = new DateTimeImmutable('now');
 
-$boot = Orm::boot($databasePath);
+$boot = DatabaseContext::boot($databasePath);
 $queries = new QueryCounter();
 $driver = $boot->dbal->driver('sqlite');
 if ($driver instanceof LoggerAwareInterface) {

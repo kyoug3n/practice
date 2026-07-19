@@ -14,8 +14,8 @@ use Recall\Domain\ValueObject\TagList;
 use Recall\Domain\ValueObject\Title;
 use Recall\Domain\ValueObject\UserId;
 use Recall\Infrastructure\Persistence\CardRepository;
+use Recall\Infrastructure\Persistence\DatabaseContext;
 use Recall\Infrastructure\Persistence\NoteRepository;
-use Recall\Infrastructure\Persistence\Orm;
 use Recall\Infrastructure\Persistence\ReviewRepository;
 use Testo\Assert;
 use Testo\Test;
@@ -25,7 +25,7 @@ final class OwnershipRepositoryTest
     #[Test]
     public function readsOnlyTheCurrentUsersData(): void
     {
-        $orm = Orm::boot(':memory:')->orm;
+        $orm = DatabaseContext::boot(':memory:')->orm;
         $notes = new NoteRepository($orm);
         $cards = new CardRepository($orm);
         $reviews = new ReviewRepository($orm);
