@@ -1,6 +1,14 @@
 # Reviews: a freshly created card is due now, can be graded, and gets rescheduled.
 # Intervals are intentionally not pinned here — only that grading moves a card forward.
 
+POST {{base}}/auth/register
+Content-Type: application/json
+{
+  "username": "{{username}}-r",
+  "password": "correct-horse-battery-staple"
+}
+HTTP 201
+
 POST {{base}}/notes
 Content-Type: application/json
 {

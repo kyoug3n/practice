@@ -1,6 +1,14 @@
 # Notes: create, read, update, filter by tag, delete.
 # Loose by design — asserts observable behaviour, not internal representation.
 
+POST {{base}}/auth/register
+Content-Type: application/json
+{
+  "username": "{{username}}-n",
+  "password": "correct-horse-battery-staple"
+}
+HTTP 201
+
 # Create a note.
 POST {{base}}/notes
 Content-Type: application/json

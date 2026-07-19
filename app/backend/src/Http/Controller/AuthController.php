@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Recall\Domain\Session;
 use Recall\Domain\User;
+use Recall\Http\AuthenticationMiddleware;
 use Recall\Http\Input\LoginInput;
 use Recall\Http\Input\RegistrationInput;
 use Recall\Http\Json;
@@ -56,18 +57,8 @@ final readonly class AuthController
 
     public function currentUser(Request $request, Response $response): Response
     {
-        $token = $this->cookie->token($request);
-        if ($token === null) {
-            return Json::error($response, 'необходима авторизация', 401);
-        }
-
-        $session = $this->sessions->findByToken($token, $this->now);
-        if ($session === null) {
-            return Json::error($response, 'необходима авторизация', 401);
-        }
-
-        $user = $this->users->find($session->userId);
-        if ($user === null) {
+        $user = $request->getAttribute(AuthenticationMiddleware::USER_ATTRIBUTE);
+        if (!$user instanceof User) {
             return Json::error($response, 'необходима авторизация', 401);
         }
 

@@ -1,5 +1,13 @@
 # Cards: created from a note, then read and listed.
 
+POST {{base}}/auth/register
+Content-Type: application/json
+{
+  "username": "{{username}}-c",
+  "password": "correct-horse-battery-staple"
+}
+HTTP 201
+
 # A card needs a note.
 POST {{base}}/notes
 Content-Type: application/json

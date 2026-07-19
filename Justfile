@@ -28,7 +28,7 @@ dev: _env
 up: _env
     {{ compose }} up -d
     @echo "ожидание бэкенда {{ base }}"
-    @for i in $(seq 1 90); do curl -sf {{ base }}/stats >/dev/null 2>&1 && break || sleep 1; done
+    @for i in $(seq 1 90); do curl -sf {{ base }}/health >/dev/null 2>&1 && break || sleep 1; done
     @echo "ожидание фронтенда {{ front }}"
     @for i in $(seq 1 90); do curl -sf {{ front }} >/dev/null 2>&1 && break || sleep 1; done
 

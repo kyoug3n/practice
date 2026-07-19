@@ -6,8 +6,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
+use Recall\Http\AuthenticationMiddleware;
 use Recall\Http\Controller\AuthController;
 use Recall\Http\Controller\CardsController;
+use Recall\Http\Controller\HealthController;
 use Recall\Http\Controller\NotesController;
 use Recall\Http\Controller\ReviewsController;
 use Recall\Http\Controller\StatsController;
@@ -54,9 +56,17 @@ $cards = new CardsController($cardRepo, $noteRepo, $serializer, $now);
 $reviews = new ReviewsController($cardRepo, $reviewRepo, $serializer, $now);
 $stats = new StatsController($cardRepo, $reviewRepo, $serializer, $now);
 $auth = new AuthController($userRepo, $sessionRepo, new SessionCookie(), $now);
+$health = new HealthController($boot->dbal->database('default'));
 
 $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
+$app->add(new AuthenticationMiddleware(
+    new SessionCookie(),
+    $sessionRepo,
+    $userRepo,
+    $now,
+    $app->getResponseFactory(),
+));
 
 // CORS — фронтенд-дев-сервер ходит к нам с другого источника.
 $configuredOrigin = getenv('RECALL_FRONTEND_ORIGIN');
@@ -102,6 +112,7 @@ $app->get('/reviews/queue', $reviews->queue(...));
 $app->post('/reviews/{id}', $reviews->grade(...));
 
 $app->get('/stats', $stats->index(...));
+$app->get('/health', $health->show(...));
 
 $app->post('/auth/register', $auth->register(...));
 $app->post('/auth/login', $auth->login(...));

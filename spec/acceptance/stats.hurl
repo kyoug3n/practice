@@ -1,6 +1,14 @@
 # Stats: shape and basic monotonicity only.
 # The exact counting rules are part of the task, so they are not pinned here.
 
+POST {{base}}/auth/register
+Content-Type: application/json
+{
+  "username": "{{username}}-s",
+  "password": "correct-horse-battery-staple"
+}
+HTTP 201
+
 GET {{base}}/stats
 HTTP 200
 [Asserts]

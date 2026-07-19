@@ -17,12 +17,29 @@ servers:
 
 tags:
   - name: auth
+  - name: health
   - name: notes
   - name: cards
   - name: reviews
   - name: stats
 
 paths:
+  /health:
+    get:
+      tags: [health]
+      summary: Check API and database availability
+      responses:
+        "200":
+          description: API and database are available
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Health" }
+        "503":
+          description: Database is unavailable
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
   /auth/register:
     post:
       tags: [auth]
@@ -293,6 +310,13 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
 
   schemas:
+    Health:
+      type: object
+      required: [status, database]
+      properties:
+        status: { type: string, enum: [ok] }
+        database: { type: string, enum: [ok] }
+
     User:
       type: object
       required: [id, username, created_at]
