@@ -38,14 +38,6 @@ h1 {
   letter-spacing: -0.03em;
 }
 
-#stats {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 1.5rem;
-}
-
 #profile-stats {
   display: grid;
   grid-template-columns: max-content 1fr;
@@ -96,60 +88,6 @@ button {
 
 button:hover {
   background: #f0f0f0;
-}
-
-#note-list {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: 0.5rem;
-}
-
-#note-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.note-edit {
-  width: 100%;
-  margin: 0;
-}
-
-.note-edit-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.note-tags {
-  color: #595959;
-  font-size: 0.85rem;
-}
-
-.card {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 1rem;
-  background: #fff;
-  margin-bottom: 1rem;
-}
-
-.card .front {
-  font-weight: 600;
-}
-
-.card .back {
-  color: #555;
-}
-
-.card .reveal-answer {
-  margin-top: 0.5rem;
-}
-
-.card .grade-buttons {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
 }
 
 #status {

@@ -1,4 +1,5 @@
 import "./style.css";
+import "./workspace.css";
 import { setupAuth } from "./auth";
 import { setupNotes } from "./notes";
 import { profileUsername, setupProfile } from "./profile";
