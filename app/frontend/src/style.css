@@ -162,3 +162,54 @@ button:hover {
 #status[data-state="error"] {
   color: #b00020;
 }
+
+#registration,
+#login {
+  max-width: 30rem;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--pico-card-background-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2rem rgba(91, 48, 40, 0.08);
+}
+
+#registration h2,
+#login h2 {
+  margin-top: 0;
+  color: #5b3028;
+}
+
+#registration form,
+#login form {
+  margin-bottom: 1.25rem;
+}
+
+#registration form button,
+#login form button {
+  margin-top: 0.25rem;
+}
+
+#registration > button,
+#login > button {
+  width: 100%;
+  margin-bottom: 0;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--pico-primary);
+}
+
+#registration > button:hover,
+#login > button:hover {
+  background: #fff1eb;
+  border-color: #f0d1c5;
+}
+
+@media (max-width: 576px) {
+  #registration,
+  #login {
+    margin-top: 1rem;
+    padding: 1.5rem;
+  }
+}
