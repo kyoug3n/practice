@@ -99,6 +99,9 @@ export const api = {
       body: JSON.stringify(input),
     }),
   me: () => http<User>("/auth/me"),
+  logout: async (): Promise<void> => {
+    await http("/auth/logout", { method: "POST" });
+  },
   listNotes: (tag?: string) =>
     http<Note[]>(`/notes${tag ? `?tag=${encodeURIComponent(tag)}` : ""}`),
   createNote: (input: { title: string; body: string; tags: string[] }) =>

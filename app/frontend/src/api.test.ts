@@ -159,4 +159,18 @@ describe("api client", () => {
     const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
     expect(init.credentials).toBe("include");
   });
+
+  it("завершает сессию через API", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 204 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(api.logout()).resolves.toBeUndefined();
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/auth/logout");
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(init.method).toBe("POST");
+    expect(init.credentials).toBe("include");
+  });
 });

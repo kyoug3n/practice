@@ -354,6 +354,12 @@ showLoginButton.addEventListener("click", showLogin);
 const showRegistrationButton = need("#show-registration");
 showRegistrationButton.addEventListener("click", showRegistration);
 
+const logoutButton = need("#logout");
+onClick(logoutButton as HTMLButtonElement, async () => {
+  await api.logout();
+  showLogin();
+});
+
 void restoreSession();
 
 const form = need("#note-form");
