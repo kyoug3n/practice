@@ -27,13 +27,21 @@ final class SessionCookie
             'samesite' => 'lax',
         ]);
 
-        foreach ($cookies->toHeaders() as $header) {
-            if (is_string($header)) {
-                $response = $response->withAddedHeader('Set-Cookie', $header);
-            }
-        }
+        return $this->attach($response, $cookies);
+    }
 
-        return $response;
+    public function clear(Response $response): Response
+    {
+        $cookies = new Cookies();
+        $cookies->set(self::NAME, [
+            'value' => '',
+            'path' => '/',
+            'expires' => 1,
+            'httponly' => true,
+            'samesite' => 'lax',
+        ]);
+
+        return $this->attach($response, $cookies);
     }
 
     public function token(Request $request): ?SessionToken
@@ -48,5 +56,16 @@ final class SessionCookie
         } catch (InvalidArgumentException) {
             return null;
         }
+    }
+
+    private function attach(Response $response, Cookies $cookies): Response
+    {
+        foreach ($cookies->toHeaders() as $header) {
+            if (is_string($header)) {
+                $response = $response->withAddedHeader('Set-Cookie', $header);
+            }
+        }
+
+        return $response;
     }
 }

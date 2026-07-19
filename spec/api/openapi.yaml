@@ -91,6 +91,18 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
 
+  /auth/logout:
+    post:
+      tags: [auth]
+      summary: End the current session
+      responses:
+        "204":
+          description: Session ended and browser cookie cleared
+          headers:
+            Set-Cookie:
+              description: An expired HttpOnly session cookie.
+              schema: { type: string }
+
   /notes:
     get:
       tags: [notes]

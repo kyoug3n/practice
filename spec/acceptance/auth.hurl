@@ -40,6 +40,18 @@ header "Set-Cookie" contains "recall_session="
 header "Set-Cookie" contains "HttpOnly"
 header "Set-Cookie" contains "SameSite=lax"
 
+# Logging out invalidates the session and clears the browser cookie.
+POST {{base}}/auth/logout
+HTTP 204
+[Asserts]
+header "Set-Cookie" contains "recall_session="
+header "Set-Cookie" contains "expires="
+header "Set-Cookie" contains "HttpOnly"
+header "Set-Cookie" contains "SameSite=lax"
+
+GET {{base}}/auth/me
+HTTP 401
+
 # A wrong password never creates a session.
 POST {{base}}/auth/login
 Content-Type: application/json

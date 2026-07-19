@@ -74,6 +74,19 @@ final readonly class AuthController
         return Json::write($response, $this->profile($user));
     }
 
+    public function logout(Request $request, Response $response): Response
+    {
+        $token = $this->cookie->token($request);
+        if ($token !== null) {
+            $session = $this->sessions->findByToken($token, $this->now);
+            if ($session !== null) {
+                $this->sessions->delete($session);
+            }
+        }
+
+        return $this->cookie->clear($response->withStatus(204));
+    }
+
     /** @return array<array-key, mixed> */
     private function body(Request $request): array
     {
