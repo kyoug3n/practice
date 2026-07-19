@@ -29,7 +29,7 @@
 
 .workspace-header #logout {
   margin: 0;
-  border-color: var(--app-highlight-background);
+  border: 0;
   background: var(--app-highlight-background);
   box-shadow: none;
   color: var(--app-highlight-color);
@@ -37,9 +37,9 @@
 }
 
 .workspace-header #logout:hover {
-  border-color: var(--app-highlight-hover-background);
-  background: var(--app-highlight-hover-background);
-  color: var(--app-highlight-color);
+  border: 0;
+  background: var(--app-danger-background);
+  color: var(--app-danger-color);
 }
 
 #stats {
@@ -118,12 +118,16 @@
 }
 
 #note-list li button[data-testid="delete-note"] {
-  border-color: #e6b8ae;
-  color: #8f392f;
+  border: 0;
+  background: var(--app-highlight-background);
+  color: var(--app-highlight-color);
+  font-weight: 700;
 }
 
 #note-list li button[data-testid="delete-note"]:hover {
-  background: #fff1eb;
+  border: 0;
+  background: var(--app-danger-background);
+  color: var(--app-danger-color);
 }
 
 .note-edit {
@@ -159,15 +163,16 @@
 
 .card .reveal-answer,
 .card .grade-buttons button {
-  border-color: #d8cbc2;
+  border: 0;
   color: var(--pico-color);
 }
 
 .card .reveal-answer:hover,
+#note-list li button[data-testid="edit-note"]:hover,
 .card .grade-buttons button:hover {
-  border-color: var(--pico-primary);
-  background: #fff1eb;
-  color: var(--pico-primary-hover);
+  border: 0;
+  background: var(--pico-primary-hover-background);
+  color: var(--pico-primary-inverse);
 }
 
 .card .reveal-answer {

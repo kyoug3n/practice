@@ -17,7 +17,7 @@
   width: 2.75rem;
   height: 2.75rem;
   padding: 0;
-  border: 1px solid var(--app-highlight-background);
+  border: 0;
   border-radius: 50%;
   background: var(--app-highlight-background);
   color: var(--app-highlight-color);
@@ -40,7 +40,7 @@
 
 #create-menu summary:hover,
 #create-menu[open] summary {
-  border-color: var(--app-highlight-hover-background);
+  border: 0;
   background: var(--app-highlight-hover-background);
 }
 
@@ -67,16 +67,16 @@
 .create-menu-list button {
   min-height: 2.5rem;
   padding: 0.5rem 0.75rem;
-  border-color: transparent;
+  border: 0;
   background: transparent;
   color: var(--pico-color);
   text-align: left;
 }
 
 .create-menu-list button:hover {
-  border-color: var(--pico-muted-border-color);
-  background: #fff4ed;
-  color: var(--pico-primary-hover);
+  border: 0;
+  background: var(--app-highlight-background);
+  color: var(--app-highlight-color);
 }
 
 #create-panel {
@@ -123,7 +123,7 @@
   width: 2.5rem;
   margin: 0;
   padding: 0;
-  border-color: transparent;
+  border: 0;
   background: transparent;
   color: var(--pico-muted-color);
   font-size: 1.5rem;
@@ -131,9 +131,9 @@
 }
 
 #create-panel #create-close:hover {
-  border-color: var(--pico-muted-border-color);
-  background: #fff4ed;
-  color: var(--pico-primary-hover);
+  border: 0;
+  background: var(--app-highlight-background);
+  color: var(--app-highlight-color);
 }
 
 #create-panel form {

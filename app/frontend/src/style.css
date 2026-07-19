@@ -28,6 +28,8 @@
   --app-highlight-hover-background: #273449;
   --app-highlight-color: #fff;
   --app-highlight-muted-color: #e2e8f0;
+  --app-danger-background: #f1c4bb;
+  --app-danger-color: #7f3028;
 }
 
 #app {
@@ -72,7 +74,7 @@ textarea::placeholder {
 button {
   padding: 0.4rem 0.8rem;
   min-height: 2.75rem;
-  border: 1px solid var(--pico-muted-border-color);
+  border: 0;
   border-radius: 0.65rem;
   background: var(--pico-card-background-color);
   color: var(--pico-color);
@@ -81,19 +83,19 @@ button {
 }
 
 button:hover {
-  border-color: #c9b8ae;
+  border: 0;
   background: #fff4ed;
 }
 
 button[type="submit"] {
-  border-color: var(--pico-primary-background);
+  border: 0;
   background: var(--pico-primary-background);
   color: var(--pico-primary-inverse);
   font-weight: 700;
 }
 
 button[type="submit"]:hover {
-  border-color: var(--pico-primary-hover-background);
+  border: 0;
   background: var(--pico-primary-hover-background);
 }
 
@@ -161,7 +163,7 @@ a:hover {
 #login > button {
   width: 100%;
   margin-bottom: 0;
-  border-color: var(--app-highlight-background);
+  border: 0;
   background: var(--app-highlight-background);
   box-shadow: none;
   color: var(--app-highlight-color);
@@ -170,9 +172,15 @@ a:hover {
 
 #registration > button:hover,
 #login > button:hover {
-  border-color: var(--app-highlight-hover-background);
+  border: 0;
   background: var(--app-highlight-hover-background);
   color: var(--app-highlight-color);
+}
+
+#clear-tag-filter:hover {
+  border: 0;
+  background: var(--app-danger-background);
+  color: var(--app-danger-color);
 }
 
 @media (max-width: 576px) {
