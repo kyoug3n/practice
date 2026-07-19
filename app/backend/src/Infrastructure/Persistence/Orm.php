@@ -103,7 +103,8 @@ final readonly class Orm
                 body TEXT NOT NULL DEFAULT '',
                 tags TEXT NOT NULL DEFAULT '[]',
                 links TEXT NOT NULL DEFAULT '[]',
-                updated_at TEXT NOT NULL
+                updated_at TEXT NOT NULL,
+                user_id TEXT NULL CHECK (user_id IS NULL OR length(user_id) = 36)
             )",
         );
         $db->execute(
@@ -114,7 +115,8 @@ final readonly class Orm
                 back TEXT NOT NULL,
                 ease REAL NOT NULL,
                 interval INTEGER NOT NULL,
-                due TEXT NOT NULL
+                due TEXT NOT NULL,
+                user_id TEXT NULL CHECK (user_id IS NULL OR length(user_id) = 36)
             )",
         );
         $db->execute(
@@ -124,9 +126,24 @@ final readonly class Orm
                 grade TEXT NOT NULL,
                 interval INTEGER NOT NULL,
                 ease REAL NOT NULL,
-                next_due TEXT NOT NULL
+                next_due TEXT NOT NULL,
+                user_id TEXT NULL CHECK (user_id IS NULL OR length(user_id) = 36)
             )",
         );
+        self::addUserOwnershipColumns($db);
+    }
+
+    /** Добавляет ownership-поля без пересборки уже выданной SQLite-базы. */
+    private static function addUserOwnershipColumns(DatabaseInterface $db): void
+    {
+        foreach (['notes', 'cards', 'reviews'] as $table) {
+            if (!$db->table($table)->hasColumn('user_id')) {
+                $db->execute(
+                    "ALTER TABLE $table ADD COLUMN user_id TEXT NULL CHECK (user_id IS NULL OR length(user_id) = 36)",
+                );
+            }
+            $db->execute("CREATE INDEX IF NOT EXISTS {$table}_user_id_idx ON $table (user_id)");
+        }
     }
 
     /** @return array<class-string, array<int, mixed>> */
@@ -148,6 +165,7 @@ final readonly class Orm
                     'tags' => 'tags',
                     'links' => 'links',
                     'updatedAt' => 'updated_at',
+                    'userId' => 'user_id',
                 ],
                 SchemaInterface::TYPECAST => [
                     'id' => NoteId::class,
@@ -155,6 +173,7 @@ final readonly class Orm
                     'tags' => TagList::class,
                     'links' => NoteIdList::class,
                     'updatedAt' => 'datetime',
+                    'userId' => UserId::class,
                 ],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],
@@ -173,6 +192,7 @@ final readonly class Orm
                     'ease' => 'ease',
                     'interval' => 'interval',
                     'due' => 'due',
+                    'userId' => 'user_id',
                 ],
                 SchemaInterface::TYPECAST => [
                     'id' => CardId::class,
@@ -182,6 +202,7 @@ final readonly class Orm
                     'ease' => Ease::class,
                     'interval' => Interval::class,
                     'due' => Day::class,
+                    'userId' => UserId::class,
                 ],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],
@@ -199,6 +220,7 @@ final readonly class Orm
                     'interval' => 'interval',
                     'ease' => 'ease',
                     'nextDue' => 'next_due',
+                    'userId' => 'user_id',
                 ],
                 SchemaInterface::TYPECAST => [
                     'id' => ReviewId::class,
@@ -207,6 +229,7 @@ final readonly class Orm
                     'interval' => Interval::class,
                     'ease' => Ease::class,
                     'nextDue' => Day::class,
+                    'userId' => UserId::class,
                 ],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],

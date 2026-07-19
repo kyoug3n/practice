@@ -10,6 +10,7 @@ use Recall\Domain\ValueObject\Day;
 use Recall\Domain\ValueObject\Ease;
 use Recall\Domain\ValueObject\Interval;
 use Recall\Domain\ValueObject\ReviewId;
+use Recall\Domain\ValueObject\UserId;
 
 /** Зафиксированная оценка карточки и полученное расписание. */
 class Review
@@ -21,6 +22,7 @@ class Review
         public Interval $interval,
         public Ease $ease,
         public Day $nextDue,
+        public ?UserId $userId = null,
     ) {}
 
     public function createdAt(): DateTimeImmutable

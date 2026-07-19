@@ -12,6 +12,7 @@ use Recall\Domain\ValueObject\Ease;
 use Recall\Domain\ValueObject\Interval;
 use Recall\Domain\ValueObject\NoteId;
 use Recall\Domain\ValueObject\ReviewId;
+use Recall\Domain\ValueObject\UserId;
 
 /** Карточка с текущим расписанием повторения. */
 class Card
@@ -24,6 +25,7 @@ class Card
         public Ease $ease,
         public Interval $interval,
         public Day $due,
+        public ?UserId $userId = null,
     ) {}
 
     public static function create(NoteId $noteId, CardText $front, CardText $back, DateTimeImmutable $now): self

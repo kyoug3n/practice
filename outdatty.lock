@@ -22,9 +22,9 @@ groups:
       www/content/task.typ: ebf6e0b273d849e2cf1a276ed5502ed8b9c2f8bb05f814d8e83e653087f2521d
   domain-model:
     source:
-      app/backend/src/Domain/Card.php: e0677882247a9f8df2aa5d221e0993eb5fbf549e437a66cecacc13ed19fdcf82
+      app/backend/src/Domain/Card.php: cef3fa7357313b74bb211a757dfefad1da4014d033807263946358e7adf405e5
       app/backend/src/Domain/Grade.php: ef3238e498d5c52d921ac4c953034db833f085d64cbc170932d5b96eeb95f68a
-      app/backend/src/Domain/Note.php: 7fe1af898b3fb83f065e18b588834a5cb4a5821d4066a1d33d41d5a93fa34d48
+      app/backend/src/Domain/Note.php: 314c584e47a6eccd036cb4fd181b50873bc476792430e8222bc5d308ccb38c20
     dependents:
       www/content/task.typ: ebf6e0b273d849e2cf1a276ed5502ed8b9c2f8bb05f814d8e83e653087f2521d
       www/utils/glossary.typ: 26c7e80019b4f737ee8f359fab52f268018a370051c8c86818b156e558c05892

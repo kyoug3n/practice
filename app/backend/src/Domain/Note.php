@@ -9,6 +9,7 @@ use Recall\Domain\ValueObject\NoteId;
 use Recall\Domain\ValueObject\NoteIdList;
 use Recall\Domain\ValueObject\TagList;
 use Recall\Domain\ValueObject\Title;
+use Recall\Domain\ValueObject\UserId;
 
 /** Заметка: заголовок, текст, теги и ссылки на другие заметки. */
 class Note
@@ -20,6 +21,7 @@ class Note
         public TagList $tags,
         public NoteIdList $links,
         public DateTimeImmutable $updatedAt,
+        public ?UserId $userId = null,
     ) {}
 
     public static function create(
