@@ -24,5 +24,8 @@
     "typescript-eslint": "^8.60.1",
     "vite": "^6.0.0",
     "vitest": "^4.1.8"
+  },
+  "dependencies": {
+    "@picocss/pico": "^2.1.1"
   }
 }

@@ -1,18 +1,41 @@
+@import "@picocss/pico/css/pico.min.css";
+
 :root {
-  font-family: system-ui, sans-serif;
-  line-height: 1.5;
-  color: #1a1a1a;
-  background: #fafafa;
+  --pico-font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  --pico-line-height: 1.6;
+  --pico-background-color: #fffaf5;
+  --pico-color: #2e2926;
+  --pico-muted-color: #756b66;
+  --pico-muted-border-color: #e7ddd5;
+  --pico-primary: #bc5545;
+  --pico-primary-background: #bc5545;
+  --pico-primary-border: #bc5545;
+  --pico-primary-hover: #963d32;
+  --pico-primary-hover-background: #963d32;
+  --pico-primary-hover-border: #963d32;
+  --pico-primary-focus: rgba(188, 85, 69, 0.25);
+  --pico-primary-inverse: #fffaf5;
+  --pico-form-element-background-color: #fff;
+  --pico-form-element-border-color: #d8cbc2;
+  --pico-form-element-color: #2e2926;
+  --pico-form-element-placeholder-color: #9c9088;
+  --pico-form-element-active-border-color: #bc5545;
+  --pico-form-element-focus-color: rgba(188, 85, 69, 0.25);
+  --pico-card-background-color: #fff;
+  --pico-border-radius: 0.75rem;
+  --pico-spacing: 1.25rem;
 }
 
 #app {
-  max-width: 42rem;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem;
 }
 
 h1 {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+  color: #5b3028;
+  letter-spacing: -0.03em;
 }
 
 #stats {
