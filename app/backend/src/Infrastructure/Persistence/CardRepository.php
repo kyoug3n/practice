@@ -66,6 +66,13 @@ final readonly class CardRepository
         return (new Select($this->orm, Card::class))->count();
     }
 
+    public function countForUser(UserId $userId): int
+    {
+        return (new Select($this->orm, Card::class))
+            ->where('userId', $userId->toString())
+            ->count();
+    }
+
     public function save(UserId $userId, Card $card): void
     {
         $this->assignOwner($userId, $card);

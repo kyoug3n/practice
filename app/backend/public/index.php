@@ -11,6 +11,7 @@ use Recall\Http\Controller\AuthController;
 use Recall\Http\Controller\CardsController;
 use Recall\Http\Controller\HealthController;
 use Recall\Http\Controller\NotesController;
+use Recall\Http\Controller\ProfileController;
 use Recall\Http\Controller\ReviewsController;
 use Recall\Http\Controller\StatsController;
 use Recall\Http\Json;
@@ -55,6 +56,7 @@ $notes = new NotesController($noteRepo, $serializer, $now);
 $cards = new CardsController($cardRepo, $noteRepo, $serializer, $now);
 $reviews = new ReviewsController($cardRepo, $reviewRepo, $serializer, $now);
 $stats = new StatsController($cardRepo, $reviewRepo, $serializer, $now);
+$profiles = new ProfileController($userRepo, $cardRepo, $reviewRepo, $serializer, $now);
 $auth = new AuthController($userRepo, $sessionRepo, new SessionCookie(), $now);
 $health = new HealthController($boot->dbal->database('default'));
 
@@ -112,6 +114,7 @@ $app->get('/reviews/queue', $reviews->queue(...));
 $app->post('/reviews/{id}', $reviews->grade(...));
 
 $app->get('/stats', $stats->index(...));
+$app->get('/users/{username}', $profiles->show(...));
 $app->get('/health', $health->show(...));
 
 $app->post('/auth/register', $auth->register(...));

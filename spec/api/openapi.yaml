@@ -22,6 +22,7 @@ tags:
   - name: cards
   - name: reviews
   - name: stats
+  - name: users
 
 paths:
   /health:
@@ -296,6 +297,25 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/Stats" }
 
+  /users/{username}:
+    get:
+      tags: [users]
+      summary: Return a user's public learning profile
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^[a-z0-9][a-z0-9_-]{2,31}$"
+      responses:
+        "200":
+          description: Public learning profile
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PublicProfile" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
 components:
   parameters:
     Id:
@@ -425,6 +445,19 @@ components:
         due_today: { type: integer }
         due_week: { type: integer }
         streak: { type: integer }
+
+    PublicProfile:
+      type: object
+      required:
+        [username, created_at, cards_count, reviews_count, practice_days, current_streak, longest_streak]
+      properties:
+        username: { type: string }
+        created_at: { type: string, format: date-time }
+        cards_count: { type: integer, minimum: 0 }
+        reviews_count: { type: integer, minimum: 0 }
+        practice_days: { type: integer, minimum: 0 }
+        current_streak: { type: integer, minimum: 0 }
+        longest_streak: { type: integer, minimum: 0 }
 
     Error:
       type: object
