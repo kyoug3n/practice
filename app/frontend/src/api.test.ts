@@ -90,5 +90,28 @@ describe("api client", () => {
       "application/json",
     );
     expect(init.method).toBe("POST");
+    expect(init.credentials).toBe("include");
+  });
+
+  it("регистрирует пользователя через API", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        jsonResponse(
+          { id: "1", username: "reader_01", created_at: "2026-07-19" },
+          201,
+        ),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.register({
+      username: "reader_01",
+      password: "correct-horse-battery-staple",
+    });
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/auth/register");
+    expect((fetchMock.mock.calls[0]?.[1] as RequestInit).credentials).toBe(
+      "include",
+    );
   });
 });

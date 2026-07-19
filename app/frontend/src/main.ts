@@ -18,6 +18,8 @@ function field(form: FormData, name: string): string {
 }
 
 const statusBar = need("#status");
+const registration = need("#registration");
+const workspace = need("#workspace");
 let activeTag: string | undefined;
 
 function showError(error: unknown): void {
@@ -232,6 +234,39 @@ async function refreshAll(): Promise<void> {
   await Promise.all([refreshStats(), refreshNotes(), refreshQueue()]);
 }
 
+function showWorkspace(): void {
+  registration.hidden = true;
+  workspace.hidden = false;
+  statusBar.textContent = "Загрузка…";
+  void refreshAll().then(clearStatus, showError);
+}
+
+const registerForm = need("#register-form");
+if (!(registerForm instanceof HTMLFormElement)) {
+  throw new Error("нет формы регистрации");
+}
+registerForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const submit = registerForm.querySelector<HTMLButtonElement>(
+    "button[type='submit']",
+  );
+  if (!submit) {
+    return;
+  }
+  const data = new FormData(registerForm);
+
+  submit.disabled = true;
+  clearStatus();
+  void api
+    .register({
+      username: field(data, "username"),
+      password: field(data, "password"),
+    })
+    .then(showWorkspace)
+    .catch(showError)
+    .finally(() => (submit.disabled = false));
+});
+
 const form = need("#note-form");
 if (!(form instanceof HTMLFormElement)) {
   throw new Error("нет формы #note-form");
@@ -314,6 +349,3 @@ onClick(clearTagFilter as HTMLButtonElement, async () => {
   activeTag = undefined;
   await refreshNotes();
 });
-
-statusBar.textContent = "Загрузка…";
-void refreshAll().then(clearStatus, showError);

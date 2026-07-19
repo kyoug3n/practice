@@ -11,71 +11,95 @@
 
       <p id="status" role="status" aria-live="polite"></p>
 
-      <section id="stats" aria-label="Статистика">
-        <span data-stat="due_today">сегодня: …</span>
-        <span data-stat="due_week">за неделю: …</span>
-        <span data-stat="streak">серия: …</span>
-      </section>
-
-      <section aria-label="Заметки">
-        <h2>Заметки</h2>
-        <form id="note-form">
+      <section id="registration" aria-label="Регистрация">
+        <h2>Создать аккаунт</h2>
+        <form id="register-form">
           <input
-            name="title"
-            placeholder="Заголовок"
-            aria-label="Заголовок заметки"
+            name="username"
+            placeholder="Логин"
+            aria-label="Логин"
+            autocomplete="username"
             required
           />
           <input
-            name="tags"
-            placeholder="теги через запятую"
-            aria-label="Теги через запятую"
-          />
-          <textarea
-            name="body"
-            placeholder="Текст заметки"
-            aria-label="Текст заметки"
-          ></textarea>
-          <button type="submit">Добавить заметку</button>
-        </form>
-        <form id="tag-filter-form">
-          <input
-            name="tag"
-            placeholder="Фильтр по тегу"
-            aria-label="Фильтр по тегу"
-          />
-          <button type="submit">Применить фильтр</button>
-          <button type="button" id="clear-tag-filter">Сбросить</button>
-        </form>
-        <ul id="note-list"></ul>
-      </section>
-
-      <section aria-label="Карточки">
-        <h2>Новая карточка</h2>
-        <form id="card-form">
-          <select name="note_id" aria-label="Заметка для карточки" required>
-            <option value="">Выберите заметку</option>
-          </select>
-          <input
-            name="front"
-            placeholder="Вопрос"
-            aria-label="Вопрос карточки"
+            name="password"
+            type="password"
+            placeholder="Пароль"
+            aria-label="Пароль"
+            autocomplete="new-password"
             required
           />
-          <textarea
-            name="back"
-            placeholder="Ответ"
-            aria-label="Ответ карточки"
-            required
-          ></textarea>
-          <button type="submit">Создать карточку</button>
+          <button type="submit">Зарегистрироваться</button>
         </form>
       </section>
 
-      <section aria-label="Повторение">
-        <h2>Очередь повторения</h2>
-        <div id="queue"></div>
-      </section>
+      <div id="workspace" hidden>
+        <section id="stats" aria-label="Статистика">
+          <span data-stat="due_today">сегодня: …</span>
+          <span data-stat="due_week">за неделю: …</span>
+          <span data-stat="streak">серия: …</span>
+        </section>
+
+        <section aria-label="Заметки">
+          <h2>Заметки</h2>
+          <form id="note-form">
+            <input
+              name="title"
+              placeholder="Заголовок"
+              aria-label="Заголовок заметки"
+              required
+            />
+            <input
+              name="tags"
+              placeholder="теги через запятую"
+              aria-label="Теги через запятую"
+            />
+            <textarea
+              name="body"
+              placeholder="Текст заметки"
+              aria-label="Текст заметки"
+            ></textarea>
+            <button type="submit">Добавить заметку</button>
+          </form>
+          <form id="tag-filter-form">
+            <input
+              name="tag"
+              placeholder="Фильтр по тегу"
+              aria-label="Фильтр по тегу"
+            />
+            <button type="submit">Применить фильтр</button>
+            <button type="button" id="clear-tag-filter">Сбросить</button>
+          </form>
+          <ul id="note-list"></ul>
+        </section>
+
+        <section aria-label="Карточки">
+          <h2>Новая карточка</h2>
+          <form id="card-form">
+            <select name="note_id" aria-label="Заметка для карточки" required>
+              <option value="">Выберите заметку</option>
+            </select>
+            <input
+              name="front"
+              placeholder="Вопрос"
+              aria-label="Вопрос карточки"
+              required
+            />
+            <textarea
+              name="back"
+              placeholder="Ответ"
+              aria-label="Ответ карточки"
+              required
+            ></textarea>
+            <button type="submit">Создать карточку</button>
+          </form>
+        </section>
+
+        <section aria-label="Повторение">
+          <h2>Очередь повторения</h2>
+          <div id="queue"></div>
+        </section>
+      </div>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>

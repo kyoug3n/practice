@@ -31,6 +31,12 @@ export interface Stats {
   streak: number;
 }
 
+export interface User {
+  id: string;
+  username: string;
+  created_at: string;
+}
+
 export type Grade = "again" | "hard" | "good" | "easy";
 
 // Ошибка обращения к API с понятным пользователю текстом.
@@ -61,7 +67,11 @@ async function http<T = unknown>(path: string, init?: RequestInit): Promise<T> {
     headers.set("Content-Type", "application/json");
   }
   try {
-    response = await fetch(`${BASE}${path}`, { ...init, headers });
+    response = await fetch(`${BASE}${path}`, {
+      ...init,
+      credentials: "include",
+      headers,
+    });
   } catch {
     throw new ApiError("Сервер недоступен", 0);
   }
@@ -78,6 +88,11 @@ async function http<T = unknown>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  register: (input: { username: string; password: string }) =>
+    http<User>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
   listNotes: (tag?: string) =>
     http<Note[]>(`/notes${tag ? `?tag=${encodeURIComponent(tag)}` : ""}`),
   createNote: (input: { title: string; body: string; tags: string[] }) =>

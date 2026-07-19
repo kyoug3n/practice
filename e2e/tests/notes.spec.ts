@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
+import { register } from "./auth";
 
 test("a created note appears in the list", async ({ page }) => {
   await page.goto("/");
+  await register(page);
 
   const title = `E2E note ${Date.now()}`;
   await page.fill("#note-form input[name='title']", title);
