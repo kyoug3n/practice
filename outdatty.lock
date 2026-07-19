@@ -3,7 +3,7 @@ algorithm: blake3
 groups:
   api-surface:
     source:
-      spec/api/openapi.yaml: a6f7bd08f624f6e78ff4ef8bfb4ebaa3a5954f799d0f4c3fede4d728e16d9a42
+      spec/api/openapi.yaml: 045b342933aad0bc3beeeffad4210d6b7b068f6686dc1467f6e283ce431aaf75
     dependents:
       www/content/task.typ: ebf6e0b273d849e2cf1a276ed5502ed8b9c2f8bb05f814d8e83e653087f2521d
       www/utils/glossary.typ: 26c7e80019b4f737ee8f359fab52f268018a370051c8c86818b156e558c05892

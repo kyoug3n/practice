@@ -48,6 +48,15 @@ final readonly class NoteRepository
         return null;
     }
 
+    public function belongsToAnotherUser(UserId $userId, NoteId $id): bool
+    {
+        foreach ((new Select($this->orm, Note::class))->where('id', $id->toString())->fetchAll() as $note) {
+            return $note instanceof Note && $note->userId?->toString() !== $userId->toString();
+        }
+
+        return false;
+    }
+
     public function save(UserId $userId, Note $note): void
     {
         $this->assignOwner($userId, $note);

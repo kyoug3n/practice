@@ -45,8 +45,12 @@ final class OwnershipRepositoryTest
         $cards->save($owner, $card);
         $reviews->save($owner, $card->grade(Grade::Good, $now));
 
+        Assert::true($notes->belongsToAnotherUser($other, $note->id));
+        Assert::false($notes->belongsToAnotherUser($owner, $note->id));
         Assert::same($notes->all($other, null), []);
         Assert::null($notes->find($other, $note->id));
+        Assert::true($cards->belongsToAnotherUser($other, $card->id));
+        Assert::false($cards->belongsToAnotherUser($owner, $card->id));
         Assert::same($cards->all($other), []);
         Assert::null($cards->find($other, $card->id));
         Assert::same($reviews->all($other), []);

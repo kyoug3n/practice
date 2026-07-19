@@ -43,15 +43,21 @@ final readonly class ReviewsController
     {
         $raw = $args['id'] ?? null;
         $userId = CurrentUser::userId($request);
+        $cardId = null;
         $card = null;
         if (is_string($raw)) {
             try {
-                $card = $this->cards->find($userId, CardId::fromString($raw));
+                $cardId = CardId::fromString($raw);
+                $card = $this->cards->find($userId, $cardId);
             } catch (InvalidArgumentException) {
                 $card = null;
             }
         }
         if ($card === null) {
+            if ($cardId !== null && $this->cards->belongsToAnotherUser($userId, $cardId)) {
+                return Json::error($response, 'forbidden', 403);
+            }
+
             return Json::error($response, 'card not found', 404);
         }
 

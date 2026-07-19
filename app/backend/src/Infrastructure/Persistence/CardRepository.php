@@ -52,6 +52,15 @@ final readonly class CardRepository
         return null;
     }
 
+    public function belongsToAnotherUser(UserId $userId, CardId $id): bool
+    {
+        foreach ((new Select($this->orm, Card::class))->where('id', $id->toString())->fetchAll() as $card) {
+            return $card instanceof Card && $card->userId?->toString() !== $userId->toString();
+        }
+
+        return false;
+    }
+
     public function countAll(): int
     {
         return (new Select($this->orm, Card::class))->count();

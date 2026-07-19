@@ -166,6 +166,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Note" }
+        "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
     put:
       tags: [notes]
@@ -181,6 +182,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Note" }
+        "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
         "422": { $ref: "#/components/responses/ValidationError" }
     delete:
@@ -188,6 +190,7 @@ paths:
       summary: Delete a note
       responses:
         "204": { description: Deleted }
+        "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
 
   /cards:
@@ -216,6 +219,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Card" }
+        "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
         "422": { $ref: "#/components/responses/ValidationError" }
 
@@ -231,12 +235,14 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Card" }
+        "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
     delete:
       tags: [cards]
       summary: Delete a card
       responses:
         "204": { description: Deleted }
+        "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
 
   /reviews/queue:
@@ -275,6 +281,7 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Review" }
+        "403": { $ref: "#/components/responses/Forbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
         "422": { $ref: "#/components/responses/ValidationError" }
 
@@ -298,6 +305,11 @@ components:
       schema: { type: string, format: uuid }
 
   responses:
+    Forbidden:
+      description: Resource belongs to another user
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
     NotFound:
       description: Resource not found
       content:

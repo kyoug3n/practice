@@ -39,10 +39,11 @@ final readonly class CardsController
     /** @param array<array-key, mixed> $args */
     public function show(Request $request, Response $response, array $args): Response
     {
-        $card = $this->lookup(CurrentUser::userId($request), $args);
+        $userId = CurrentUser::userId($request);
+        $card = $this->lookup($userId, $args);
 
         return $card === null
-            ? Json::error($response, 'card not found', 404)
+            ? $this->notFoundOrForbidden($response, $userId, $args)
             : Json::write($response, $this->serializer->serialize($card));
     }
 
@@ -57,7 +58,9 @@ final readonly class CardsController
             return Json::error($response, 'note not found', 404);
         }
         if ($this->notes->find($userId, $noteId) === null) {
-            return Json::error($response, 'note not found', 404);
+            return $this->notes->belongsToAnotherUser($userId, $noteId)
+                ? Json::error($response, 'forbidden', 403)
+                : Json::error($response, 'note not found', 404);
         }
 
         $card = Card::create($noteId, $input->front, $input->back, $this->now);
@@ -72,7 +75,7 @@ final readonly class CardsController
         $userId = CurrentUser::userId($request);
         $card = $this->lookup($userId, $args);
         if ($card === null) {
-            return Json::error($response, 'card not found', 404);
+            return $this->notFoundOrForbidden($response, $userId, $args);
         }
 
         $this->cards->delete($userId, $card);
@@ -92,6 +95,24 @@ final readonly class CardsController
         } catch (InvalidArgumentException) {
             return null;
         }
+    }
+
+    /** @param array<array-key, mixed> $args */
+    private function notFoundOrForbidden(Response $response, UserId $userId, array $args): Response
+    {
+        $raw = $args['id'] ?? null;
+        if (!is_string($raw)) {
+            return Json::error($response, 'card not found', 404);
+        }
+        try {
+            $otherUsersCard = $this->cards->belongsToAnotherUser($userId, CardId::fromString($raw));
+        } catch (InvalidArgumentException) {
+            return Json::error($response, 'card not found', 404);
+        }
+
+        return $otherUsersCard
+            ? Json::error($response, 'forbidden', 403)
+            : Json::error($response, 'card not found', 404);
     }
 
     /** @return array<array-key, mixed> */

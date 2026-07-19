@@ -40,10 +40,11 @@ final readonly class NotesController
     /** @param array<array-key, mixed> $args */
     public function show(Request $request, Response $response, array $args): Response
     {
-        $note = $this->lookup(CurrentUser::userId($request), $args);
+        $userId = CurrentUser::userId($request);
+        $note = $this->lookup($userId, $args);
 
         return $note === null
-            ? Json::error($response, 'note not found', 404)
+            ? $this->notFoundOrForbidden($response, $userId, $args)
             : Json::write($response, $this->serializer->serialize($note));
     }
 
@@ -62,7 +63,7 @@ final readonly class NotesController
         $userId = CurrentUser::userId($request);
         $note = $this->lookup($userId, $args);
         if ($note === null) {
-            return Json::error($response, 'note not found', 404);
+            return $this->notFoundOrForbidden($response, $userId, $args);
         }
 
         $input = NoteInput::fromArray($this->body($request));
@@ -78,7 +79,7 @@ final readonly class NotesController
         $userId = CurrentUser::userId($request);
         $note = $this->lookup($userId, $args);
         if ($note === null) {
-            return Json::error($response, 'note not found', 404);
+            return $this->notFoundOrForbidden($response, $userId, $args);
         }
 
         $this->notes->delete($userId, $note);
@@ -98,6 +99,24 @@ final readonly class NotesController
         } catch (InvalidArgumentException) {
             return null;
         }
+    }
+
+    /** @param array<array-key, mixed> $args */
+    private function notFoundOrForbidden(Response $response, UserId $userId, array $args): Response
+    {
+        $raw = $args['id'] ?? null;
+        if (!is_string($raw)) {
+            return Json::error($response, 'note not found', 404);
+        }
+        try {
+            $otherUsersNote = $this->notes->belongsToAnotherUser($userId, NoteId::fromString($raw));
+        } catch (InvalidArgumentException) {
+            return Json::error($response, 'note not found', 404);
+        }
+
+        return $otherUsersNote
+            ? Json::error($response, 'forbidden', 403)
+            : Json::error($response, 'note not found', 404);
     }
 
     /** @return array<array-key, mixed> */
