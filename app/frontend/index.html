@@ -98,20 +98,7 @@
       <div id="workspace" hidden>
         <div class="workspace-header">
           <p><a id="current-user" aria-live="polite"></a></p>
-          <div class="workspace-actions">
-            <details id="create-menu">
-              <summary aria-label="Создать элемент">+</summary>
-              <div class="create-menu-list" role="menu">
-                <button type="button" id="create-note" role="menuitem">
-                  Новая заметка
-                </button>
-                <button type="button" id="create-card" role="menuitem">
-                  Новая карточка
-                </button>
-              </div>
-            </details>
-            <button type="button" id="logout">Выйти</button>
-          </div>
+          <button type="button" id="logout">Выйти</button>
         </div>
 
         <section id="stats" aria-label="Статистика">
@@ -167,7 +154,17 @@
         </dialog>
 
         <section aria-label="Заметки">
-          <h2>Заметки</h2>
+          <div class="section-heading">
+            <h2>Заметки</h2>
+            <button
+              type="button"
+              class="section-create"
+              id="create-note"
+              aria-label="Новая заметка"
+            >
+              +
+            </button>
+          </div>
           <form id="tag-filter-form">
             <input
               name="tag"
@@ -181,7 +178,17 @@
         </section>
 
         <section aria-label="Повторение">
-          <h2>Очередь повторения</h2>
+          <div class="section-heading">
+            <h2>Очередь повторения</h2>
+            <button
+              type="button"
+              class="section-create"
+              id="create-card"
+              aria-label="Новая карточка"
+            >
+              +
+            </button>
+          </div>
           <div id="queue"></div>
         </section>
       </div>

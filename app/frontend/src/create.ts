@@ -1,5 +1,4 @@
-export interface CreateMenuElements {
-  menu: HTMLDetailsElement;
+export interface CreateElements {
   panel: HTMLDialogElement;
   panelTitle: HTMLElement;
   closeButton: HTMLButtonElement;
@@ -15,7 +14,7 @@ interface CreateTarget {
   title: string;
 }
 
-export function setupCreateMenu(elements: CreateMenuElements): () => void {
+export function setupCreateActions(elements: CreateElements): () => void {
   const targets: CreateTarget[] = [
     {
       button: elements.noteButton,
@@ -30,7 +29,6 @@ export function setupCreateMenu(elements: CreateMenuElements): () => void {
   ];
 
   function close(): void {
-    elements.menu.open = false;
     for (const target of targets) {
       target.form.hidden = true;
     }
@@ -41,7 +39,6 @@ export function setupCreateMenu(elements: CreateMenuElements): () => void {
 
   function open(target: CreateTarget): void {
     elements.panelTitle.textContent = target.title;
-    elements.menu.open = false;
     for (const item of targets) {
       item.form.hidden = item !== target;
     }
@@ -62,7 +59,6 @@ export function setupCreateMenu(elements: CreateMenuElements): () => void {
   }
   elements.closeButton.addEventListener("click", close);
   elements.panel.addEventListener("close", () => {
-    elements.menu.open = false;
     for (const target of targets) {
       target.form.hidden = true;
     }

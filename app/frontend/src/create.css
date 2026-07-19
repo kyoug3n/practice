@@ -1,17 +1,16 @@
-.workspace-actions {
+.section-heading {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-#create-menu {
-  display: block;
-  height: 2.75rem;
+.section-heading h2 {
   margin: 0;
-  position: relative;
 }
 
-#create-menu summary {
+.section-create {
   display: grid;
   place-items: center;
   width: 2.75rem;
@@ -25,58 +24,16 @@
   font-size: 1.6rem;
   font-weight: 400;
   line-height: 1;
-  list-style: none;
 }
 
-#create-menu summary::-webkit-details-marker {
-  display: none;
-}
-
-#create-menu summary::marker,
-#create-menu summary::after {
-  display: none;
-  content: none;
-}
-
-#create-menu summary:hover,
-#create-menu[open] summary {
+.section-create:hover {
   border: 0;
   background: var(--app-highlight-hover-background);
 }
 
-#create-menu summary:focus-visible {
+.section-create:focus-visible {
   outline: 3px solid var(--pico-primary-focus);
   outline-offset: 2px;
-}
-
-.create-menu-list {
-  position: absolute;
-  z-index: 10;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  display: grid;
-  min-width: 12rem;
-  gap: 0.25rem;
-  padding: 0.5rem;
-  border: 1px solid var(--pico-muted-border-color);
-  border-radius: 0.75rem;
-  background: var(--pico-card-background-color);
-  box-shadow: 0 0.75rem 1.5rem rgba(37, 35, 35, 0.16);
-}
-
-.create-menu-list button {
-  min-height: 2.5rem;
-  padding: 0.5rem 0.75rem;
-  border: 0;
-  background: transparent;
-  color: var(--pico-color);
-  text-align: left;
-}
-
-.create-menu-list button:hover {
-  border: 0;
-  background: var(--app-highlight-background);
-  color: var(--app-highlight-color);
 }
 
 #create-panel {
@@ -138,14 +95,4 @@
 
 #create-panel form {
   margin: 0;
-}
-
-@media (max-width: 576px) {
-  .workspace-actions {
-    align-items: flex-start;
-  }
-
-  .create-menu-list {
-    right: 0;
-  }
 }

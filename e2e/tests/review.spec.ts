@@ -1,17 +1,17 @@
 import { test, expect } from "@playwright/test";
-import { openCreateMenu, register } from "./auth";
+import { openCreateForm, register } from "./auth";
 
 test("grading a due card removes it from the queue", async ({ page }) => {
   await page.goto("/");
   await register(page);
 
   const title = `E2E review ${Date.now()}`;
-  await openCreateMenu(page, "note");
+  await openCreateForm(page, "note");
   await page.fill("#note-form input[name='title']", title);
   await page.click("#note-form button[type='submit']");
   await expect(page.locator("[data-testid='note']", { hasText: title })).toBeVisible();
 
-  await openCreateMenu(page, "card");
+  await openCreateForm(page, "card");
   await page.selectOption("#card-form select[name='note_id']", { label: title });
   await page.fill("#card-form input[name='front']", "E2E question");
   await page.fill("#card-form textarea[name='back']", "E2E answer");

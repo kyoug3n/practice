@@ -3,7 +3,7 @@ import "./profile.css";
 import "./workspace.css";
 import "./create.css";
 import { setupAuth } from "./auth";
-import { setupCreateMenu } from "./create";
+import { setupCreateActions } from "./create";
 import { setupNotes } from "./notes";
 import { profileUsername, setupProfile } from "./profile";
 import { setupReviews } from "./reviews";
@@ -31,14 +31,6 @@ function needButton(selector: string): HTMLButtonElement {
     throw new Error(`нет кнопки: ${selector}`);
   }
   return button;
-}
-
-function needDetails(selector: string): HTMLDetailsElement {
-  const details = need(selector);
-  if (!(details instanceof HTMLDetailsElement)) {
-    throw new Error(`нет раскрывающегося меню: ${selector}`);
-  }
-  return details;
 }
 
 function needDialog(selector: string): HTMLDialogElement {
@@ -87,8 +79,7 @@ if (publicUsername !== null) {
   const noteForm = needForm("#note-form");
   const cardForm = needForm("#card-form");
 
-  const closeCreateDialog = setupCreateMenu({
-    menu: needDetails("#create-menu"),
+  const closeCreateDialog = setupCreateActions({
     panel: needDialog("#create-panel"),
     panelTitle: need("#create-panel-title"),
     closeButton: needButton("#create-close"),
