@@ -142,4 +142,21 @@ describe("api client", () => {
     );
     expect(init.credentials).toBe("include");
   });
+
+  it("запрашивает текущего пользователя через API", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        id: "1",
+        username: "reader_01",
+        created_at: "2026-07-19",
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.me();
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/auth/me");
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(init.credentials).toBe("include");
+  });
 });

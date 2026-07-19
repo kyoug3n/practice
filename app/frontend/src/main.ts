@@ -1,5 +1,12 @@
 import "./style.css";
-import { api, ApiError, type Card, type Grade, type Note } from "./api";
+import {
+  api,
+  ApiError,
+  type Card,
+  type Grade,
+  type Note,
+  type User,
+} from "./api";
 import { parseTags, tagLabel } from "./format";
 
 const GRADES: Grade[] = ["again", "hard", "good", "easy"];
@@ -21,7 +28,15 @@ const statusBar = need("#status");
 const registration = need("#registration");
 const login = need("#login");
 const workspace = need("#workspace");
+const currentUserBar = need("#current-user");
+let currentUser: User | null = null;
 let activeTag: string | undefined;
+
+function renderCurrentUser(): void {
+  currentUserBar.textContent = currentUser
+    ? `Вы вошли как ${currentUser.username}`
+    : "";
+}
 
 function showError(error: unknown): void {
   statusBar.textContent =
@@ -235,26 +250,50 @@ async function refreshAll(): Promise<void> {
   await Promise.all([refreshStats(), refreshNotes(), refreshQueue()]);
 }
 
-function showWorkspace(): void {
+function showWorkspace(user: User): void {
+  currentUser = user;
   registration.hidden = true;
   login.hidden = true;
   workspace.hidden = false;
+  renderCurrentUser();
   statusBar.textContent = "Загрузка…";
   void refreshAll().then(clearStatus, showError);
 }
 
 function showRegistration(): void {
+  currentUser = null;
   registration.hidden = false;
   login.hidden = true;
   workspace.hidden = true;
+  renderCurrentUser();
   clearStatus();
 }
 
 function showLogin(): void {
+  currentUser = null;
   registration.hidden = true;
   login.hidden = false;
   workspace.hidden = true;
+  renderCurrentUser();
   clearStatus();
+}
+
+async function restoreSession(): Promise<void> {
+  registration.hidden = true;
+  login.hidden = true;
+  workspace.hidden = true;
+  statusBar.textContent = "Загрузка…";
+
+  try {
+    showWorkspace(await api.me());
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      showRegistration();
+      return;
+    }
+    showRegistration();
+    showError(error);
+  }
 }
 
 const registerForm = need("#register-form");
@@ -314,6 +353,8 @@ showLoginButton.addEventListener("click", showLogin);
 
 const showRegistrationButton = need("#show-registration");
 showRegistrationButton.addEventListener("click", showRegistration);
+
+void restoreSession();
 
 const form = need("#note-form");
 if (!(form instanceof HTMLFormElement)) {
