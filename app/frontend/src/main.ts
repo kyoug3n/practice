@@ -1,6 +1,7 @@
 import "./style.css";
 import { setupAuth } from "./auth";
 import { setupNotes } from "./notes";
+import { profileUsername, setupProfile } from "./profile";
 import { setupReviews } from "./reviews";
 import { createUiActions } from "./ui";
 
@@ -39,46 +40,75 @@ function needSelect(selector: string): HTMLSelectElement {
 const statusBar = need("#status");
 const actions = createUiActions(statusBar);
 
-const notes = setupNotes(
-  {
-    noteForm: needForm("#note-form"),
-    tagFilterForm: needForm("#tag-filter-form"),
-    clearTagFilter: needButton("#clear-tag-filter"),
-    noteList: need("#note-list"),
-    cardNoteSelect: needSelect("#card-form select[name='note_id']"),
-  },
-  actions,
-);
+const publicUsername = profileUsername(window.location.pathname);
 
-const reviews = setupReviews(
-  {
-    dueToday: need("[data-stat='due_today']"),
-    dueWeek: need("[data-stat='due_week']"),
-    streak: need("[data-stat='streak']"),
-    queue: need("#queue"),
-    cardForm: needForm("#card-form"),
-  },
-  actions,
-);
+if (publicUsername !== null) {
+  need("#registration").hidden = true;
+  need("#login").hidden = true;
+  need("#workspace").hidden = true;
 
-const refreshAll = async (): Promise<void> => {
-  await Promise.all([reviews.refreshStats(), notes(), reviews.refreshQueue()]);
-};
+  setupProfile(
+    {
+      section: need("#profile"),
+      content: need("#profile-content"),
+      error: need("#profile-error"),
+      username: need("[data-profile='username']"),
+      createdAt: need("[data-profile='created_at']"),
+      cardsCount: need("[data-profile='cards_count']"),
+      reviewsCount: need("[data-profile='reviews_count']"),
+      practiceDays: need("[data-profile='practice_days']"),
+      currentStreak: need("[data-profile='current_streak']"),
+      longestStreak: need("[data-profile='longest_streak']"),
+    },
+    actions,
+    publicUsername,
+  );
+} else {
+  const notes = setupNotes(
+    {
+      noteForm: needForm("#note-form"),
+      tagFilterForm: needForm("#tag-filter-form"),
+      clearTagFilter: needButton("#clear-tag-filter"),
+      noteList: need("#note-list"),
+      cardNoteSelect: needSelect("#card-form select[name='note_id']"),
+    },
+    actions,
+  );
 
-reviews.setupCardForm(refreshAll);
+  const reviews = setupReviews(
+    {
+      dueToday: need("[data-stat='due_today']"),
+      dueWeek: need("[data-stat='due_week']"),
+      streak: need("[data-stat='streak']"),
+      queue: need("#queue"),
+      cardForm: needForm("#card-form"),
+    },
+    actions,
+  );
 
-setupAuth(
-  {
-    registration: need("#registration"),
-    login: need("#login"),
-    workspace: need("#workspace"),
-    currentUserBar: need("#current-user"),
-    registerForm: needForm("#register-form"),
-    loginForm: needForm("#login-form"),
-    showLoginButton: needButton("#show-login"),
-    showRegistrationButton: needButton("#show-registration"),
-    logoutButton: needButton("#logout"),
-  },
-  actions,
-  refreshAll,
-);
+  const refreshAll = async (): Promise<void> => {
+    await Promise.all([
+      reviews.refreshStats(),
+      notes(),
+      reviews.refreshQueue(),
+    ]);
+  };
+
+  reviews.setupCardForm(refreshAll);
+
+  setupAuth(
+    {
+      registration: need("#registration"),
+      login: need("#login"),
+      workspace: need("#workspace"),
+      currentUserBar: need("#current-user"),
+      registerForm: needForm("#register-form"),
+      loginForm: needForm("#login-form"),
+      showLoginButton: needButton("#show-login"),
+      showRegistrationButton: needButton("#show-registration"),
+      logoutButton: needButton("#logout"),
+    },
+    actions,
+    refreshAll,
+  );
+}

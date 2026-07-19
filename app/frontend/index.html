@@ -57,8 +57,46 @@
         <button type="button" id="show-registration">Создать аккаунт</button>
       </section>
 
+      <section id="profile" aria-label="Публичный профиль" hidden>
+        <h2>Публичный профиль</h2>
+        <p id="profile-error" role="alert" hidden></p>
+        <div id="profile-content" hidden>
+          <dl id="profile-stats">
+            <div>
+              <dt>Пользователь</dt>
+              <dd data-profile="username"></dd>
+            </div>
+            <div>
+              <dt>Регистрация</dt>
+              <dd data-profile="created_at"></dd>
+            </div>
+            <div>
+              <dt>Карточки</dt>
+              <dd data-profile="cards_count"></dd>
+            </div>
+            <div>
+              <dt>Повторения</dt>
+              <dd data-profile="reviews_count"></dd>
+            </div>
+            <div>
+              <dt>Дни практики</dt>
+              <dd data-profile="practice_days"></dd>
+            </div>
+            <div>
+              <dt>Текущая серия</dt>
+              <dd data-profile="current_streak"></dd>
+            </div>
+            <div>
+              <dt>Лучшая серия</dt>
+              <dd data-profile="longest_streak"></dd>
+            </div>
+          </dl>
+        </div>
+        <a id="profile-home" href="/">Вернуться в Recall</a>
+      </section>
+
       <div id="workspace" hidden>
-        <p id="current-user" aria-live="polite"></p>
+        <p><a id="current-user" aria-live="polite"></a></p>
         <button type="button" id="logout">Выйти</button>
 
         <section id="stats" aria-label="Статистика">

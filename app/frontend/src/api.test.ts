@@ -173,4 +173,26 @@ describe("api client", () => {
     expect(init.method).toBe("POST");
     expect(init.credentials).toBe("include");
   });
+
+  it("запрашивает публичный профиль с кодированным логином", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        username: "reader_01",
+        created_at: "2026-07-19T12:00:00+00:00",
+        cards_count: 4,
+        reviews_count: 12,
+        practice_days: 3,
+        current_streak: 2,
+        longest_streak: 4,
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.profile("reader_01");
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/users/reader_01");
+    expect((fetchMock.mock.calls[0]?.[1] as RequestInit).credentials).toBe(
+      "include",
+    );
+  });
 });

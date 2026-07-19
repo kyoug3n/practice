@@ -37,6 +37,16 @@ export interface User {
   created_at: string;
 }
 
+export interface PublicProfile {
+  username: string;
+  created_at: string;
+  cards_count: number;
+  reviews_count: number;
+  practice_days: number;
+  current_streak: number;
+  longest_streak: number;
+}
+
 export type Grade = "again" | "hard" | "good" | "easy";
 
 // Ошибка обращения к API с понятным пользователю текстом.
@@ -129,4 +139,6 @@ export const api = {
   },
 
   stats: () => http<Stats>("/stats"),
+  profile: (username: string) =>
+    http<PublicProfile>(`/users/${encodeURIComponent(username)}`),
 };

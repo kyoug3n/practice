@@ -21,9 +21,17 @@ export function setupAuth(
   let currentUser: User | null = null;
 
   function renderCurrentUser(): void {
-    elements.currentUserBar.textContent = currentUser
-      ? `Вы вошли как ${currentUser.username}`
-      : "";
+    if (currentUser) {
+      elements.currentUserBar.textContent = `Вы вошли как ${currentUser.username}`;
+      elements.currentUserBar.setAttribute(
+        "href",
+        `/users/${encodeURIComponent(currentUser.username)}`,
+      );
+      return;
+    }
+
+    elements.currentUserBar.textContent = "";
+    elements.currentUserBar.removeAttribute("href");
   }
 
   function showWorkspace(user: User): void {
