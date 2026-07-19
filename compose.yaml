@@ -24,6 +24,8 @@ services:
     environment:
       # Ephemeral DB inside the container: a fresh, seeded database on every `up`.
       RECALL_DB: /tmp/recall.sqlite
+      # Credentialed CORS accepts only the browser frontend's origin.
+      RECALL_FRONTEND_ORIGIN: ${RECALL_FRONTEND_ORIGIN:-http://localhost:${RECALL_FRONTEND_PORT}}
     volumes:
       - ./app/backend:/app
       - backend_vendor:/app/vendor

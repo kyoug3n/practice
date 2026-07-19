@@ -38,7 +38,7 @@ down:
 
 # API-приёмка — приложение уже должно быть запущено (см. `just up`).
 acceptance:
-    hurl --variable base={{ base }} --variable username=acceptance-$(date +%s%N) --test spec/acceptance/*.hurl
+    hurl --variable base={{ base }} --variable frontend={{ front }} --variable username=acceptance-$(date +%s%N) --test spec/acceptance/*.hurl
 
 # Браузерные сценарии — приложение уже должно быть запущено (см. `just up`).
 e2e:

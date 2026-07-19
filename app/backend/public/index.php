@@ -59,10 +59,23 @@ $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
 
 // CORS — фронтенд-дев-сервер ходит к нам с другого источника.
-$app->add(static fn(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface => $handler->handle($request)
-    ->withHeader('Access-Control-Allow-Origin', '*')
-    ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-    ->withHeader('Access-Control-Allow-Headers', 'Content-Type'));
+$configuredOrigin = getenv('RECALL_FRONTEND_ORIGIN');
+$frontendOrigin = is_string($configuredOrigin) && $configuredOrigin !== ''
+    ? $configuredOrigin
+    : 'http://localhost:5173';
+$app->add(static function (ServerRequestInterface $request, RequestHandlerInterface $handler) use ($frontendOrigin): ResponseInterface {
+    $response = $handler->handle($request);
+    if ($request->getHeaderLine('Origin') !== $frontendOrigin) {
+        return $response;
+    }
+
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', $frontendOrigin)
+        ->withHeader('Access-Control-Allow-Credentials', 'true')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        ->withHeader('Access-Control-Allow-Headers', 'Content-Type')
+        ->withHeader('Vary', 'Origin');
+});
 
 // Метрики: время запроса и число запросов к БД (наблюдение, не гейт).
 $app->add(static function (ServerRequestInterface $request, RequestHandlerInterface $handler) use ($queries): ResponseInterface {
