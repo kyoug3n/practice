@@ -1,7 +1,9 @@
 import "./style.css";
 import "./profile.css";
 import "./workspace.css";
+import "./create.css";
 import { setupAuth } from "./auth";
+import { setupCreateMenu } from "./create";
 import { setupNotes } from "./notes";
 import { profileUsername, setupProfile } from "./profile";
 import { setupReviews } from "./reviews";
@@ -29,6 +31,22 @@ function needButton(selector: string): HTMLButtonElement {
     throw new Error(`нет кнопки: ${selector}`);
   }
   return button;
+}
+
+function needDetails(selector: string): HTMLDetailsElement {
+  const details = need(selector);
+  if (!(details instanceof HTMLDetailsElement)) {
+    throw new Error(`нет раскрывающегося меню: ${selector}`);
+  }
+  return details;
+}
+
+function needDialog(selector: string): HTMLDialogElement {
+  const dialog = need(selector);
+  if (!(dialog instanceof HTMLDialogElement)) {
+    throw new Error(`нет диалога: ${selector}`);
+  }
+  return dialog;
 }
 
 function needSelect(selector: string): HTMLSelectElement {
@@ -66,13 +84,28 @@ if (publicUsername !== null) {
     publicUsername,
   );
 } else {
+  const noteForm = needForm("#note-form");
+  const cardForm = needForm("#card-form");
+
+  const closeCreateDialog = setupCreateMenu({
+    menu: needDetails("#create-menu"),
+    panel: needDialog("#create-panel"),
+    panelTitle: need("#create-panel-title"),
+    closeButton: needButton("#create-close"),
+    noteButton: needButton("#create-note"),
+    cardButton: needButton("#create-card"),
+    noteForm,
+    cardForm,
+  });
+
   const notes = setupNotes(
     {
-      noteForm: needForm("#note-form"),
+      noteForm,
       tagFilterForm: needForm("#tag-filter-form"),
       clearTagFilter: needButton("#clear-tag-filter"),
       noteList: need("#note-list"),
       cardNoteSelect: needSelect("#card-form select[name='note_id']"),
+      onCreated: closeCreateDialog,
     },
     actions,
   );
@@ -83,7 +116,8 @@ if (publicUsername !== null) {
       dueWeek: need("[data-stat='due_week']"),
       streak: need("[data-stat='streak']"),
       queue: need("#queue"),
-      cardForm: needForm("#card-form"),
+      cardForm,
+      onCreated: closeCreateDialog,
     },
     actions,
   );

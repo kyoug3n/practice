@@ -98,7 +98,20 @@
       <div id="workspace" hidden>
         <div class="workspace-header">
           <p><a id="current-user" aria-live="polite"></a></p>
-          <button type="button" id="logout">Выйти</button>
+          <div class="workspace-actions">
+            <details id="create-menu">
+              <summary aria-label="Создать элемент">+</summary>
+              <div class="create-menu-list" role="menu">
+                <button type="button" id="create-note" role="menuitem">
+                  Новая заметка
+                </button>
+                <button type="button" id="create-card" role="menuitem">
+                  Новая карточка
+                </button>
+              </div>
+            </details>
+            <button type="button" id="logout">Выйти</button>
+          </div>
         </div>
 
         <section id="stats" aria-label="Статистика">
@@ -107,9 +120,14 @@
           <span data-stat="streak">серия: …</span>
         </section>
 
-        <section aria-label="Заметки">
-          <h2>Заметки</h2>
-          <form id="note-form">
+        <dialog id="create-panel" aria-labelledby="create-panel-title">
+          <div class="create-panel-header">
+            <h2 id="create-panel-title">Новый элемент</h2>
+            <button type="button" id="create-close" aria-label="Закрыть">
+              ×
+            </button>
+          </div>
+          <form id="note-form" hidden>
             <input
               name="title"
               placeholder="Заголовок"
@@ -128,21 +146,7 @@
             ></textarea>
             <button type="submit">Добавить заметку</button>
           </form>
-          <form id="tag-filter-form">
-            <input
-              name="tag"
-              placeholder="Фильтр по тегу"
-              aria-label="Фильтр по тегу"
-            />
-            <button type="submit">Применить фильтр</button>
-            <button type="button" id="clear-tag-filter">Сбросить</button>
-          </form>
-          <ul id="note-list"></ul>
-        </section>
-
-        <section aria-label="Карточки">
-          <h2>Новая карточка</h2>
-          <form id="card-form">
+          <form id="card-form" hidden>
             <select name="note_id" aria-label="Заметка для карточки" required>
               <option value="">Выберите заметку</option>
             </select>
@@ -160,6 +164,20 @@
             ></textarea>
             <button type="submit">Создать карточку</button>
           </form>
+        </dialog>
+
+        <section aria-label="Заметки">
+          <h2>Заметки</h2>
+          <form id="tag-filter-form">
+            <input
+              name="tag"
+              placeholder="Фильтр по тегу"
+              aria-label="Фильтр по тегу"
+            />
+            <button type="submit">Применить фильтр</button>
+            <button type="button" id="clear-tag-filter">Сбросить</button>
+          </form>
+          <ul id="note-list"></ul>
         </section>
 
         <section aria-label="Повторение">

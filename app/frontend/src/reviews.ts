@@ -9,6 +9,7 @@ export interface ReviewsElements {
   streak: HTMLElement;
   queue: HTMLElement;
   cardForm: HTMLFormElement;
+  onCreated: () => void;
 }
 
 export function setupReviews(
@@ -109,6 +110,7 @@ export function setupReviews(
           elements.cardForm.reset();
           return Promise.all([refreshStats(), refreshQueue()]);
         })
+        .then(elements.onCreated)
         .catch(actions.showError)
         .finally(() => (submit.disabled = false));
     });

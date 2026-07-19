@@ -36,3 +36,12 @@ export async function login(page: Page, credentials: Credentials): Promise<void>
 
   await expect(page.locator("#workspace")).toBeVisible();
 }
+
+export async function openCreateMenu(
+  page: Page,
+  type: "note" | "card",
+): Promise<void> {
+  await page.locator("#create-menu summary").click();
+  await page.click(`#create-${type}`);
+  await expect(page.locator(`#${type}-form`)).toBeVisible();
+}

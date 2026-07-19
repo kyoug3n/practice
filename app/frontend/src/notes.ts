@@ -8,6 +8,7 @@ export interface NotesElements {
   clearTagFilter: HTMLButtonElement;
   noteList: HTMLElement;
   cardNoteSelect: HTMLSelectElement;
+  onCreated: () => void;
 }
 
 export function setupNotes(
@@ -152,6 +153,7 @@ export function setupNotes(
         elements.noteForm.reset();
         return refreshNotes();
       })
+      .then(elements.onCreated)
       .catch(actions.showError)
       .finally(() => (submit.disabled = false));
   });
