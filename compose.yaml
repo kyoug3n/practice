@@ -22,13 +22,14 @@ services:
     # Limits come from .env.example (single source; the guide renders them too).
     command: php -d memory_limit=${RECALL_PHP_MEMORY_LIMIT:-96M} -S 0.0.0.0:8080 -t public public/index.php
     environment:
-      # Ephemeral DB inside the container: a fresh, seeded database on every `up`.
-      RECALL_DB: /tmp/recall.sqlite
+      # Persistent SQLite database, retained when the backend container is recreated.
+      RECALL_DB: /data/recall.sqlite
       # Credentialed CORS accepts only the browser frontend's origin.
       RECALL_FRONTEND_ORIGIN: ${RECALL_FRONTEND_ORIGIN:-http://localhost:${RECALL_FRONTEND_PORT}}
     volumes:
       - ./app/backend:/app
       - backend_vendor:/app/vendor
+      - backend_data:/data
     ports:
       - "${RECALL_BACKEND_PORT}:8080"
     mem_limit: ${RECALL_CONTAINER_MEMORY_LIMIT:-256M}
@@ -51,5 +52,6 @@ services:
       - backend
 
 volumes:
+  backend_data:
   backend_vendor:
   frontend_node_modules:

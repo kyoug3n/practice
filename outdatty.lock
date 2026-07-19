@@ -10,7 +10,7 @@ groups:
   backend-stack:
     source:
       app/backend/composer.json: affae8dc08e919c50426844bbdd6b4ab76797d4e7957e210c445ff4a670ccdc0
-      compose.yaml: 2800c785d79ecbdc534aa9a69d1111a1829c5c035d00bd3e466322f419cd244f
+      compose.yaml: 9be8443048e2b2278dbf39f366417c5a11646cddaeb9da37e06185221f84cb6b
     dependents:
       www/content/stack.typ: 8ed4066fd5b324331297dd50a3b88fafe76668342af0c974808aefd01a009031
       www/content/task.typ: ebf6e0b273d849e2cf1a276ed5502ed8b9c2f8bb05f814d8e83e653087f2521d
@@ -42,7 +42,7 @@ groups:
   repo-layout:
     source:
       Justfile: ffa4bea01dcd958845f65e7eab80a0704d1ae1c5ce7608050f678968ded6ac5b
-      compose.yaml: 2800c785d79ecbdc534aa9a69d1111a1829c5c035d00bd3e466322f419cd244f
+      compose.yaml: 9be8443048e2b2278dbf39f366417c5a11646cddaeb9da37e06185221f84cb6b
       devbox.json: 66bbcef55a4654318df272586c8b12ed0d79e3b70242dd25af77e22cff3e1c13
     dependents:
       www/content/task.typ: ebf6e0b273d849e2cf1a276ed5502ed8b9c2f8bb05f814d8e83e653087f2521d
