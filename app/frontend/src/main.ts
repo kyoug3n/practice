@@ -19,6 +19,7 @@ function field(form: FormData, name: string): string {
 
 const statusBar = need("#status");
 const registration = need("#registration");
+const login = need("#login");
 const workspace = need("#workspace");
 let activeTag: string | undefined;
 
@@ -236,9 +237,24 @@ async function refreshAll(): Promise<void> {
 
 function showWorkspace(): void {
   registration.hidden = true;
+  login.hidden = true;
   workspace.hidden = false;
   statusBar.textContent = "Загрузка…";
   void refreshAll().then(clearStatus, showError);
+}
+
+function showRegistration(): void {
+  registration.hidden = false;
+  login.hidden = true;
+  workspace.hidden = true;
+  clearStatus();
+}
+
+function showLogin(): void {
+  registration.hidden = true;
+  login.hidden = false;
+  workspace.hidden = true;
+  clearStatus();
 }
 
 const registerForm = need("#register-form");
@@ -266,6 +282,38 @@ registerForm.addEventListener("submit", (event) => {
     .catch(showError)
     .finally(() => (submit.disabled = false));
 });
+
+const loginForm = need("#login-form");
+if (!(loginForm instanceof HTMLFormElement)) {
+  throw new Error("нет формы входа");
+}
+loginForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const submit = loginForm.querySelector<HTMLButtonElement>(
+    "button[type='submit']",
+  );
+  if (!submit) {
+    return;
+  }
+  const data = new FormData(loginForm);
+
+  submit.disabled = true;
+  clearStatus();
+  void api
+    .login({
+      username: field(data, "username"),
+      password: field(data, "password"),
+    })
+    .then(showWorkspace)
+    .catch(showError)
+    .finally(() => (submit.disabled = false));
+});
+
+const showLoginButton = need("#show-login");
+showLoginButton.addEventListener("click", showLogin);
+
+const showRegistrationButton = need("#show-registration");
+showRegistrationButton.addEventListener("click", showRegistration);
 
 const form = need("#note-form");
 if (!(form instanceof HTMLFormElement)) {

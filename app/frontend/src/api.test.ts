@@ -114,4 +114,32 @@ describe("api client", () => {
       "include",
     );
   });
+
+  it("выполняет вход пользователя через API", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        jsonResponse(
+          { id: "1", username: "reader_01", created_at: "2026-07-19" },
+          200,
+        ),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.login({
+      username: "reader_01",
+      password: "correct-horse-battery-staple",
+    });
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/auth/login");
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(init.method).toBe("POST");
+    expect(init.body).toBe(
+      JSON.stringify({
+        username: "reader_01",
+        password: "correct-horse-battery-staple",
+      }),
+    );
+    expect(init.credentials).toBe("include");
+  });
 });

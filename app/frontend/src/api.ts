@@ -93,6 +93,11 @@ export const api = {
       method: "POST",
       body: JSON.stringify(input),
     }),
+  login: (input: { username: string; password: string }) =>
+    http<User>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
   listNotes: (tag?: string) =>
     http<Note[]>(`/notes${tag ? `?tag=${encodeURIComponent(tag)}` : ""}`),
   createNote: (input: { title: string; body: string; tags: string[] }) =>

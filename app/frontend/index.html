@@ -31,6 +31,30 @@
           />
           <button type="submit">Зарегистрироваться</button>
         </form>
+        <button type="button" id="show-login">Уже есть аккаунт? Войти</button>
+      </section>
+
+      <section id="login" aria-label="Вход" hidden>
+        <h2>Войти</h2>
+        <form id="login-form">
+          <input
+            name="username"
+            placeholder="Логин"
+            aria-label="Логин"
+            autocomplete="username"
+            required
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Пароль"
+            aria-label="Пароль"
+            autocomplete="current-password"
+            required
+          />
+          <button type="submit">Войти</button>
+        </form>
+        <button type="button" id="show-registration">Создать аккаунт</button>
       </section>
 
       <div id="workspace" hidden>
