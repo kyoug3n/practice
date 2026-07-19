@@ -11,6 +11,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Recall\Domain\Card;
 use Recall\Domain\ValueObject\CardId;
 use Recall\Domain\ValueObject\NoteId;
+use Recall\Domain\ValueObject\UserId;
+use Recall\Http\CurrentUser;
 use Recall\Http\Input\CardInput;
 use Recall\Http\Json;
 use Recall\Http\Serializer;
@@ -28,13 +30,16 @@ final readonly class CardsController
 
     public function index(Request $request, Response $response): Response
     {
-        return Json::write($response, array_map($this->serializer->serialize(...), $this->cards->all()));
+        return Json::write(
+            $response,
+            array_map($this->serializer->serialize(...), $this->cards->all(CurrentUser::userId($request))),
+        );
     }
 
     /** @param array<array-key, mixed> $args */
     public function show(Request $request, Response $response, array $args): Response
     {
-        $card = $this->lookup($args);
+        $card = $this->lookup(CurrentUser::userId($request), $args);
 
         return $card === null
             ? Json::error($response, 'card not found', 404)
@@ -44,18 +49,19 @@ final readonly class CardsController
     public function create(Request $request, Response $response): Response
     {
         $input = CardInput::fromArray($this->body($request));
+        $userId = CurrentUser::userId($request);
 
         try {
             $noteId = NoteId::fromString($input->noteId);
         } catch (InvalidArgumentException) {
             return Json::error($response, 'note not found', 404);
         }
-        if ($this->notes->find($noteId) === null) {
+        if ($this->notes->find($userId, $noteId) === null) {
             return Json::error($response, 'note not found', 404);
         }
 
         $card = Card::create($noteId, $input->front, $input->back, $this->now);
-        $this->cards->save($card);
+        $this->cards->save($userId, $card);
 
         return Json::write($response, $this->serializer->serialize($card), 201);
     }
@@ -63,25 +69,26 @@ final readonly class CardsController
     /** @param array<array-key, mixed> $args */
     public function delete(Request $request, Response $response, array $args): Response
     {
-        $card = $this->lookup($args);
+        $userId = CurrentUser::userId($request);
+        $card = $this->lookup($userId, $args);
         if ($card === null) {
             return Json::error($response, 'card not found', 404);
         }
 
-        $this->cards->delete($card);
+        $this->cards->delete($userId, $card);
 
         return $response->withStatus(204);
     }
 
     /** @param array<array-key, mixed> $args */
-    private function lookup(array $args): ?Card
+    private function lookup(UserId $userId, array $args): ?Card
     {
         $raw = $args['id'] ?? null;
         if (!is_string($raw)) {
             return null;
         }
         try {
-            return $this->cards->find(CardId::fromString($raw));
+            return $this->cards->find($userId, CardId::fromString($raw));
         } catch (InvalidArgumentException) {
             return null;
         }

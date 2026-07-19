@@ -9,6 +9,7 @@ use Recall\Domain\Note;
 use Recall\Domain\ValueObject\NoteIdList;
 use Recall\Domain\ValueObject\TagList;
 use Recall\Domain\ValueObject\Title;
+use Recall\Domain\ValueObject\UserId;
 use Recall\Infrastructure\Persistence\NoteRepository;
 use Recall\Infrastructure\Persistence\Orm;
 use Testo\Assert;
@@ -25,6 +26,7 @@ final class NoteRepositoryTest
     public function createsAndReadsBackANote(): void
     {
         $repo = new NoteRepository(Orm::boot(':memory:')->orm);
+        $ownerId = UserId::generate();
 
         $note = Note::create(
             Title::fromString('Working memory'),
@@ -33,13 +35,14 @@ final class NoteRepositoryTest
             new NoteIdList(),
             new DateTimeImmutable(),
         );
-        $repo->save($note);
+        $repo->save($ownerId, $note);
 
-        $found = $repo->find($note->id);
+        $found = $repo->find($ownerId, $note->id);
         Assert::notNull($found);
         Assert::same($found->title->value, 'Working memory');
         // Теги хранятся канонично: в нижнем регистре и без повторов.
         Assert::same($found->tags->toStrings(), ['memory', 'cognition']);
         Assert::same($found->body, 'Holds a handful of items at once.');
+        Assert::same($found->userId?->toString(), $ownerId->toString());
     }
 }

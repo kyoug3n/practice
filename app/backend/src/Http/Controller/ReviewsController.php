@@ -11,6 +11,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Recall\Domain\Grade;
 use Recall\Domain\ValueObject\CardId;
 use Recall\Domain\ValueObject\Day;
+use Recall\Http\CurrentUser;
 use Recall\Http\Json;
 use Recall\Http\Serializer;
 use Recall\Infrastructure\Persistence\CardRepository;
@@ -28,7 +29,7 @@ final readonly class ReviewsController
     /** Карточки, которые пора повторить. */
     public function queue(Request $request, Response $response): Response
     {
-        $due = $this->cards->dueOn(Day::today($this->now));
+        $due = $this->cards->dueOn(CurrentUser::userId($request), Day::today($this->now));
 
         return Json::write($response, array_map($this->serializer->serialize(...), $due));
     }
@@ -41,10 +42,11 @@ final readonly class ReviewsController
     public function grade(Request $request, Response $response, array $args): Response
     {
         $raw = $args['id'] ?? null;
+        $userId = CurrentUser::userId($request);
         $card = null;
         if (is_string($raw)) {
             try {
-                $card = $this->cards->find(CardId::fromString($raw));
+                $card = $this->cards->find($userId, CardId::fromString($raw));
             } catch (InvalidArgumentException) {
                 $card = null;
             }
@@ -67,8 +69,8 @@ final readonly class ReviewsController
 
         $review = $card->grade($grade, $this->now);
 
-        $this->cards->save($card);
-        $this->reviews->save($review);
+        $this->cards->save($userId, $card);
+        $this->reviews->save($userId, $review);
 
         return Json::write($response, $this->serializer->serialize($review), 201);
     }

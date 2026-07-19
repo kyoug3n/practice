@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Recall\Domain\Stats;
 use Recall\Domain\ValueObject\Day;
+use Recall\Http\CurrentUser;
 use Recall\Http\Json;
 use Recall\Http\Serializer;
 use Recall\Infrastructure\Persistence\CardRepository;
@@ -25,11 +26,12 @@ final readonly class StatsController
 
     public function index(Request $request, Response $response): Response
     {
+        $userId = CurrentUser::userId($request);
         $today = Day::today($this->now);
         $weekEnd = new Day($this->now->modify('+6 days')->format('Y-m-d'));
         $dueToday = 0;
         $dueWeek = 0;
-        foreach ($this->cards->all() as $card) {
+        foreach ($this->cards->all($userId) as $card) {
             if ($card->isDue($today)) {
                 ++$dueToday;
             }
@@ -39,7 +41,7 @@ final readonly class StatsController
         }
 
         $reviewDays = [];
-        foreach ($this->reviews->all() as $review) {
+        foreach ($this->reviews->all($userId) as $review) {
             $reviewDays[$review->createdAt()->format('Y-m-d')] = true;
         }
         $streak = 0;

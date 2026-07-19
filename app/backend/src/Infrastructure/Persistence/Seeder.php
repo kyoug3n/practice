@@ -24,7 +24,7 @@ final readonly class Seeder
 
     public function seedIfEmpty(DateTimeImmutable $now): void
     {
-        if ($this->cards->count() > 0) {
+        if ($this->cards->countAll() > 0) {
             return;
         }
 
@@ -42,18 +42,18 @@ final readonly class Seeder
             new NoteIdList(),
             $now,
         );
-        $this->notes->save($spacedRepetition);
-        $this->notes->save($rust);
+        $this->notes->saveLegacy($spacedRepetition);
+        $this->notes->saveLegacy($rust);
 
         // Две карточки на сегодня, одна — через три дня.
         $today = Day::today($now);
         $later = $today->plusDays(Interval::ofDays(3));
 
-        $this->cards->save(Card::create($spacedRepetition->id, CardText::fromString('Что такое интервальное повторение?'), CardText::fromString('Повторение прямо перед забыванием.'), $now));
-        $this->cards->save(Card::create($rust->id, CardText::fromString('Сколько владельцев у значения в Rust?'), CardText::fromString('Ровно один.'), $now));
+        $this->cards->saveLegacy(Card::create($spacedRepetition->id, CardText::fromString('Что такое интервальное повторение?'), CardText::fromString('Повторение прямо перед забыванием.'), $now));
+        $this->cards->saveLegacy(Card::create($rust->id, CardText::fromString('Сколько владельцев у значения в Rust?'), CardText::fromString('Ровно один.'), $now));
 
         $future = Card::create($spacedRepetition->id, CardText::fromString('Почему интервалы помогают?'), CardText::fromString('Они борются с кривой забывания.'), $now);
         $future->due = $later;
-        $this->cards->save($future);
+        $this->cards->saveLegacy($future);
     }
 }
