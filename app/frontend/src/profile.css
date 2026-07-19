@@ -70,6 +70,33 @@
   text-decoration: underline;
 }
 
+@media (min-width: 768px) {
+  #app:has(> #profile:not([hidden])) {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  #profile {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1.5rem;
+  }
+
+  #profile-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin: 1rem 0 1.25rem;
+  }
+
+  #profile-stats div {
+    padding: 0.75rem;
+  }
+
+  #profile-stats dd {
+    font-size: 1.1rem;
+  }
+}
+
 @media (max-width: 576px) {
   #profile {
     margin-top: 1rem;
