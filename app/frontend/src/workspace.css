@@ -8,7 +8,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+  margin-bottom: 0;
 }
 
 .workspace-header p {
@@ -16,7 +18,7 @@
 }
 
 #current-user {
-  color: #5b3028;
+  color: var(--pico-color);
   font-weight: 700;
   text-decoration: none;
 }
@@ -27,16 +29,17 @@
 
 .workspace-header #logout {
   margin: 0;
-  background: transparent;
-  border-color: #d8cbc2;
+  border-color: var(--app-highlight-background);
+  background: var(--app-highlight-background);
   box-shadow: none;
-  color: var(--pico-muted-color);
+  color: var(--app-highlight-color);
+  font-weight: 700;
 }
 
 .workspace-header #logout:hover {
-  background: #fff1eb;
-  border-color: #f0d1c5;
-  color: var(--pico-primary-hover);
+  border-color: var(--app-highlight-hover-background);
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
 }
 
 #stats {
@@ -47,21 +50,23 @@
 }
 
 #stats span {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 4.5rem;
   padding: 1rem;
   border: 1px solid var(--pico-muted-border-color);
   border-radius: 0.75rem;
   background: var(--pico-card-background-color);
-  color: var(--pico-muted-color);
+  color: var(--pico-color);
   font-size: 0.95rem;
   font-weight: 600;
   box-shadow: 0 0.5rem 1.25rem rgba(91, 48, 40, 0.06);
 }
 
 #stats [data-stat="streak"] {
-  border-color: #f0d79f;
-  background: #fff5d9;
-  color: #8b5d16;
+  border-color: var(--app-highlight-background);
+  background: var(--app-highlight-background);
+  color: var(--app-highlight-color);
 }
 
 #workspace > section:not(#stats) {
@@ -75,7 +80,7 @@
 
 #workspace > section:not(#stats) > h2 {
   margin-top: 0;
-  color: #5b3028;
+  color: var(--pico-color);
 }
 
 #note-list {
@@ -93,7 +98,7 @@
   padding: 0.75rem 1rem;
   border: 1px solid var(--pico-muted-border-color);
   border-radius: 0.75rem;
-  background: #fffaf5;
+  background: var(--pico-background-color);
 }
 
 .note-title {
@@ -104,6 +109,21 @@
 .note-tags {
   color: var(--pico-muted-color);
   font-size: 0.85rem;
+}
+
+#note-list li button {
+  min-height: 2.4rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.9rem;
+}
+
+#note-list li button[data-testid="delete-note"] {
+  border-color: #e6b8ae;
+  color: #8f392f;
+}
+
+#note-list li button[data-testid="delete-note"]:hover {
+  background: #fff1eb;
 }
 
 .note-edit {
@@ -121,7 +141,7 @@
   padding: 1.25rem;
   border: 1px solid var(--pico-muted-border-color);
   border-radius: 0.75rem;
-  background: #fffaf5;
+  background: var(--pico-background-color);
 }
 
 .card:last-child {
@@ -133,7 +153,21 @@
 }
 
 .card .back {
+  margin-bottom: 0;
   color: var(--pico-muted-color);
+}
+
+.card .reveal-answer,
+.card .grade-buttons button {
+  border-color: #d8cbc2;
+  color: var(--pico-color);
+}
+
+.card .reveal-answer:hover,
+.card .grade-buttons button:hover {
+  border-color: var(--pico-primary);
+  background: #fff1eb;
+  color: var(--pico-primary-hover);
 }
 
 .card .reveal-answer {

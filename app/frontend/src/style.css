@@ -4,26 +4,30 @@
   --pico-font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   --pico-line-height: 1.6;
   --pico-background-color: #fffaf5;
-  --pico-color: #2e2926;
-  --pico-muted-color: #756b66;
+  --pico-color: #252323;
+  --pico-muted-color: #625f5c;
   --pico-muted-border-color: #e7ddd5;
-  --pico-primary: #bc5545;
-  --pico-primary-background: #bc5545;
-  --pico-primary-border: #bc5545;
-  --pico-primary-hover: #963d32;
-  --pico-primary-hover-background: #963d32;
-  --pico-primary-hover-border: #963d32;
-  --pico-primary-focus: rgba(188, 85, 69, 0.25);
-  --pico-primary-inverse: #fffaf5;
+  --pico-primary: #a94438;
+  --pico-primary-background: #a94438;
+  --pico-primary-border: #a94438;
+  --pico-primary-hover: #8f392f;
+  --pico-primary-hover-background: #8f392f;
+  --pico-primary-hover-border: #8f392f;
+  --pico-primary-focus: rgba(169, 68, 56, 0.35);
+  --pico-primary-inverse: #fff;
   --pico-form-element-background-color: #fff;
   --pico-form-element-border-color: #d8cbc2;
-  --pico-form-element-color: #2e2926;
-  --pico-form-element-placeholder-color: #9c9088;
-  --pico-form-element-active-border-color: #bc5545;
-  --pico-form-element-focus-color: rgba(188, 85, 69, 0.25);
+  --pico-form-element-color: #252323;
+  --pico-form-element-placeholder-color: #625f5c;
+  --pico-form-element-active-border-color: #a94438;
+  --pico-form-element-focus-color: rgba(169, 68, 56, 0.35);
   --pico-card-background-color: #fff;
   --pico-border-radius: 0.75rem;
   --pico-spacing: 1.25rem;
+  --app-highlight-background: #334155;
+  --app-highlight-hover-background: #273449;
+  --app-highlight-color: #fff;
+  --app-highlight-muted-color: #e2e8f0;
 }
 
 #app {
@@ -34,7 +38,7 @@
 
 h1 {
   margin-bottom: 0.5rem;
-  color: #5b3028;
+  color: var(--pico-color);
   letter-spacing: -0.03em;
 }
 
@@ -52,33 +56,78 @@ input,
 textarea,
 select {
   padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--pico-form-element-border-color);
+  border-radius: 0.65rem;
+  background: var(--pico-form-element-background-color);
+  color: var(--pico-form-element-color);
   font: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--pico-form-element-placeholder-color);
+  opacity: 1;
 }
 
 button {
   padding: 0.4rem 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
+  min-height: 2.75rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 0.65rem;
+  background: var(--pico-card-background-color);
+  color: var(--pico-color);
   cursor: pointer;
   font: inherit;
 }
 
 button:hover {
-  background: #f0f0f0;
+  border-color: #c9b8ae;
+  background: #fff4ed;
+}
+
+button[type="submit"] {
+  border-color: var(--pico-primary-background);
+  background: var(--pico-primary-background);
+  color: var(--pico-primary-inverse);
+  font-weight: 700;
+}
+
+button[type="submit"]:hover {
+  border-color: var(--pico-primary-hover-background);
+  background: var(--pico-primary-hover-background);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--pico-primary-focus);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--pico-primary);
+}
+
+a:hover {
+  color: var(--pico-primary-hover);
 }
 
 #status {
   min-height: 1.25rem;
   margin: 0 0 1rem;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--pico-muted-color);
 }
 
 #status[data-state="error"] {
-  color: #b00020;
+  color: #8f3028;
 }
 
 #registration,
@@ -95,7 +144,7 @@ button:hover {
 #registration h2,
 #login h2 {
   margin-top: 0;
-  color: #5b3028;
+  color: var(--pico-color);
 }
 
 #registration form,
@@ -112,16 +161,18 @@ button:hover {
 #login > button {
   width: 100%;
   margin-bottom: 0;
-  background: transparent;
-  border-color: transparent;
+  border-color: var(--app-highlight-background);
+  background: var(--app-highlight-background);
   box-shadow: none;
-  color: var(--pico-primary);
+  color: var(--app-highlight-color);
+  font-weight: 700;
 }
 
 #registration > button:hover,
 #login > button:hover {
-  background: #fff1eb;
-  border-color: #f0d1c5;
+  border-color: var(--app-highlight-hover-background);
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
 }
 
 @media (max-width: 576px) {
@@ -129,5 +180,16 @@ button:hover {
   #login {
     margin-top: 1rem;
     padding: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

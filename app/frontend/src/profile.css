@@ -10,7 +10,7 @@
 
 #profile h2 {
   margin-top: 0;
-  color: #5b3028;
+  color: var(--pico-color);
 }
 
 #profile-stats {
@@ -27,13 +27,17 @@
   padding: 1rem;
   border: 1px solid var(--pico-muted-border-color);
   border-radius: 0.75rem;
-  background: #fffaf5;
+  background: var(--pico-background-color);
 }
 
 #profile-stats div:first-child {
   grid-column: 1 / -1;
-  border-color: #f0d1c5;
-  background: #fff1eb;
+  border-color: var(--app-highlight-background);
+  background: var(--app-highlight-background);
+}
+
+#profile-stats div:first-child dt {
+  color: var(--app-highlight-muted-color);
 }
 
 #profile-stats dt {
@@ -46,9 +50,13 @@
 
 #profile-stats dd {
   margin: 0;
-  color: #5b3028;
+  color: var(--pico-color);
   font-size: 1.2rem;
   font-weight: 700;
+}
+
+#profile-stats div:first-child dd {
+  color: var(--app-highlight-color);
 }
 
 #profile-error {
@@ -57,7 +65,7 @@
   border: 1px solid #f0d1c5;
   border-radius: 0.75rem;
   background: #fff1eb;
-  color: #963d32;
+  color: #8f392f;
 }
 
 #profile-home {
