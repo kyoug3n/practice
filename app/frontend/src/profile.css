@@ -80,6 +80,9 @@
 
 @media (min-width: 768px) {
   #app:has(> #profile:not([hidden])) {
+    display: grid;
+    min-height: 100vh;
+    align-content: center;
     padding-top: 1.25rem;
     padding-bottom: 1.25rem;
   }
