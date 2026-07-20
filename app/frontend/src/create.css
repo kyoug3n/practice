@@ -58,11 +58,6 @@
   background: var(--app-highlight-hover-background);
 }
 
-.section-create:focus-visible {
-  outline: 3px solid var(--pico-primary-focus);
-  outline-offset: 2px;
-}
-
 .section-create > span {
   transform: translateY(-0.1rem);
 }

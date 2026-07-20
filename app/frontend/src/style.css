@@ -153,13 +153,18 @@ button:disabled {
   opacity: 0.6;
 }
 
-button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
   outline: 3px solid var(--pico-primary-focus);
   outline-offset: 2px;
+}
+
+button:focus,
+button:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 a {
