@@ -7,7 +7,7 @@ export interface ReviewsElements {
   dueToday: HTMLElement;
   dueWeek: HTMLElement;
   streak: HTMLElement;
-  queueProgress: HTMLElement;
+  queueCount: HTMLElement;
   queue: HTMLElement;
   cardForm: HTMLFormElement;
   onCreated: () => void;
@@ -76,7 +76,7 @@ export function setupReviews(
 
   async function refreshQueue(): Promise<void> {
     const cards = await api.queue();
-    elements.queueProgress.textContent = `В очереди карточек: ${cards.length}`;
+    elements.queueCount.textContent = String(cards.length);
     if (cards.length === 0) {
       const done = document.createElement("p");
       done.dataset.testid = "queue-empty";
