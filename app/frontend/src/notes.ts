@@ -2,6 +2,27 @@ import { api, type Note } from "./api";
 import { parseTags, tagLabel } from "./format";
 import type { UiActions } from "./ui";
 
+function trashIcon(): SVGSVGElement {
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "M5 7h14M9 7V5h6v2M8 10v7M12 10v7M16 10v7M7 7l1 13h8l1-13",
+  );
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("stroke-linejoin", "round");
+  path.setAttribute("stroke-width", "2");
+  icon.append(path);
+
+  return icon;
+}
+
 export interface NotesElements {
   noteForm: HTMLFormElement;
   tagFilterForm: HTMLFormElement;
@@ -113,7 +134,7 @@ export function setupNotes(
 
     const remove = document.createElement("button");
     remove.type = "button";
-    remove.textContent = "удалить";
+    remove.append(trashIcon());
     remove.dataset.testid = "delete-note";
     remove.setAttribute("aria-label", `Удалить заметку: ${note.title}`);
     actions.onClick(remove, async () => {

@@ -81,16 +81,30 @@
 }
 
 #note-list li button[data-testid="delete-note"] {
-  border: 0;
-  background: var(--app-highlight-background);
-  color: var(--app-highlight-color);
-  font-weight: 700;
-}
-
-#note-list li button[data-testid="delete-note"]:hover {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border-radius: 50%;
   border: 0;
   background: var(--app-danger-background);
   color: var(--app-danger-color);
+  transition: filter 0.15s ease;
+}
+
+#note-list li button[data-testid="delete-note"] svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+#note-list li button[data-testid="delete-note"]:hover {
+  filter: brightness(0.9);
+}
+
+#note-list li button[data-testid="delete-note"]:active {
+  filter: brightness(0.86);
 }
 
 .note-edit {
