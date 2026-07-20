@@ -93,6 +93,7 @@ if (publicUsername !== null) {
     {
       noteForm,
       tagFilterForm: needForm("#tag-filter-form"),
+      toggleTagFilter: needButton("#toggle-tag-filter"),
       clearTagFilter: needButton("#clear-tag-filter"),
       noteList: need("#note-list"),
       cardNoteSelect: needSelect("#card-form select[name='note_id']"),

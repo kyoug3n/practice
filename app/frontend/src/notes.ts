@@ -5,6 +5,7 @@ import type { UiActions } from "./ui";
 export interface NotesElements {
   noteForm: HTMLFormElement;
   tagFilterForm: HTMLFormElement;
+  toggleTagFilter: HTMLButtonElement;
   clearTagFilter: HTMLButtonElement;
   noteList: HTMLElement;
   cardNoteSelect: HTMLSelectElement;
@@ -165,6 +166,12 @@ export function setupNotes(
     activeTag = tag === "" ? undefined : tag;
     actions.clearStatus();
     void refreshNotes().catch(actions.showError);
+  });
+
+  elements.toggleTagFilter.addEventListener("click", () => {
+    const isOpen = !elements.tagFilterForm.hidden;
+    elements.tagFilterForm.hidden = isOpen;
+    elements.toggleTagFilter.setAttribute("aria-expanded", String(!isOpen));
   });
 
   actions.onClick(elements.clearTagFilter, async () => {

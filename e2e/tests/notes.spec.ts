@@ -15,3 +15,21 @@ test("a created note appears in the list", async ({ page }) => {
     page.locator("[data-testid='note']", { hasText: title }),
   ).toBeVisible();
 });
+
+test("the tag filter is hidden behind its toolbar button", async ({ page }) => {
+  await page.goto("/");
+  await register(page);
+
+  const filter = page.locator("#tag-filter-form");
+  const toggle = page.locator("#toggle-tag-filter");
+  await expect(filter).toBeHidden();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+  await toggle.click();
+  await expect(filter).toBeVisible();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+
+  await toggle.click();
+  await expect(filter).toBeHidden();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+});

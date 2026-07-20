@@ -157,16 +157,42 @@
         <section aria-label="Заметки">
           <div class="section-heading">
             <h2>Заметки</h2>
-            <button
-              type="button"
-              class="section-create"
-              id="create-note"
-              aria-label="Новая заметка"
-            >
-              +
-            </button>
+            <div class="section-actions">
+              <button
+                type="button"
+                class="section-create section-filter"
+                id="toggle-tag-filter"
+                aria-controls="tag-filter-form"
+                aria-expanded="false"
+                aria-label="Фильтр по тегу"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d="M4 5h16l-6.5 7.2V18l-3 1.5v-7.3L4 5z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                  />
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="section-create"
+                id="create-note"
+                aria-label="Новая заметка"
+              >
+                +
+              </button>
+            </div>
           </div>
-          <form id="tag-filter-form">
+          <form id="tag-filter-form" hidden>
             <input
               name="tag"
               placeholder="Фильтр по тегу"
