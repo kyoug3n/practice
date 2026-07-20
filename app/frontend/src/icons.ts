@@ -31,3 +31,9 @@ export function pencilIcon(): SVGSVGElement {
 export function chevronIcon(): SVGSVGElement {
   return strokeIcon("M6 9l6 6 6-6");
 }
+
+export function refreshIcon(): SVGSVGElement {
+  return strokeIcon(
+    "M20 11a8 8 0 0 0-14.9-3M4 5v4h4M4 13a8 8 0 0 0 14.9 3M20 19v-4h-4",
+  );
+}

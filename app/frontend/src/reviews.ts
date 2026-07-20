@@ -1,9 +1,15 @@
 import { api, type Card, type Grade } from "./api";
 import { createCardEdit, type CardEditView } from "./card-edit";
-import { pencilIcon, trashIcon } from "./icons";
+import { pencilIcon, refreshIcon, trashIcon } from "./icons";
 import type { UiActions } from "./ui";
 
 const GRADES: Grade[] = ["again", "hard", "good", "easy"];
+const GRADE_LABELS: Record<Grade, string> = {
+  again: "Снова",
+  hard: "Сложно",
+  good: "Хорошо",
+  easy: "Легко",
+};
 
 export interface ReviewsElements {
   dueToday: HTMLElement;
@@ -76,9 +82,15 @@ export function setupReviews(
     for (const grade of GRADES) {
       const button = document.createElement("button");
       button.type = "button";
-      button.textContent = grade;
+      if (grade === "again") {
+        button.append(refreshIcon());
+      } else {
+        const label = document.createElement("span");
+        label.textContent = GRADE_LABELS[grade];
+        button.append(label);
+      }
       button.dataset.testid = `grade-${grade}`;
-      button.setAttribute("aria-label", `Оценить: ${grade}`);
+      button.setAttribute("aria-label", `Оценить: ${GRADE_LABELS[grade]}`);
       actions.onClick(button, async () => {
         await api.grade(card.id, grade);
         await refreshAll();
