@@ -41,6 +41,47 @@ describe("api client", () => {
     await expect(api.deleteNote("1")).resolves.toBeUndefined();
   });
 
+  it("изменяет карточку через PUT", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      jsonResponse({
+        id: "card-1",
+        note_id: "note-1",
+        front: "new question",
+        back: "new answer",
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.updateCard("card-1", {
+      note_id: "note-1",
+      front: "new question",
+      back: "new answer",
+    });
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/cards/card-1");
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(init.method).toBe("PUT");
+    expect(init.body).toBe(
+      JSON.stringify({
+        note_id: "note-1",
+        front: "new question",
+        back: "new answer",
+      }),
+    );
+  });
+
+  it("удаляет карточку через DELETE", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 204 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(api.deleteCard("card-1")).resolves.toBeUndefined();
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/cards/card-1");
+    expect((fetchMock.mock.calls[0]?.[1] as RequestInit).method).toBe("DELETE");
+  });
+
   it("превращает ошибку сервера с полем error в ApiError", async () => {
     const fetchMock = vi
       .fn()
