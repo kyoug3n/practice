@@ -43,6 +43,7 @@ export function setupReviews(
 
     const review = document.createElement("div");
     review.className = "card-review";
+    review.setAttribute("aria-hidden", String(cardEditMode));
     const syncReviewHeight = (): void => {
       review.style.setProperty(
         "--card-review-height",
@@ -87,6 +88,7 @@ export function setupReviews(
     const management = document.createElement("div");
     management.className = "card-management";
     management.dataset.testid = "card-management";
+    management.setAttribute("aria-hidden", String(!cardEditMode));
 
     const edit = document.createElement("button");
     edit.type = "button";
@@ -134,6 +136,12 @@ export function setupReviews(
     elements.toggleCardEdit.setAttribute("aria-pressed", String(enabled));
     elements.queue.querySelectorAll<HTMLElement>(".card").forEach((card) => {
       card.classList.toggle("is-card-edit-mode", enabled);
+      card
+        .querySelector<HTMLElement>(".card-review")
+        ?.setAttribute("aria-hidden", String(enabled));
+      card
+        .querySelector<HTMLElement>(".card-management")
+        ?.setAttribute("aria-hidden", String(!enabled));
       if (!enabled) {
         return;
       }

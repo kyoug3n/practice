@@ -32,15 +32,22 @@
   max-height: var(--card-review-height, 100rem);
   overflow: hidden;
   opacity: 1;
+  visibility: visible;
   transition:
     max-height 0.22s ease,
-    opacity 0.18s ease;
+    opacity 0.18s ease,
+    visibility 0s linear;
 }
 
 .card.is-card-edit-mode .card-review {
   max-height: 0;
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.18s ease,
+    visibility 0s linear 0.22s;
 }
 
 .card-management {
@@ -51,10 +58,12 @@
   overflow: hidden;
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
   transition:
     max-height 0.22s ease,
     opacity 0.18s ease,
-    margin-top 0.22s ease;
+    margin-top 0.22s ease,
+    visibility 0s linear 0.22s;
 }
 
 .card.is-card-edit-mode .card-management {
@@ -62,6 +71,12 @@
   margin-top: 0.5rem;
   opacity: 1;
   pointer-events: auto;
+  visibility: visible;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.18s ease,
+    margin-top 0.22s ease,
+    visibility 0s linear;
 }
 
 .card-management button {
