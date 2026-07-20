@@ -29,23 +29,30 @@
 }
 
 .card-review {
-  max-height: var(--card-review-height, 100rem);
+  display: grid;
+  grid-template-rows: 1fr;
+  min-height: 0;
   overflow: hidden;
   opacity: 1;
   visibility: visible;
   transition:
-    max-height 0.22s ease,
+    grid-template-rows 0.22s ease,
     opacity 0.18s ease,
     visibility 0s linear;
 }
 
+.card-review-content {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .card.is-card-edit-mode .card-review {
-  max-height: 0;
+  grid-template-rows: 0fr;
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
   transition:
-    max-height 0.22s ease,
+    grid-template-rows 0.22s ease,
     opacity 0.18s ease,
     visibility 0s linear 0.22s;
 }
@@ -149,8 +156,26 @@
 }
 
 .card .back {
-  margin-bottom: 0;
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
   color: var(--pico-muted-color);
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.18s ease,
+    visibility 0s linear 0.22s;
+}
+
+.card .back.is-visible {
+  max-height: var(--card-answer-height, 100rem);
+  visibility: visible;
+  opacity: 1;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.18s ease,
+    visibility 0s linear;
 }
 
 .card .reveal-answer,
@@ -167,7 +192,21 @@
 }
 
 .card .reveal-answer {
-  margin-top: 0.5rem;
+  min-height: 0;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--pico-muted-color);
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.card .reveal-answer:hover {
+  border: 0;
+  background: transparent;
+  color: var(--pico-primary-hover);
+  text-decoration: underline;
 }
 
 .card .grade-buttons {

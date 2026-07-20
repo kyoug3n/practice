@@ -44,29 +44,31 @@ export function setupReviews(
     const review = document.createElement("div");
     review.className = "card-review";
     review.setAttribute("aria-hidden", String(cardEditMode));
-    const syncReviewHeight = (): void => {
-      review.style.setProperty(
-        "--card-review-height",
-        `${review.scrollHeight}px`,
-      );
-    };
+    const reviewContent = document.createElement("div");
+    reviewContent.className = "card-review-content";
 
     const back = document.createElement("p");
     back.className = "back";
     back.textContent = card.back;
-    back.hidden = true;
     back.setAttribute("aria-hidden", "true");
+
+    const syncAnswerHeight = (): void => {
+      back.style.setProperty("--card-answer-height", `${back.scrollHeight}px`);
+    };
 
     const reveal = document.createElement("button");
     reveal.type = "button";
     reveal.className = "reveal-answer";
-    reveal.textContent = "Показать ответ";
+    reveal.textContent = "(Показать ответ)";
     reveal.dataset.testid = "reveal-answer";
     reveal.addEventListener("click", () => {
-      back.hidden = false;
-      back.setAttribute("aria-hidden", "false");
-      reveal.hidden = true;
-      window.requestAnimationFrame(syncReviewHeight);
+      const visible = !back.classList.contains("is-visible");
+      back.classList.toggle("is-visible", visible);
+      back.setAttribute("aria-hidden", String(!visible));
+      reveal.textContent = visible ? "(Скрыть ответ)" : "(Показать ответ)";
+      if (visible) {
+        window.requestAnimationFrame(syncAnswerHeight);
+      }
     });
 
     const buttons = document.createElement("div");
@@ -83,7 +85,8 @@ export function setupReviews(
       });
       buttons.append(button);
     }
-    review.append(reveal, back, buttons);
+    reviewContent.append(reveal, back, buttons);
+    review.append(reviewContent);
 
     const management = document.createElement("div");
     management.className = "card-management";
@@ -124,9 +127,7 @@ export function setupReviews(
       editView.open();
     });
 
-    window.requestAnimationFrame(() => {
-      syncReviewHeight();
-    });
+    window.requestAnimationFrame(syncAnswerHeight);
     return wrap;
   }
 
@@ -147,12 +148,10 @@ export function setupReviews(
       }
       const back = card.querySelector<HTMLElement>(".back");
       const reveal = card.querySelector<HTMLButtonElement>(".reveal-answer");
+      back?.classList.remove("is-visible");
       back?.setAttribute("aria-hidden", "true");
-      if (back) {
-        back.hidden = true;
-      }
       if (reveal) {
-        reveal.hidden = false;
+        reveal.textContent = "(Показать ответ)";
       }
     });
   }
