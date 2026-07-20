@@ -1,6 +1,7 @@
 import { api, type Note } from "./api";
 import { createAnimatedDisclosure } from "./disclosure";
 import { parseTags } from "./format";
+import { populateLinkOptions, selectedLinkIds } from "./note-options";
 import type { UiActions } from "./ui";
 
 const EDIT_ANIMATION_DURATION = 220;
@@ -26,6 +27,7 @@ export function createNoteEdit(
   note: Note,
   actions: UiActions,
   callbacks: NoteEditCallbacks,
+  linkedNotes: Note[],
 ): NoteEditView {
   const form = document.createElement("form");
   form.className = "note-edit";
@@ -48,6 +50,20 @@ export function createNoteEdit(
   body.value = note.body;
   body.setAttribute("aria-label", "Текст заметки");
 
+  const linksFieldset = document.createElement("fieldset");
+  linksFieldset.className = "note-links-fieldset";
+  linksFieldset.setAttribute("aria-label", "Связанные заметки");
+  const linksLegend = document.createElement("legend");
+  linksLegend.textContent = "Связанные заметки";
+  const linksContainer = document.createElement("div");
+  linksContainer.className = "note-link-options";
+  populateLinkOptions(
+    linksContainer,
+    linkedNotes.filter((linkedNote) => linkedNote.id !== note.id),
+    note.links,
+  );
+  linksFieldset.append(linksLegend, linksContainer);
+
   const actionsBox = document.createElement("div");
   actionsBox.className = "note-edit-actions";
   const save = document.createElement("button");
@@ -64,7 +80,7 @@ export function createNoteEdit(
   cancel.addEventListener("click", close);
   actionsBox.append(save, cancel);
 
-  form.append(title, tags, body, actionsBox);
+  form.append(title, tags, body, linksFieldset, actionsBox);
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     save.disabled = true;
@@ -74,7 +90,7 @@ export function createNoteEdit(
         title: title.value,
         body: body.value,
         tags: parseTags(tags.value),
-        links: note.links,
+        links: selectedLinkIds(linksContainer),
       })
       .then(() => {
         callbacks.onCloseStart(form);

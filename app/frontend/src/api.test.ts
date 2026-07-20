@@ -124,7 +124,7 @@ describe("api client", () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: "1" }, 201));
     vi.stubGlobal("fetch", fetchMock);
 
-    await api.createNote({ title: "t", body: "b", tags: [] });
+    await api.createNote({ title: "t", body: "b", tags: [], links: [] });
 
     const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
     expect((init.headers as Headers).get("Content-Type")).toBe(
@@ -132,6 +132,9 @@ describe("api client", () => {
     );
     expect(init.method).toBe("POST");
     expect(init.credentials).toBe("include");
+    expect(init.body).toBe(
+      JSON.stringify({ title: "t", body: "b", tags: [], links: [] }),
+    );
   });
 
   it("регистрирует пользователя через API", async () => {

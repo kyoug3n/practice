@@ -5,12 +5,18 @@ import { pencilIcon, trashIcon } from "./icons";
 import { animateListHeight } from "./notes-animation";
 import { createNoteBody } from "./note-body";
 import { createNoteEdit, type NoteEditView } from "./note-edit";
+import {
+  populateLinkOptions,
+  populateNoteOptions,
+  selectedLinkIds,
+} from "./note-options";
 import { truncateNoteTags, truncateNoteTitle } from "./note-text";
 import { NOTES_PER_PAGE, setupNotesPagination } from "./notes-pagination";
 import type { UiActions } from "./ui";
 
 export interface NotesElements {
   noteForm: HTMLFormElement;
+  noteLinksContainer: HTMLElement;
   tagFilterForm: HTMLFormElement;
   toggleTagFilter: HTMLButtonElement;
   clearTagFilter: HTMLButtonElement;
@@ -30,23 +36,7 @@ export function setupNotes(
 ): () => Promise<void> {
   let activeTag: string | undefined;
   let notes: Note[] = [];
-
-  function updateCardNoteOptions(notes: Note[]): void {
-    const options = notes.map((note) => {
-      const option = document.createElement("option");
-      option.value = note.id;
-      option.textContent = note.title;
-      return option;
-    });
-    elements.cardNoteSelect.replaceChildren(
-      Object.assign(document.createElement("option"), {
-        value: "",
-        textContent: "Выберите заметку",
-      }),
-      ...options,
-    );
-    elements.cardNoteSelect.disabled = notes.length === 0;
-  }
+  let linkableNotes: Note[] = [];
 
   function noteItem(note: Note): HTMLLIElement {
     const item = document.createElement("li");
@@ -93,30 +83,35 @@ export function setupNotes(
     let editView: NoteEditView;
     edit.addEventListener("click", () => {
       view.classList.add("is-editing");
-      editView = createNoteEdit(note, actions, {
-        onCloseStart: (form) => {
-          const closeHeight = Math.min(
-            view.offsetHeight,
-            form.getBoundingClientRect().height,
-          );
-          form.style.setProperty(
-            "--note-edit-close-height",
-            `${closeHeight}px`,
-          );
-          form.classList.add("is-closing");
-        },
-        onClosed: () => {
-          editView.form.classList.remove("is-closing");
-          editView.form.remove();
-          return new Promise((resolve) => {
-            window.requestAnimationFrame(() => {
-              view.classList.remove("is-editing");
-              window.setTimeout(resolve, 180);
+      editView = createNoteEdit(
+        note,
+        actions,
+        {
+          onCloseStart: (form) => {
+            const closeHeight = Math.min(
+              view.offsetHeight,
+              form.getBoundingClientRect().height,
+            );
+            form.style.setProperty(
+              "--note-edit-close-height",
+              `${closeHeight}px`,
+            );
+            form.classList.add("is-closing");
+          },
+          onClosed: () => {
+            editView.form.classList.remove("is-closing");
+            editView.form.remove();
+            return new Promise((resolve) => {
+              window.requestAnimationFrame(() => {
+                view.classList.remove("is-editing");
+                window.setTimeout(resolve, 180);
+              });
             });
-          });
+          },
+          onSaved: refreshNotes,
         },
-        onSaved: refreshNotes,
-      });
+        linkableNotes,
+      );
       item.append(editView.form);
       editView.open();
     });
@@ -161,12 +156,19 @@ export function setupNotes(
   );
 
   async function refreshNotes(animate = false): Promise<void> {
-    notes = await api.listNotes(activeTag);
+    const allNotes = await api.listNotes();
+    notes = activeTag === undefined ? allNotes : await api.listNotes(activeTag);
+    linkableNotes = allNotes;
     const page = pagination.update(notes.length);
     renderPage(page, animate, animate);
     elements.noteList.hidden = notes.length === 0;
     elements.notesEmpty.hidden = notes.length > 0;
-    updateCardNoteOptions(notes);
+    populateNoteOptions(
+      elements.cardNoteSelect,
+      linkableNotes,
+      "Выберите заметку",
+    );
+    populateLinkOptions(elements.noteLinksContainer, linkableNotes);
   }
 
   elements.noteForm.addEventListener("submit", (event) => {
@@ -182,6 +184,7 @@ export function setupNotes(
       title: actions.field(data, "title"),
       body: actions.field(data, "body"),
       tags: parseTags(actions.field(data, "tags")),
+      links: selectedLinkIds(elements.noteLinksContainer),
     };
 
     submit.disabled = true;

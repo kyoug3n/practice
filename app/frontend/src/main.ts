@@ -83,6 +83,7 @@ if (publicUsername !== null) {
   const notes = setupNotes(
     {
       noteForm,
+      noteLinksContainer: need("#note-links"),
       tagFilterForm: needForm("#tag-filter-form"),
       toggleTagFilter: needButton("#toggle-tag-filter"),
       clearTagFilter: needButton("#clear-tag-filter"),

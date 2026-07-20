@@ -114,8 +114,12 @@ export const api = {
   },
   listNotes: (tag?: string) =>
     http<Note[]>(`/notes${tag ? `?tag=${encodeURIComponent(tag)}` : ""}`),
-  createNote: (input: { title: string; body: string; tags: string[] }) =>
-    http<Note>("/notes", { method: "POST", body: JSON.stringify(input) }),
+  createNote: (input: {
+    title: string;
+    body: string;
+    tags: string[];
+    links: string[];
+  }) => http<Note>("/notes", { method: "POST", body: JSON.stringify(input) }),
   updateNote: (
     id: string,
     input: { title: string; body: string; tags: string[]; links: string[] },

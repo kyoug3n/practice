@@ -101,3 +101,61 @@
   padding: 0.75rem 1rem;
   resize: vertical;
 }
+
+#note-links,
+.note-links-fieldset {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+}
+
+#note-links legend,
+.note-links-fieldset legend {
+  margin: 0;
+  color: var(--pico-muted-color);
+  font-size: 0.85rem;
+}
+
+.note-link-options {
+  display: grid;
+  gap: 0.25rem;
+  max-height: 7rem;
+  overflow-y: auto;
+}
+
+.note-link-option {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 2.25rem;
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--pico-color);
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.note-link-option:hover {
+  border: 0;
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
+}
+
+.note-link-option[data-selected="true"] {
+  background: var(--app-highlight-background);
+  color: var(--app-highlight-color);
+}
+
+.note-link-option[data-selected="true"]:hover {
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
+}
+
+.note-links-empty {
+  margin: 0;
+  color: var(--pico-muted-color);
+  font-size: 0.85rem;
+}
