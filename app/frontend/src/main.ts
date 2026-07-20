@@ -96,6 +96,7 @@ if (publicUsername !== null) {
       toggleTagFilter: needButton("#toggle-tag-filter"),
       clearTagFilter: needButton("#clear-tag-filter"),
       noteList: need("#note-list"),
+      notesEmpty: need("#notes-empty"),
       cardNoteSelect: needSelect("#card-form select[name='note_id']"),
       onCreated: closeCreateDialog,
     },

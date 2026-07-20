@@ -45,11 +45,21 @@
   color: var(--pico-color);
 }
 
+#workspace > section[aria-label="Заметки"] .section-heading {
+  margin-bottom: 0.5rem;
+}
+
 #note-list {
   display: grid;
   gap: 0.75rem;
   padding: 0;
   list-style: none;
+}
+
+#notes-empty {
+  margin: 0;
+  color: var(--pico-muted-color);
+  text-align: center;
 }
 
 #note-list li {

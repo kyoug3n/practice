@@ -29,6 +29,7 @@ export interface NotesElements {
   toggleTagFilter: HTMLButtonElement;
   clearTagFilter: HTMLButtonElement;
   noteList: HTMLElement;
+  notesEmpty: HTMLElement;
   cardNoteSelect: HTMLSelectElement;
   onCreated: () => void;
 }
@@ -149,6 +150,8 @@ export function setupNotes(
   async function refreshNotes(): Promise<void> {
     const notes = await api.listNotes(activeTag);
     elements.noteList.replaceChildren(...notes.map(noteItem));
+    elements.noteList.hidden = notes.length === 0;
+    elements.notesEmpty.hidden = notes.length > 0;
     updateCardNoteOptions(notes);
   }
 
