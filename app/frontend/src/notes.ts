@@ -23,6 +23,27 @@ function trashIcon(): SVGSVGElement {
   return icon;
 }
 
+function pencilIcon(): SVGSVGElement {
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("focusable", "false");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "m4 16.5-.5 4 4-.5L19 8.5 15.5 5 4 16.5Zm9.5-9.5 3.5 3.5",
+  );
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("stroke-linejoin", "round");
+  path.setAttribute("stroke-width", "2");
+  icon.append(path);
+
+  return icon;
+}
+
 export interface NotesElements {
   noteForm: HTMLFormElement;
   tagFilterForm: HTMLFormElement;
@@ -126,7 +147,7 @@ export function setupNotes(
 
     const edit = document.createElement("button");
     edit.type = "button";
-    edit.textContent = "изменить";
+    edit.append(pencilIcon());
     edit.dataset.testid = "edit-note";
     edit.setAttribute("aria-label", `Изменить заметку: ${note.title}`);
     edit.addEventListener("click", () => {

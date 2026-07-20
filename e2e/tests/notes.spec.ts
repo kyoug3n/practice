@@ -18,6 +18,9 @@ test("a created note appears in the list", async ({ page }) => {
   await expect(
     page.locator("[data-testid='note']", { hasText: title }),
   ).toBeVisible();
+  await expect(
+    page.locator("[data-testid='edit-note'] svg"),
+  ).toBeVisible();
   await expect(emptyState).toBeHidden();
 });
 
