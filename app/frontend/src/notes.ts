@@ -53,7 +53,7 @@ export function setupNotes(
     tags.textContent = truncateNoteTags(note.tags);
     tags.title = note.tags.join(", ");
 
-    const { body, toggle: bodyToggle } = createNoteBody(note);
+    const { body, toggle: bodyToggle } = createNoteBody(note, linkableNotes);
 
     const edit = document.createElement("button");
     edit.type = "button";
