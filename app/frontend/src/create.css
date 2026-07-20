@@ -40,7 +40,7 @@
   display: block;
   position: fixed;
   inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -46%) scale(0.98);
   width: min(36rem, calc(100vw - 2rem));
   min-width: 0;
   height: auto;
@@ -54,6 +54,10 @@
   backdrop-filter: none;
   box-shadow: 0 1rem 2rem rgba(37, 35, 35, 0.2);
   color: var(--pico-color);
+  opacity: 0;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
 }
 
 #create-panel:not([open]) {
@@ -61,7 +65,21 @@
 }
 
 #create-panel::backdrop {
+  background: transparent;
+  transition: background-color 0.18s ease;
+}
+
+#create-panel.is-open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+#create-panel.is-open::backdrop {
   background: rgba(37, 35, 35, 0.45);
+}
+
+#create-panel.is-closing::backdrop {
+  background: transparent;
 }
 
 .create-panel-header {
