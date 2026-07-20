@@ -19,6 +19,9 @@ test("grading a due card removes it from the queue", async ({ page }) => {
 
   const cards = page.locator("[data-testid='queue-card']");
   await expect(cards.first()).toBeVisible();
+  await expect(page.locator("#queue-progress")).toHaveText(
+    "В очереди карточек: 1",
+  );
 
   const firstId = await cards.first().getAttribute("data-id");
   const before = await cards.count();
@@ -31,6 +34,9 @@ test("grading a due card removes it from the queue", async ({ page }) => {
   await expect(
     page.locator(`[data-testid='queue-card'][data-id='${firstId}']`),
   ).toHaveCount(0);
+  await expect(page.locator("#queue-progress")).toHaveText(
+    "В очереди карточек: 0",
+  );
 
   const after = await page.locator("[data-testid='queue-card']").count();
   expect(after).toBeLessThan(before);

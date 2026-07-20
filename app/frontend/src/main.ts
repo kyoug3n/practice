@@ -106,6 +106,7 @@ if (publicUsername !== null) {
       dueToday: need("[data-stat='due_today']"),
       dueWeek: need("[data-stat='due_week']"),
       streak: need("[data-stat='streak']"),
+      queueProgress: need("#queue-progress"),
       queue: need("#queue"),
       cardForm,
       onCreated: closeCreateDialog,
