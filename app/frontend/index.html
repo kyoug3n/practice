@@ -108,33 +108,6 @@
           <span data-stat="streak">серия: …</span>
         </section>
 
-        <dialog id="create-panel" aria-labelledby="create-panel-title">
-          <div class="create-panel-header">
-            <h2 id="create-panel-title">Новая карточка</h2>
-            <button type="button" id="create-close" aria-label="Закрыть">
-              ×
-            </button>
-          </div>
-          <form id="card-form" hidden>
-            <select name="note_id" aria-label="Заметка для карточки" required>
-              <option value="">Выберите заметку</option>
-            </select>
-            <input
-              name="front"
-              placeholder="Вопрос"
-              aria-label="Вопрос карточки"
-              required
-            />
-            <textarea
-              name="back"
-              placeholder="Ответ"
-              aria-label="Ответ карточки"
-              required
-            ></textarea>
-            <button type="submit">Создать карточку</button>
-          </form>
-        </dialog>
-
         <section aria-label="Заметки">
           <div class="section-heading">
             <h2>Заметки</h2>
@@ -302,6 +275,24 @@
               </button>
             </div>
           </div>
+          <form id="card-form" hidden>
+            <select name="note_id" aria-label="Заметка для карточки" required>
+              <option value="">Выберите заметку</option>
+            </select>
+            <input
+              name="front"
+              placeholder="Вопрос"
+              aria-label="Вопрос карточки"
+              required
+            />
+            <textarea
+              name="back"
+              placeholder="Ответ карточки"
+              aria-label="Ответ карточки"
+              required
+            ></textarea>
+            <button type="submit">Создать карточку</button>
+          </form>
           <div id="queue"></div>
         </section>
       </div>

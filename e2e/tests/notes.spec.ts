@@ -62,7 +62,7 @@ test("notes truncate long text and use three-note pages", async ({ page }) => {
   expect(toggleOffset).toBe(0);
 
   for (const title of ["Page note 2", "Page note 3", "Page note 4"]) {
-    await expect(page.locator("#create-panel")).toHaveJSProperty("open", false);
+    await expect(page.locator("#card-form")).toBeHidden();
     await openCreateForm(page, "note");
     await page.fill("#note-form input[name='title']", title);
     await page.click("#note-form button[type='submit']");

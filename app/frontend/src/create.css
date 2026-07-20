@@ -69,7 +69,8 @@
   transform: translateY(-0.05rem);
 }
 
-#note-form {
+#note-form,
+#card-form {
   gap: 0.35rem;
   max-height: 0;
   margin-bottom: 0;
@@ -81,98 +82,22 @@
     opacity 0.18s ease;
 }
 
-#note-form.is-open {
+#note-form.is-open,
+#card-form.is-open {
   max-height: var(--disclosure-height);
   margin-bottom: 1rem;
   opacity: 1;
 }
 
-#note-form.is-resizing {
+#note-form.is-resizing,
+#card-form.is-resizing {
   transition: none;
 }
 
-#note-form textarea {
+#note-form textarea,
+#card-form textarea {
   min-height: calc(1.6rem + 1.5rem + 2px);
   max-height: calc(6.4rem + 1.5rem + 2px);
   padding: 0.75rem 1rem;
   resize: vertical;
-}
-
-#create-panel {
-  display: block;
-  position: fixed;
-  inset: 50% auto auto 50%;
-  transform: translate(-50%, -46%) scale(0.98);
-  width: min(36rem, calc(100vw - 2rem));
-  min-width: 0;
-  height: auto;
-  max-height: calc(100vh - 2rem);
-  min-height: 0;
-  margin: 0;
-  padding: 1.5rem;
-  border: 1px solid var(--pico-muted-border-color);
-  border-radius: 1rem;
-  background: var(--pico-card-background-color);
-  backdrop-filter: none;
-  box-shadow: 0 1rem 2rem rgba(37, 35, 35, 0.2);
-  color: var(--pico-color);
-  opacity: 0;
-  transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
-}
-
-#create-panel:not([open]) {
-  display: none;
-}
-
-#create-panel::backdrop {
-  background: transparent;
-  transition: background-color 0.18s ease;
-}
-
-#create-panel.is-open {
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 1;
-}
-
-#create-panel.is-open::backdrop {
-  background: rgba(37, 35, 35, 0.45);
-}
-
-#create-panel.is-closing::backdrop {
-  background: transparent;
-}
-
-.create-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.create-panel-header h2 {
-  margin: 0;
-}
-
-#create-panel #create-close {
-  width: 2.5rem;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--pico-muted-color);
-  font-size: 1.5rem;
-  line-height: 1;
-}
-
-#create-panel #create-close:hover {
-  border: 0;
-  background: var(--app-highlight-background);
-  color: var(--app-highlight-color);
-}
-
-#create-panel form {
-  margin: 0;
 }

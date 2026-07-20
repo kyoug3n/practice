@@ -35,14 +35,6 @@ function needButton(selector: string): HTMLButtonElement {
   return button;
 }
 
-function needDialog(selector: string): HTMLDialogElement {
-  const dialog = need(selector);
-  if (!(dialog instanceof HTMLDialogElement)) {
-    throw new Error(`нет диалога: ${selector}`);
-  }
-  return dialog;
-}
-
 function needSelect(selector: string): HTMLSelectElement {
   const select = need(selector);
   if (!(select instanceof HTMLSelectElement)) {
@@ -81,9 +73,7 @@ if (publicUsername !== null) {
   const noteForm = needForm("#note-form");
   const cardForm = needForm("#card-form");
 
-  const closeCreateDialog = setupCreateActions({
-    panel: needDialog("#create-panel"),
-    closeButton: needButton("#create-close"),
+  const closeCreateForms = setupCreateActions({
     noteButton: needButton("#create-note"),
     cardButton: needButton("#create-card"),
     noteForm,
@@ -103,7 +93,7 @@ if (publicUsername !== null) {
       notesNext: needButton("#notes-next"),
       notesPage: need("#notes-page"),
       cardNoteSelect: needSelect("#card-form select[name='note_id']"),
-      onCreated: closeCreateDialog,
+      onCreated: closeCreateForms,
     },
     actions,
   );
@@ -117,7 +107,7 @@ if (publicUsername !== null) {
       queue: need("#queue"),
       toggleCardEdit: needButton("#toggle-card-edit"),
       cardForm,
-      onCreated: closeCreateDialog,
+      onCreated: closeCreateForms,
     },
     actions,
   );
