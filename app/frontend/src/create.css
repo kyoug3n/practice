@@ -10,6 +10,11 @@
   margin: 0;
 }
 
+#workspace > section[aria-label="Заметки"] .section-heading h2 {
+  position: relative;
+  top: -0.75rem;
+}
+
 .section-actions {
   display: flex;
   align-items: center;
