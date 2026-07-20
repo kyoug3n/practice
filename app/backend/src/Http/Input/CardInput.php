@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Recall\Domain\ValueObject\CardText;
 use Recall\Http\ValidationException;
 
-/** Разбор тела запроса для создания карточки. */
+/** Разбор тела запроса для создания/изменения карточки. */
 final readonly class CardInput
 {
     public function __construct(

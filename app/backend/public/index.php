@@ -108,6 +108,7 @@ $app->delete('/notes/{id}', $notes->delete(...));
 $app->get('/cards', $cards->index(...));
 $app->post('/cards', $cards->create(...));
 $app->get('/cards/{id}', $cards->show(...));
+$app->put('/cards/{id}', $cards->update(...));
 $app->delete('/cards/{id}', $cards->delete(...));
 
 $app->get('/reviews/queue', $reviews->queue(...));

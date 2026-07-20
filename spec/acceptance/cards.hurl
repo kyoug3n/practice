@@ -42,12 +42,32 @@ HTTP 200
 [Asserts]
 jsonpath "$.back" == "Paris"
 
+# Update the card text.
+PUT {{base}}/cards/{{card_id}}
+Content-Type: application/json
+{
+  "note_id": "{{note_id}}",
+  "front": "Updated capital question",
+  "back": "Updated Paris"
+}
+HTTP 200
+[Asserts]
+jsonpath "$.front" == "Updated capital question"
+jsonpath "$.back" == "Updated Paris"
+
 # It shows up in the list.
 GET {{base}}/cards
 HTTP 200
 [Asserts]
 jsonpath "$" isCollection
 jsonpath "$[*].id" contains {{card_id}}
+
+# Delete the card.
+DELETE {{base}}/cards/{{card_id}}
+HTTP 204
+
+GET {{base}}/cards/{{card_id}}
+HTTP 404
 
 # A card needs an existing note.
 POST {{base}}/cards

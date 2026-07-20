@@ -70,6 +70,35 @@ final readonly class CardsController
     }
 
     /** @param array<array-key, mixed> $args */
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        $userId = CurrentUser::userId($request);
+        $card = $this->lookup($userId, $args);
+        if ($card === null) {
+            return $this->notFoundOrForbidden($response, $userId, $args);
+        }
+
+        $input = CardInput::fromArray($this->body($request));
+        try {
+            $noteId = NoteId::fromString($input->noteId);
+        } catch (InvalidArgumentException) {
+            return Json::error($response, 'note not found', 404);
+        }
+        if ($this->notes->find($userId, $noteId) === null) {
+            return $this->notes->belongsToAnotherUser($userId, $noteId)
+                ? Json::error($response, 'forbidden', 403)
+                : Json::error($response, 'note not found', 404);
+        }
+
+        $card->noteId = $noteId;
+        $card->front = $input->front;
+        $card->back = $input->back;
+        $this->cards->save($userId, $card);
+
+        return Json::write($response, $this->serializer->serialize($card));
+    }
+
+    /** @param array<array-key, mixed> $args */
     public function delete(Request $request, Response $response, array $args): Response
     {
         $userId = CurrentUser::userId($request);
