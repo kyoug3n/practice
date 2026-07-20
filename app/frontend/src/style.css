@@ -153,12 +153,17 @@ button:disabled {
   opacity: 0.6;
 }
 
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
+a:focus-visible {
   outline: 3px solid var(--pico-primary-focus);
   outline-offset: 2px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--pico-form-element-active-border-color);
+  box-shadow: none;
 }
 
 button:focus,

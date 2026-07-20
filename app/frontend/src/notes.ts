@@ -1,48 +1,13 @@
 import { api, type Note } from "./api";
-import { parseTags, tagLabel } from "./format";
+import { createAnimatedDisclosure } from "./disclosure";
+import { parseTags } from "./format";
+import { pencilIcon, trashIcon } from "./icons";
+import { animateListHeight } from "./notes-animation";
+import { createNoteBody } from "./note-body";
+import { createNoteEdit, type NoteEditView } from "./note-edit";
+import { truncateNoteTags, truncateNoteTitle } from "./note-text";
+import { NOTES_PER_PAGE, setupNotesPagination } from "./notes-pagination";
 import type { UiActions } from "./ui";
-
-function trashIcon(): SVGSVGElement {
-  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  icon.setAttribute("viewBox", "0 0 24 24");
-  icon.setAttribute("aria-hidden", "true");
-  icon.setAttribute("focusable", "false");
-
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute(
-    "d",
-    "M5 7h14M9 7V5h6v2M8 10v7M12 10v7M16 10v7M7 7l1 13h8l1-13",
-  );
-  path.setAttribute("fill", "none");
-  path.setAttribute("stroke", "currentColor");
-  path.setAttribute("stroke-linecap", "round");
-  path.setAttribute("stroke-linejoin", "round");
-  path.setAttribute("stroke-width", "2");
-  icon.append(path);
-
-  return icon;
-}
-
-function pencilIcon(): SVGSVGElement {
-  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  icon.setAttribute("viewBox", "0 0 24 24");
-  icon.setAttribute("aria-hidden", "true");
-  icon.setAttribute("focusable", "false");
-
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute(
-    "d",
-    "m4 16.5-.5 4 4-.5L19 8.5 15.5 5 4 16.5Zm9.5-9.5 3.5 3.5",
-  );
-  path.setAttribute("fill", "none");
-  path.setAttribute("stroke", "currentColor");
-  path.setAttribute("stroke-linecap", "round");
-  path.setAttribute("stroke-linejoin", "round");
-  path.setAttribute("stroke-width", "2");
-  icon.append(path);
-
-  return icon;
-}
 
 export interface NotesElements {
   noteForm: HTMLFormElement;
@@ -51,6 +16,10 @@ export interface NotesElements {
   clearTagFilter: HTMLButtonElement;
   noteList: HTMLElement;
   notesEmpty: HTMLElement;
+  notesPagination: HTMLElement;
+  notesPrevious: HTMLButtonElement;
+  notesNext: HTMLButtonElement;
+  notesPage: HTMLElement;
   cardNoteSelect: HTMLSelectElement;
   onCreated: () => void;
 }
@@ -60,6 +29,7 @@ export function setupNotes(
   actions: UiActions,
 ): () => Promise<void> {
   let activeTag: string | undefined;
+  let notes: Note[] = [];
 
   function updateCardNoteOptions(notes: Note[]): void {
     const options = notes.map((note) => {
@@ -78,60 +48,6 @@ export function setupNotes(
     elements.cardNoteSelect.disabled = notes.length === 0;
   }
 
-  function noteEditForm(note: Note): HTMLFormElement {
-    const form = document.createElement("form");
-    form.className = "note-edit";
-    form.dataset.testid = "edit-note-form";
-
-    const title = document.createElement("input");
-    title.name = "title";
-    title.value = note.title;
-    title.required = true;
-    title.setAttribute("aria-label", "Заголовок заметки");
-
-    const tags = document.createElement("input");
-    tags.name = "tags";
-    tags.value = note.tags.join(", ");
-    tags.setAttribute("aria-label", "Теги через запятую");
-
-    const body = document.createElement("textarea");
-    body.name = "body";
-    body.value = note.body;
-    body.setAttribute("aria-label", "Текст заметки");
-
-    const actionsBox = document.createElement("div");
-    actionsBox.className = "note-edit-actions";
-    const save = document.createElement("button");
-    save.type = "submit";
-    save.textContent = "сохранить";
-    const cancel = document.createElement("button");
-    cancel.type = "button";
-    cancel.textContent = "отмена";
-    cancel.addEventListener("click", () => {
-      void refreshNotes().catch(actions.showError);
-    });
-    actionsBox.append(save, cancel);
-
-    form.append(title, tags, body, actionsBox);
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      save.disabled = true;
-      actions.clearStatus();
-      void api
-        .updateNote(note.id, {
-          title: title.value,
-          body: body.value,
-          tags: parseTags(tags.value),
-          links: note.links,
-        })
-        .then(refreshNotes)
-        .catch(actions.showError)
-        .finally(() => (save.disabled = false));
-    });
-
-    return form;
-  }
-
   function noteItem(note: Note): HTMLLIElement {
     const item = document.createElement("li");
     item.dataset.testid = "note";
@@ -139,20 +55,21 @@ export function setupNotes(
 
     const title = document.createElement("span");
     title.className = "note-title";
-    title.textContent = note.title;
+    title.textContent = truncateNoteTitle(note.title);
+    title.title = note.title;
 
     const tags = document.createElement("span");
     tags.className = "note-tags";
-    tags.textContent = tagLabel(note.tags);
+    tags.textContent = truncateNoteTags(note.tags);
+    tags.title = note.tags.join(", ");
+
+    const { body, toggle: bodyToggle } = createNoteBody(note);
 
     const edit = document.createElement("button");
     edit.type = "button";
     edit.append(pencilIcon());
     edit.dataset.testid = "edit-note";
     edit.setAttribute("aria-label", `Изменить заметку: ${note.title}`);
-    edit.addEventListener("click", () => {
-      item.replaceChildren(noteEditForm(note));
-    });
 
     const remove = document.createElement("button");
     remove.type = "button";
@@ -164,13 +81,89 @@ export function setupNotes(
       await refreshNotes();
     });
 
-    item.append(title, tags, edit, remove);
+    const actionsBox = document.createElement("div");
+    actionsBox.className = "note-actions";
+    actionsBox.append(bodyToggle, edit, remove);
+
+    const view = document.createElement("div");
+    view.className = "note-view";
+    view.append(title, tags, actionsBox, body);
+    item.append(view);
+
+    let editView: NoteEditView;
+    edit.addEventListener("click", () => {
+      view.classList.add("is-editing");
+      editView = createNoteEdit(note, actions, {
+        onCloseStart: (form) => {
+          const closeHeight = Math.min(
+            view.offsetHeight,
+            form.getBoundingClientRect().height,
+          );
+          form.style.setProperty(
+            "--note-edit-close-height",
+            `${closeHeight}px`,
+          );
+          form.classList.add("is-closing");
+        },
+        onClosed: () => {
+          editView.form.classList.remove("is-closing");
+          editView.form.remove();
+          return new Promise((resolve) => {
+            window.requestAnimationFrame(() => {
+              view.classList.remove("is-editing");
+              window.setTimeout(resolve, 180);
+            });
+          });
+        },
+        onSaved: refreshNotes,
+      });
+      item.append(editView.form);
+      editView.open();
+    });
     return item;
   }
 
-  async function refreshNotes(): Promise<void> {
-    const notes = await api.listNotes(activeTag);
-    elements.noteList.replaceChildren(...notes.map(noteItem));
+  function renderPage(
+    page: number,
+    animate = false,
+    forceAnimation = false,
+  ): void {
+    const start = page * NOTES_PER_PAGE;
+    const visibleNotes = notes.slice(start, start + NOTES_PER_PAGE);
+    const list = elements.noteList;
+    if (
+      !animate ||
+      (!forceAnimation && list.childElementCount === visibleNotes.length)
+    ) {
+      list.replaceChildren(...visibleNotes.map(noteItem));
+      return;
+    }
+
+    animateListHeight(list, () => {
+      list.replaceChildren(...visibleNotes.map(noteItem));
+    });
+  }
+
+  const pagination = setupNotesPagination(
+    {
+      container: elements.notesPagination,
+      previous: elements.notesPrevious,
+      next: elements.notesNext,
+      page: elements.notesPage,
+    },
+    (page) => {
+      renderPage(page, true);
+    },
+  );
+  const setFilterOpen = createAnimatedDisclosure(
+    elements.tagFilterForm,
+    "is-open",
+  );
+
+  async function refreshNotes(animate = false): Promise<void> {
+    notes = await api.listNotes(activeTag);
+    const page = pagination.update(notes.length);
+    renderPage(page, animate, animate);
     elements.noteList.hidden = notes.length === 0;
     elements.notesEmpty.hidden = notes.length > 0;
     updateCardNoteOptions(notes);
@@ -197,6 +190,7 @@ export function setupNotes(
       .createNote(input)
       .then(() => {
         elements.noteForm.reset();
+        pagination.reset();
         return refreshNotes();
       })
       .then(elements.onCreated)
@@ -209,13 +203,14 @@ export function setupNotes(
     const data = new FormData(elements.tagFilterForm);
     const tag = actions.field(data, "tag").trim();
     activeTag = tag === "" ? undefined : tag;
+    pagination.reset();
     actions.clearStatus();
     void refreshNotes().catch(actions.showError);
   });
 
   elements.toggleTagFilter.addEventListener("click", () => {
     const isOpen = !elements.tagFilterForm.hidden;
-    elements.tagFilterForm.hidden = isOpen;
+    setFilterOpen(!isOpen);
     elements.toggleTagFilter.setAttribute("aria-expanded", String(!isOpen));
   });
 
@@ -225,6 +220,7 @@ export function setupNotes(
       input.value = "";
     }
     activeTag = undefined;
+    pagination.reset();
     await refreshNotes();
   });
 

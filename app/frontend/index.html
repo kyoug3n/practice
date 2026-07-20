@@ -110,30 +110,11 @@
 
         <dialog id="create-panel" aria-labelledby="create-panel-title">
           <div class="create-panel-header">
-            <h2 id="create-panel-title">Новый элемент</h2>
+            <h2 id="create-panel-title">Новая карточка</h2>
             <button type="button" id="create-close" aria-label="Закрыть">
               ×
             </button>
           </div>
-          <form id="note-form" hidden>
-            <input
-              name="title"
-              placeholder="Заголовок"
-              aria-label="Заголовок заметки"
-              required
-            />
-            <input
-              name="tags"
-              placeholder="теги через запятую"
-              aria-label="Теги через запятую"
-            />
-            <textarea
-              name="body"
-              placeholder="Текст заметки"
-              aria-label="Текст заметки"
-            ></textarea>
-            <button type="submit">Добавить заметку</button>
-          </form>
           <form id="card-form" hidden>
             <select name="note_id" aria-label="Заметка для карточки" required>
               <option value="">Выберите заметку</option>
@@ -186,6 +167,8 @@
                 type="button"
                 class="section-create"
                 id="create-note"
+                aria-controls="note-form"
+                aria-expanded="false"
                 aria-label="Новая заметка"
               >
                 <span aria-hidden="true">+</span>
@@ -201,10 +184,81 @@
             <button type="submit">Применить фильтр</button>
             <button type="button" id="clear-tag-filter">Сбросить</button>
           </form>
+          <form id="note-form" hidden>
+            <input
+              name="title"
+              placeholder="Заголовок"
+              aria-label="Заголовок заметки"
+              required
+            />
+            <input
+              name="tags"
+              placeholder="Теги (через запятую)"
+              aria-label="Теги через запятую"
+            />
+            <textarea
+              name="body"
+              placeholder="Текст заметки"
+              aria-label="Текст заметки"
+            ></textarea>
+            <button type="submit">Добавить заметку</button>
+          </form>
           <ul id="note-list"></ul>
           <p id="notes-empty" data-testid="notes-empty" hidden>
             Заметок нет. Нажмите +, чтобы создать.
           </p>
+          <nav
+            id="notes-pagination"
+            class="notes-pagination"
+            aria-label="Страницы заметок"
+            hidden
+          >
+            <button
+              type="button"
+              id="notes-previous"
+              aria-label="Предыдущая страница заметок"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="m14 6-6 6 6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                />
+              </svg>
+            </button>
+            <span id="notes-page" aria-live="polite"></span>
+            <button
+              type="button"
+              id="notes-next"
+              aria-label="Следующая страница заметок"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="m10 6 6 6-6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                />
+              </svg>
+            </button>
+          </nav>
         </section>
 
         <section aria-label="Повторение">

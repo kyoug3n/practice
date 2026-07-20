@@ -1,6 +1,7 @@
 import "./style.css";
 import "./profile.css";
 import "./workspace.css";
+import "./notes.css";
 import "./create.css";
 import { setupAuth } from "./auth";
 import { setupCreateActions } from "./create";
@@ -81,7 +82,6 @@ if (publicUsername !== null) {
 
   const closeCreateDialog = setupCreateActions({
     panel: needDialog("#create-panel"),
-    panelTitle: need("#create-panel-title"),
     closeButton: needButton("#create-close"),
     noteButton: needButton("#create-note"),
     cardButton: needButton("#create-card"),
@@ -97,6 +97,10 @@ if (publicUsername !== null) {
       clearTagFilter: needButton("#clear-tag-filter"),
       noteList: need("#note-list"),
       notesEmpty: need("#notes-empty"),
+      notesPagination: need("#notes-pagination"),
+      notesPrevious: needButton("#notes-previous"),
+      notesNext: needButton("#notes-next"),
+      notesPage: need("#notes-page"),
       cardNoteSelect: needSelect("#card-form select[name='note_id']"),
       onCreated: closeCreateDialog,
     },

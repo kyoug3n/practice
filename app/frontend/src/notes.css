@@ -1,0 +1,252 @@
+#note-list {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  transition:
+    height 0.22s ease,
+    opacity 0.16s ease;
+}
+
+#note-list.is-paging {
+  opacity: 0.65;
+}
+
+#notes-empty {
+  margin: 0;
+  color: var(--pico-muted-color);
+  text-align: center;
+}
+
+#tag-filter-form {
+  align-content: start;
+  grid-template-columns: minmax(0, 67fr) minmax(0, 33fr);
+  max-height: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.22s ease,
+    margin-bottom 0.22s ease,
+    opacity 0.18s ease;
+}
+
+#tag-filter-form input {
+  grid-column: 1 / -1;
+}
+
+#tag-filter-form button {
+  border: 0;
+  white-space: nowrap;
+}
+
+#tag-filter-form #clear-tag-filter {
+  background: var(--app-danger-background);
+  color: var(--app-danger-color);
+  font-weight: 700;
+  transition: filter 0.15s ease;
+}
+
+#tag-filter-form #clear-tag-filter:hover {
+  background: var(--app-danger-background);
+  color: var(--app-danger-color);
+  filter: brightness(0.9);
+}
+
+#tag-filter-form #clear-tag-filter:active {
+  filter: brightness(0.86);
+}
+
+#tag-filter-form.is-open {
+  max-height: var(--disclosure-height);
+  margin-bottom: 1rem;
+  opacity: 1;
+}
+
+#note-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 0.75rem;
+  background: var(--pico-background-color);
+}
+
+.note-edit {
+  gap: 0.35rem;
+  grid-column: 1;
+  grid-row: 1;
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.18s ease;
+}
+
+.note-edit.is-open {
+  max-height: var(--disclosure-height);
+  opacity: 1;
+}
+
+.note-edit.is-closing {
+  max-height: var(--note-edit-close-height);
+}
+
+.note-edit.is-resizing {
+  transition: none;
+}
+
+.note-edit textarea {
+  min-height: calc(1.6rem + 1.5rem + 2px);
+  max-height: calc(6.4rem + 1.5rem + 2px);
+  padding: 0.75rem 1rem;
+  resize: vertical;
+}
+
+.note-view {
+  display: grid;
+  grid-column: 1;
+  grid-row: 1;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 0.5rem;
+  min-width: 0;
+  transition: opacity 0.18s ease;
+}
+
+.note-view.is-editing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.note-title {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.note-tags {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--pico-muted-color);
+  font-size: 0.85rem;
+}
+
+.note-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+#note-list li .note-body-toggle {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2.4rem;
+  height: 2.4rem;
+  min-height: 2.4rem;
+  margin: 0 auto 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--app-highlight-background);
+  color: var(--app-highlight-color);
+}
+
+.note-body-toggle svg {
+  position: relative;
+  left: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  transition: transform 0.15s ease;
+}
+
+.note-body-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+#note-list li .note-body-toggle:hover {
+  border: 0;
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
+}
+
+.note-body {
+  max-height: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  overflow: hidden;
+  white-space: pre-wrap;
+  color: var(--pico-muted-color);
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.22s ease,
+    margin-top 0.22s ease,
+    opacity 0.18s ease;
+}
+
+.note-body.is-expanded {
+  max-height: var(--disclosure-height);
+  margin-top: 0.5rem;
+  visibility: visible;
+  opacity: 1;
+}
+
+.notes-pagination {
+  display: grid;
+  grid-template-columns: 2rem 1fr 2rem;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.notes-pagination button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  min-height: 2rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--app-highlight-muted-color);
+  transition: color 0.15s ease;
+}
+
+.notes-pagination button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.notes-pagination button:hover {
+  border: 0;
+  background: transparent;
+  color: var(--app-highlight-color);
+}
+
+.notes-pagination button:disabled {
+  background: transparent;
+  color: var(--app-highlight-background);
+}
+
+#notes-page {
+  color: var(--pico-muted-color);
+  font-size: 0.9rem;
+  text-align: center;
+}

@@ -49,40 +49,6 @@
   margin-bottom: 0.5rem;
 }
 
-#note-list {
-  display: grid;
-  gap: 0.75rem;
-  padding: 0;
-  list-style: none;
-}
-
-#notes-empty {
-  margin: 0;
-  color: var(--pico-muted-color);
-  text-align: center;
-}
-
-#note-list li {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--pico-muted-border-color);
-  border-radius: 0.75rem;
-  background: var(--pico-background-color);
-}
-
-.note-title {
-  margin-right: auto;
-  font-weight: 700;
-}
-
-.note-tags {
-  color: var(--pico-muted-color);
-  font-size: 0.85rem;
-}
-
 #note-list li button {
   margin: 0;
   min-height: 2.4rem;
@@ -147,8 +113,27 @@
 }
 
 .note-edit-actions {
-  display: flex;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 60fr) minmax(0, 40fr);
+  gap: 0.35rem;
+}
+
+.note-edit-actions button {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  font-weight: 700;
+}
+
+.note-edit-actions button[type="button"] {
+  background: var(--app-highlight-background);
+  color: var(--app-highlight-color);
+}
+
+.note-edit-actions button[type="button"]:hover {
+  border: 0;
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
 }
 
 .card {

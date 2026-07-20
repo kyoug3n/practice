@@ -1,6 +1,7 @@
+import { createAnimatedDisclosure } from "./disclosure";
+
 export interface CreateElements {
   panel: HTMLDialogElement;
-  panelTitle: HTMLElement;
   closeButton: HTMLButtonElement;
   noteButton: HTMLButtonElement;
   cardButton: HTMLButtonElement;
@@ -8,25 +9,8 @@ export interface CreateElements {
   cardForm: HTMLFormElement;
 }
 
-interface CreateTarget {
-  button: HTMLButtonElement;
-  form: HTMLFormElement;
-  title: string;
-}
-
 export function setupCreateActions(elements: CreateElements): () => void {
-  const targets: CreateTarget[] = [
-    {
-      button: elements.noteButton,
-      form: elements.noteForm,
-      title: "Новая заметка",
-    },
-    {
-      button: elements.cardButton,
-      form: elements.cardForm,
-      title: "Новая карточка",
-    },
-  ];
+  const setNoteOpen = createAnimatedDisclosure(elements.noteForm, "is-open");
   let closeTimer: number | undefined;
 
   function finishClose(): void {
@@ -38,6 +22,11 @@ export function setupCreateActions(elements: CreateElements): () => void {
     if (elements.panel.open) {
       elements.panel.close();
     }
+  }
+
+  function closeNoteForm(): void {
+    setNoteOpen(false);
+    elements.noteButton.setAttribute("aria-expanded", "false");
   }
 
   function close(): void {
@@ -61,11 +50,9 @@ export function setupCreateActions(elements: CreateElements): () => void {
     closeTimer = window.setTimeout(finishClose, 220);
   }
 
-  function open(target: CreateTarget): void {
-    elements.panelTitle.textContent = target.title;
-    for (const item of targets) {
-      item.form.hidden = item !== target;
-    }
+  function openCardForm(): void {
+    closeNoteForm();
+    elements.cardForm.hidden = false;
     if (!elements.panel.open) {
       elements.panel.showModal();
       window.requestAnimationFrame(() => {
@@ -75,17 +62,18 @@ export function setupCreateActions(elements: CreateElements): () => void {
       });
     }
 
-    const field = target.form.querySelector<HTMLElement>(
+    const field = elements.cardForm.querySelector<HTMLElement>(
       "input:not(:disabled), select:not(:disabled), textarea:not(:disabled)",
     );
     field?.focus();
   }
 
-  for (const target of targets) {
-    target.button.addEventListener("click", () => {
-      open(target);
-    });
-  }
+  elements.noteButton.addEventListener("click", () => {
+    const isOpen = elements.noteForm.classList.contains("is-open");
+    setNoteOpen(!isOpen);
+    elements.noteButton.setAttribute("aria-expanded", String(!isOpen));
+  });
+  elements.cardButton.addEventListener("click", openCardForm);
   elements.closeButton.addEventListener("click", close);
   elements.panel.addEventListener("cancel", (event) => {
     event.preventDefault();
@@ -93,9 +81,7 @@ export function setupCreateActions(elements: CreateElements): () => void {
   });
   elements.panel.addEventListener("close", () => {
     elements.panel.classList.remove("is-open", "is-closing");
-    for (const target of targets) {
-      target.form.hidden = true;
-    }
+    elements.cardForm.hidden = true;
   });
   elements.panel.addEventListener("click", (event) => {
     if (event.target === elements.panel) {
@@ -103,5 +89,8 @@ export function setupCreateActions(elements: CreateElements): () => void {
     }
   });
 
-  return close;
+  return () => {
+    closeNoteForm();
+    close();
+  };
 }
