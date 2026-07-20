@@ -15,6 +15,11 @@
   top: -0.65rem;
 }
 
+#workspace > section[aria-label="Повторение"] .section-heading h2 {
+  position: relative;
+  top: -0.65rem;
+}
+
 .section-actions {
   display: flex;
   align-items: center;
