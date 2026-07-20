@@ -126,6 +126,17 @@ export const api = {
     }),
   createCard: (input: { note_id: string; front: string; back: string }) =>
     http<Card>("/cards", { method: "POST", body: JSON.stringify(input) }),
+  updateCard: (
+    id: string,
+    input: { note_id: string; front: string; back: string },
+  ) =>
+    http<Card>(`/cards/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(input),
+    }),
+  deleteCard: async (id: string): Promise<void> => {
+    await http(`/cards/${id}`, { method: "DELETE" });
+  },
   deleteNote: async (id: string): Promise<void> => {
     await http(`/notes/${id}`, { method: "DELETE" });
   },
