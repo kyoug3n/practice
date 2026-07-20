@@ -8,7 +8,5 @@ test("восстанавливает пользователя после пер�
   await page.reload();
 
   await expect(page.locator("#workspace")).toBeVisible();
-  await expect(page.locator("#current-user")).toContainText(
-    credentials.username,
-  );
+  await expect(page.locator("#current-user")).toHaveText(credentials.username);
 });

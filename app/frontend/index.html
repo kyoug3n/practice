@@ -7,7 +7,13 @@
   </head>
   <body>
     <main id="app">
-      <h1>Recall</h1>
+      <header id="app-header">
+        <h1>Recall</h1>
+        <div id="app-userbar" hidden>
+          <a id="current-user" aria-live="polite"></a>
+          <button type="button" id="logout">Выйти</button>
+        </div>
+      </header>
 
       <p id="status" role="status" aria-live="polite"></p>
 
@@ -96,11 +102,6 @@
       </section>
 
       <div id="workspace" hidden>
-        <div class="workspace-header">
-          <p><a id="current-user" aria-live="polite"></a></p>
-          <button type="button" id="logout">Выйти</button>
-        </div>
-
         <section id="stats" aria-label="Статистика">
           <span data-stat="due_today">сегодня: …</span>
           <span data-stat="due_week">за неделю: …</span>

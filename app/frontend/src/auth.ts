@@ -5,6 +5,7 @@ export interface AuthElements {
   registration: HTMLElement;
   login: HTMLElement;
   workspace: HTMLElement;
+  userBar: HTMLElement;
   currentUserBar: HTMLElement;
   registerForm: HTMLFormElement;
   loginForm: HTMLFormElement;
@@ -22,7 +23,7 @@ export function setupAuth(
 
   function renderCurrentUser(): void {
     if (currentUser) {
-      elements.currentUserBar.textContent = `Вы вошли как ${currentUser.username}`;
+      elements.currentUserBar.textContent = currentUser.username;
       elements.currentUserBar.setAttribute(
         "href",
         `/users/${encodeURIComponent(currentUser.username)}`,
@@ -39,6 +40,7 @@ export function setupAuth(
     elements.registration.hidden = true;
     elements.login.hidden = true;
     elements.workspace.hidden = false;
+    elements.userBar.hidden = false;
     renderCurrentUser();
     void refreshAll().then(actions.clearStatus, actions.showError);
   }
@@ -48,6 +50,7 @@ export function setupAuth(
     elements.registration.hidden = false;
     elements.login.hidden = true;
     elements.workspace.hidden = true;
+    elements.userBar.hidden = true;
     renderCurrentUser();
     actions.clearStatus();
   }
@@ -57,6 +60,7 @@ export function setupAuth(
     elements.registration.hidden = true;
     elements.login.hidden = false;
     elements.workspace.hidden = true;
+    elements.userBar.hidden = true;
     renderCurrentUser();
     actions.clearStatus();
   }
@@ -65,6 +69,7 @@ export function setupAuth(
     elements.registration.hidden = true;
     elements.login.hidden = true;
     elements.workspace.hidden = true;
+    elements.userBar.hidden = true;
 
     try {
       showWorkspace(await api.me());

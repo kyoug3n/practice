@@ -38,6 +38,55 @@
   padding: 3rem 1.25rem 4rem;
 }
 
+#app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+}
+
+#app-header h1 {
+  margin: 0;
+}
+
+#app-userbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+#current-user {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--pico-color);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#current-user:hover {
+  text-decoration: underline;
+}
+
+#app-userbar #logout {
+  margin: 0;
+  border: 0;
+  background: var(--app-highlight-background);
+  box-shadow: none;
+  color: var(--app-highlight-color);
+  font-weight: 700;
+}
+
+#app-userbar #logout:hover {
+  border: 0;
+  background: var(--app-danger-background);
+  color: var(--app-danger-color);
+}
+
 h1 {
   margin-bottom: 0.5rem;
   color: var(--pico-color);
@@ -128,6 +177,11 @@ a:hover {
   color: var(--pico-muted-color);
 }
 
+#status:empty {
+  min-height: 0;
+  margin-bottom: 0;
+}
+
 #status[data-state="error"] {
   color: #8f3028;
 }
@@ -184,6 +238,15 @@ a:hover {
 }
 
 @media (max-width: 576px) {
+  #app-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  #app-userbar {
+    width: 100%;
+  }
+
   #registration,
   #login {
     margin-top: 1rem;

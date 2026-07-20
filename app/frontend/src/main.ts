@@ -128,6 +128,7 @@ if (publicUsername !== null) {
       registration: need("#registration"),
       login: need("#login"),
       workspace: need("#workspace"),
+      userBar: need("#app-userbar"),
       currentUserBar: need("#current-user"),
       registerForm: needForm("#register-form"),
       loginForm: needForm("#login-form"),
