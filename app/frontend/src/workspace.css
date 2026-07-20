@@ -193,6 +193,23 @@
   color: var(--pico-muted-color);
 }
 
+@media (min-width: 900px) and (orientation: landscape) {
+  #workspace {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  #workspace > .workspace-header,
+  #workspace > #stats {
+    grid-column: 1 / -1;
+  }
+
+  #workspace > section[aria-label="Заметки"],
+  #workspace > section[aria-label="Повторение"] {
+    min-width: 0;
+  }
+}
+
 @media (max-width: 576px) {
   .workspace-header {
     align-items: flex-start;
