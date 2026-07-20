@@ -1,0 +1,169 @@
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 0.75rem;
+  background: var(--pico-background-color);
+}
+
+.card:last-child {
+  margin-bottom: 0;
+}
+
+.card-view,
+.card-edit {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.card-view {
+  min-width: 0;
+  transition: opacity 0.18s ease;
+}
+
+.card-view.is-editing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-review {
+  max-height: var(--card-review-height, 100rem);
+  overflow: hidden;
+  opacity: 1;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.18s ease;
+}
+
+.card.is-card-edit-mode .card-review {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-management {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.18s ease,
+    margin-top 0.22s ease;
+}
+
+.card.is-card-edit-mode .card-management {
+  max-height: 3rem;
+  margin-top: 0.5rem;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.card-management button {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  min-height: 2.4rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+}
+
+.card-management button svg,
+.card-edit-toggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.card-management button[data-testid="edit-card"] {
+  background: var(--app-highlight-background);
+  color: var(--app-highlight-color);
+}
+
+.card-management button[data-testid="edit-card"]:hover {
+  border: 0;
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
+}
+
+.card-management button[data-testid="delete-card"] {
+  background: var(--app-danger-background);
+  color: var(--app-danger-color);
+  transition: filter 0.15s ease;
+}
+
+.card-management button[data-testid="delete-card"]:hover {
+  filter: brightness(0.9);
+}
+
+.card-management button[data-testid="delete-card"]:active {
+  filter: brightness(0.86);
+}
+
+.card-edit {
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 0.22s ease,
+    opacity 0.18s ease;
+}
+
+.card-edit.is-open {
+  max-height: var(--disclosure-height);
+  opacity: 1;
+}
+
+.card-edit textarea {
+  min-height: calc(1.6rem + 1.5rem + 2px);
+  max-height: calc(6.4rem + 1.5rem + 2px);
+  padding: 0.75rem 1rem;
+  resize: vertical;
+}
+
+.card .front {
+  font-weight: 700;
+}
+
+.card .back {
+  margin-bottom: 0;
+  color: var(--pico-muted-color);
+}
+
+.card .reveal-answer,
+.card .grade-buttons button {
+  border: 0;
+  color: var(--pico-color);
+}
+
+.card .reveal-answer:hover,
+.card .grade-buttons button:hover {
+  border: 0;
+  background: var(--pico-primary-hover-background);
+  color: var(--pico-primary-inverse);
+}
+
+.card .reveal-answer {
+  margin-top: 0.5rem;
+}
+
+.card .grade-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 576px) {
+  .card .grade-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

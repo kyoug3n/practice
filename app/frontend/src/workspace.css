@@ -136,51 +136,6 @@
   color: var(--app-highlight-color);
 }
 
-.card {
-  margin-bottom: 1rem;
-  padding: 1.25rem;
-  border: 1px solid var(--pico-muted-border-color);
-  border-radius: 0.75rem;
-  background: var(--pico-background-color);
-}
-
-.card:last-child {
-  margin-bottom: 0;
-}
-
-.card .front {
-  font-weight: 700;
-}
-
-.card .back {
-  margin-bottom: 0;
-  color: var(--pico-muted-color);
-}
-
-.card .reveal-answer,
-.card .grade-buttons button {
-  border: 0;
-  color: var(--pico-color);
-}
-
-.card .reveal-answer:hover,
-.card .grade-buttons button:hover {
-  border: 0;
-  background: var(--pico-primary-hover-background);
-  color: var(--pico-primary-inverse);
-}
-
-.card .reveal-answer {
-  margin-top: 0.5rem;
-}
-
-.card .grade-buttons {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
 [data-testid="queue-empty"] {
   margin: 0;
   color: var(--pico-muted-color);
@@ -209,9 +164,5 @@
 
   #workspace > section:not(#stats) {
     padding: 1.25rem;
-  }
-
-  .card .grade-buttons {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

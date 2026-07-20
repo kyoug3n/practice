@@ -266,14 +266,41 @@
             <h2>
               Карточки (<span id="queue-count" aria-live="polite">0</span>)
             </h2>
-            <button
-              type="button"
-              class="section-create"
-              id="create-card"
-              aria-label="Новая карточка"
-            >
-              <span aria-hidden="true">+</span>
-            </button>
+            <div class="section-actions">
+              <button
+                type="button"
+                class="section-create card-edit-toggle"
+                id="toggle-card-edit"
+                aria-expanded="false"
+                aria-pressed="false"
+                aria-label="Изменить карточки"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d="m4.75 16-.5 4 4-.5L19.75 8 16.25 4.5 4.75 16Zm9.5-9.5 3.5 3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                  />
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="section-create"
+                id="create-card"
+                aria-label="Новая карточка"
+              >
+                <span aria-hidden="true">+</span>
+              </button>
+            </div>
           </div>
           <div id="queue"></div>
         </section>

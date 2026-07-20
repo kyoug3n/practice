@@ -1,4 +1,6 @@
 import { api, type Card, type Grade } from "./api";
+import { createCardEdit, type CardEditView } from "./card-edit";
+import { pencilIcon, trashIcon } from "./icons";
 import type { UiActions } from "./ui";
 
 const GRADES: Grade[] = ["again", "hard", "good", "easy"];
@@ -9,6 +11,7 @@ export interface ReviewsElements {
   streak: HTMLElement;
   queueCount: HTMLElement;
   queue: HTMLElement;
+  toggleCardEdit: HTMLButtonElement;
   cardForm: HTMLFormElement;
   onCreated: () => void;
 }
@@ -22,21 +25,36 @@ export function setupReviews(
   setupCardForm(refreshAll: () => Promise<void>): void;
 } {
   let refreshAll = (): Promise<void> => Promise.resolve();
+  let cardEditMode = false;
 
   function cardItem(card: Card): HTMLDivElement {
     const wrap = document.createElement("div");
     wrap.className = "card";
+    wrap.classList.toggle("is-card-edit-mode", cardEditMode);
     wrap.dataset.testid = "queue-card";
     wrap.dataset.id = card.id;
+
+    const view = document.createElement("div");
+    view.className = "card-view";
 
     const front = document.createElement("p");
     front.className = "front";
     front.textContent = card.front;
 
+    const review = document.createElement("div");
+    review.className = "card-review";
+    const syncReviewHeight = (): void => {
+      review.style.setProperty(
+        "--card-review-height",
+        `${review.scrollHeight}px`,
+      );
+    };
+
     const back = document.createElement("p");
     back.className = "back";
     back.textContent = card.back;
     back.hidden = true;
+    back.setAttribute("aria-hidden", "true");
 
     const reveal = document.createElement("button");
     reveal.type = "button";
@@ -45,7 +63,9 @@ export function setupReviews(
     reveal.dataset.testid = "reveal-answer";
     reveal.addEventListener("click", () => {
       back.hidden = false;
+      back.setAttribute("aria-hidden", "false");
       reveal.hidden = true;
+      window.requestAnimationFrame(syncReviewHeight);
     });
 
     const buttons = document.createElement("div");
@@ -62,9 +82,71 @@ export function setupReviews(
       });
       buttons.append(button);
     }
+    review.append(reveal, back, buttons);
 
-    wrap.append(front, reveal, back, buttons);
+    const management = document.createElement("div");
+    management.className = "card-management";
+    management.dataset.testid = "card-management";
+
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.append(pencilIcon());
+    edit.dataset.testid = "edit-card";
+    edit.setAttribute("aria-label", `Изменить карточку: ${card.front}`);
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.append(trashIcon());
+    remove.dataset.testid = "delete-card";
+    remove.setAttribute("aria-label", `Удалить карточку: ${card.front}`);
+    actions.onClick(remove, async () => {
+      await api.deleteCard(card.id);
+      await refreshAll();
+    });
+    management.append(edit, remove);
+
+    view.append(front, review, management);
+    wrap.append(view);
+
+    let editView: CardEditView;
+    edit.addEventListener("click", () => {
+      view.classList.add("is-editing");
+      editView = createCardEdit(card, actions, {
+        onClosed: () => {
+          editView.form.remove();
+          view.classList.remove("is-editing");
+        },
+        onSaved: refreshAll,
+      });
+      wrap.append(editView.form);
+      editView.open();
+    });
+
+    window.requestAnimationFrame(() => {
+      syncReviewHeight();
+    });
     return wrap;
+  }
+
+  function setCardEditMode(enabled: boolean): void {
+    cardEditMode = enabled;
+    elements.toggleCardEdit.setAttribute("aria-expanded", String(enabled));
+    elements.toggleCardEdit.setAttribute("aria-pressed", String(enabled));
+    elements.queue.querySelectorAll<HTMLElement>(".card").forEach((card) => {
+      card.classList.toggle("is-card-edit-mode", enabled);
+      if (!enabled) {
+        return;
+      }
+      const back = card.querySelector<HTMLElement>(".back");
+      const reveal = card.querySelector<HTMLButtonElement>(".reveal-answer");
+      back?.setAttribute("aria-hidden", "true");
+      if (back) {
+        back.hidden = true;
+      }
+      if (reveal) {
+        reveal.hidden = false;
+      }
+    });
   }
 
   async function refreshStats(): Promise<void> {
@@ -117,6 +199,10 @@ export function setupReviews(
         .finally(() => (submit.disabled = false));
     });
   }
+
+  elements.toggleCardEdit.addEventListener("click", () => {
+    setCardEditMode(!cardEditMode);
+  });
 
   return { refreshStats, refreshQueue, setupCardForm };
 }

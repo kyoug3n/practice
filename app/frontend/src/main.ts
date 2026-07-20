@@ -1,6 +1,7 @@
 import "./style.css";
 import "./profile.css";
 import "./workspace.css";
+import "./cards.css";
 import "./notes.css";
 import "./create.css";
 import { setupAuth } from "./auth";
@@ -114,6 +115,7 @@ if (publicUsername !== null) {
       streak: need("[data-stat='streak']"),
       queueCount: need("#queue-count"),
       queue: need("#queue"),
+      toggleCardEdit: needButton("#toggle-card-edit"),
       cardForm,
       onCreated: closeCreateDialog,
     },
