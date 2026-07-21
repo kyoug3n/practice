@@ -31,6 +31,37 @@ test("a created note appears in the list", async ({ page }) => {
   await expect(emptyState).toBeHidden();
 });
 
+test("keeps note editing and creation menus mutually exclusive", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await register(page);
+
+  for (const title of ["Edit menu one", "Edit menu two"]) {
+    await openCreateForm(page, "note");
+    await page.fill("#note-form input[name='title']", title);
+    await page.click("#note-form button[type='submit']");
+  }
+
+  const notes = page.locator("[data-testid='note']");
+  const first = notes.nth(0);
+  const second = notes.nth(1);
+  await first.locator("[data-testid='edit-note']").click();
+  await expect(first.locator("[data-testid='edit-note-form']")).toBeVisible();
+
+  await second.locator("[data-testid='edit-note']").click();
+  await expect(second.locator("[data-testid='edit-note-form']")).toBeVisible();
+  await expect(first.locator("[data-testid='edit-note-form']")).toBeHidden();
+
+  await openCreateForm(page, "note");
+  await expect(page.locator("#note-form")).toBeVisible();
+  await expect(second.locator("[data-testid='edit-note-form']")).toBeHidden();
+
+  await first.locator("[data-testid='edit-note']").click();
+  await expect(first.locator("[data-testid='edit-note-form']")).toBeVisible();
+  await expect(page.locator("#note-form")).toBeHidden();
+});
+
 test("notes truncate long text and use three-note pages", async ({ page }) => {
   await page.goto("/");
   await register(page);

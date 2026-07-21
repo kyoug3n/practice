@@ -23,6 +23,7 @@ function labeledField(
 export interface NoteEditView {
   form: HTMLFormElement;
   open: () => void;
+  close: () => Promise<void>;
 }
 
 interface NoteEditCallbacks {
@@ -98,12 +99,23 @@ export function createNoteEdit(
   const cancel = document.createElement("button");
   cancel.type = "button";
   cancel.textContent = "Отмена";
-  function close(): void {
+  let closePromise: Promise<void> | undefined;
+  function close(): Promise<void> {
+    if (closePromise !== undefined) {
+      return closePromise;
+    }
+
     callbacks.onCloseStart(form);
     setOpen(false);
-    void waitForEditClose().then(callbacks.onClosed).catch(actions.showError);
+    closePromise = waitForEditClose()
+      .then(callbacks.onClosed)
+      .catch(actions.showError);
+
+    return closePromise;
   }
-  cancel.addEventListener("click", close);
+  cancel.addEventListener("click", () => {
+    void close();
+  });
   actionsBox.append(save, cancel);
 
   form.append(
@@ -129,11 +141,8 @@ export function createNoteEdit(
           : { book_id: bookPicker.selectedId() }),
       })
       .then(() => {
-        callbacks.onCloseStart(form);
-        setOpen(false);
-        return waitForEditClose();
+        return close();
       })
-      .then(callbacks.onClosed)
       .then(callbacks.onSaved)
       .catch(actions.showError)
       .finally(() => (save.disabled = false));
@@ -144,5 +153,6 @@ export function createNoteEdit(
     open: () => {
       setOpen(true);
     },
+    close,
   };
 }

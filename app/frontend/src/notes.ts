@@ -26,6 +26,7 @@ export interface NotesElements {
   notesPage: HTMLElement;
   cardNoteSelect: HTMLSelectElement;
   onCreated: () => void;
+  closeCreateForms: () => void;
 }
 
 export function setupNotes(elements: NotesElements, actions: UiActions) {
@@ -33,6 +34,8 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
   let notes: Note[] = [];
   let linkableNotes: Note[] = [];
   let books: Book[] = [];
+  let activeEdit: NoteEditView | undefined;
+  let editRequest = 0;
   const noteBookPicker: BookPickerView = createBookPicker(
     elements.noteBookPicker,
     actions,
@@ -99,39 +102,55 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
     item.append(view);
     let editView: NoteEditView;
     edit.addEventListener("click", () => {
-      view.classList.add("is-editing");
-      editView = createNoteEdit(
-        note,
-        actions,
-        {
-          onCloseStart: (form) => {
-            const closeHeight = Math.min(
-              view.offsetHeight,
-              form.getBoundingClientRect().height,
-            );
-            form.style.setProperty(
-              "--note-edit-close-height",
-              `${closeHeight}px`,
-            );
-            form.classList.add("is-closing");
-          },
-          onClosed: () => {
-            editView.form.classList.remove("is-closing");
-            editView.form.remove();
-            return new Promise((resolve) => {
-              window.requestAnimationFrame(() => {
-                view.classList.remove("is-editing");
-                window.setTimeout(resolve, 180);
-              });
-            });
-          },
-          onSaved: refreshNotes,
-        },
-        linkableNotes,
-        books,
-      );
-      item.append(editView.form);
-      editView.open();
+      const request = ++editRequest;
+      const previousEdit = activeEdit;
+      activeEdit = undefined;
+      void (previousEdit?.close() ?? Promise.resolve())
+        .then(() => {
+          if (request !== editRequest) {
+            return;
+          }
+
+          elements.closeCreateForms();
+          view.classList.add("is-editing");
+          editView = createNoteEdit(
+            note,
+            actions,
+            {
+              onCloseStart: (form) => {
+                const closeHeight = Math.min(
+                  view.offsetHeight,
+                  form.getBoundingClientRect().height,
+                );
+                form.style.setProperty(
+                  "--note-edit-close-height",
+                  `${closeHeight}px`,
+                );
+                form.classList.add("is-closing");
+              },
+              onClosed: () => {
+                if (activeEdit === editView) {
+                  activeEdit = undefined;
+                }
+                editView.form.classList.remove("is-closing");
+                editView.form.remove();
+                return new Promise((resolve) => {
+                  window.requestAnimationFrame(() => {
+                    view.classList.remove("is-editing");
+                    window.setTimeout(resolve, 180);
+                  });
+                });
+              },
+              onSaved: refreshNotes,
+            },
+            linkableNotes,
+            books,
+          );
+          activeEdit = editView;
+          item.append(editView.form);
+          editView.open();
+        })
+        .catch(actions.showError);
     });
     return item;
   }
@@ -246,5 +265,16 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
     pagination.reset();
     await refreshNotes();
   });
-  return { refresh: refreshNotes, open: openLinkedNote };
+  function closeEditMenus(): Promise<void> {
+    ++editRequest;
+    const editView = activeEdit;
+    activeEdit = undefined;
+    return editView?.close() ?? Promise.resolve();
+  }
+
+  return {
+    refresh: refreshNotes,
+    open: openLinkedNote,
+    closeEditMenus,
+  };
 }

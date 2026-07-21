@@ -75,11 +75,13 @@ if (publicUsername !== null) {
   const noteForm = needForm("#note-form");
   const cardForm = needForm("#card-form");
 
+  let closeEditMenus = (): Promise<void> => Promise.resolve();
   const closeCreateForms = setupCreateActions({
     noteButton: needButton("#create-note"),
     cardButton: needButton("#create-card"),
     noteForm,
     cardForm,
+    onOpen: () => closeEditMenus(),
   });
 
   const notes = setupNotes(
@@ -98,9 +100,11 @@ if (publicUsername !== null) {
       notesPage: need("#notes-page"),
       cardNoteSelect: needSelect("#card-form select[name='note_id']"),
       onCreated: closeCreateForms,
+      closeCreateForms,
     },
     actions,
   );
+  closeEditMenus = notes.closeEditMenus;
 
   const reviews = setupReviews(
     {

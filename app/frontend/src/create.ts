@@ -5,11 +5,13 @@ export interface CreateElements {
   cardButton: HTMLButtonElement;
   noteForm: HTMLFormElement;
   cardForm: HTMLFormElement;
+  onOpen?: () => Promise<void> | void;
 }
 
 export function setupCreateActions(elements: CreateElements): () => void {
   const setNoteOpen = createAnimatedDisclosure(elements.noteForm, "is-open");
   const setCardOpen = createAnimatedDisclosure(elements.cardForm, "is-open");
+  let openRequest = 0;
 
   function closeNoteForm(): void {
     setNoteOpen(false);
@@ -21,29 +23,53 @@ export function setupCreateActions(elements: CreateElements): () => void {
     elements.cardButton.setAttribute("aria-expanded", "false");
   }
 
-  function openCardForm(): void {
+  async function openCardForm(): Promise<void> {
+    const request = ++openRequest;
     const isOpen = elements.cardForm.classList.contains("is-open");
     closeNoteForm();
-    setCardOpen(!isOpen);
-    elements.cardButton.setAttribute("aria-expanded", String(!isOpen));
-
-    if (!isOpen) {
-      const field = elements.cardForm.querySelector<HTMLElement>(
-        "input:not(:disabled), select:not(:disabled), textarea:not(:disabled)",
-      );
-      field?.focus();
+    if (isOpen) {
+      setCardOpen(false);
+      elements.cardButton.setAttribute("aria-expanded", "false");
+      return;
     }
+
+    await elements.onOpen?.();
+    if (request !== openRequest) {
+      return;
+    }
+    setCardOpen(true);
+    elements.cardButton.setAttribute("aria-expanded", "true");
+
+    const field = elements.cardForm.querySelector<HTMLElement>(
+      "input:not(:disabled), select:not(:disabled), textarea:not(:disabled)",
+    );
+    field?.focus();
   }
 
   elements.noteButton.addEventListener("click", () => {
+    const request = ++openRequest;
     const isOpen = elements.noteForm.classList.contains("is-open");
     closeCardForm();
-    setNoteOpen(!isOpen);
-    elements.noteButton.setAttribute("aria-expanded", String(!isOpen));
+    if (isOpen) {
+      setNoteOpen(false);
+      elements.noteButton.setAttribute("aria-expanded", "false");
+      return;
+    }
+
+    void Promise.resolve(elements.onOpen?.()).then(() => {
+      if (request !== openRequest) {
+        return;
+      }
+      setNoteOpen(true);
+      elements.noteButton.setAttribute("aria-expanded", "true");
+    });
   });
-  elements.cardButton.addEventListener("click", openCardForm);
+  elements.cardButton.addEventListener("click", () => {
+    void openCardForm().catch(() => undefined);
+  });
 
   return () => {
+    ++openRequest;
     closeNoteForm();
     closeCardForm();
   };
