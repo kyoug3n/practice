@@ -7,6 +7,35 @@ export interface NoteBodyElements {
   toggle: HTMLButtonElement;
 }
 
+function appendRelatedNotes(
+  body: HTMLDivElement,
+  labelText: string,
+  notes: Note[],
+  onLinkedNote?: (id: string) => void,
+): void {
+  if (notes.length === 0) {
+    return;
+  }
+
+  const related = document.createElement("div");
+  related.className = "note-related";
+  const label = document.createElement("span");
+  label.className = "note-related-label";
+  label.textContent = labelText;
+  const list = document.createElement("div");
+  list.className = "note-related-list";
+  for (const linkedNote of notes) {
+    const title = document.createElement("button");
+    title.type = "button";
+    title.className = "note-related-item";
+    title.textContent = linkedNote.title;
+    title.addEventListener("click", () => onLinkedNote?.(linkedNote.id));
+    list.append(title);
+  }
+  related.append(label, list);
+  body.append(related);
+}
+
 export function createNoteBody(
   note: Note,
   linkedNotes: Note[] = [],
@@ -26,25 +55,16 @@ export function createNoteBody(
   const relatedNotes = note.links
     .map((id) => linkedNotes.find((linkedNote) => linkedNote.id === id))
     .filter((linkedNote): linkedNote is Note => linkedNote !== undefined);
-  if (relatedNotes.length > 0) {
-    const related = document.createElement("div");
-    related.className = "note-related";
-    const label = document.createElement("span");
-    label.className = "note-related-label";
-    label.textContent = "Связанные заметки:";
-    const list = document.createElement("div");
-    list.className = "note-related-list";
-    for (const linkedNote of relatedNotes) {
-      const title = document.createElement("button");
-      title.type = "button";
-      title.className = "note-related-item";
-      title.textContent = linkedNote.title;
-      title.addEventListener("click", () => onLinkedNote?.(linkedNote.id));
-      list.append(title);
-    }
-    related.append(label, list);
-    body.append(related);
-  }
+  appendRelatedNotes(body, "Связанные заметки:", relatedNotes, onLinkedNote);
+  appendRelatedNotes(
+    body,
+    "Ссылаются на эту заметку:",
+    linkedNotes.filter(
+      (sourceNote) =>
+        sourceNote.id !== note.id && sourceNote.links.includes(note.id),
+    ),
+    onLinkedNote,
+  );
 
   const toggle = document.createElement("button");
   toggle.type = "button";
