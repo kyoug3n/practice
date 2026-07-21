@@ -18,6 +18,7 @@ export async function register(
   page: Page,
   credentials = newCredentials(),
 ): Promise<Credentials> {
+  await page.click("#show-registration");
   await page.fill("#register-form input[name='username']", credentials.username);
   await page.fill(
     "#register-form input[name='password']",

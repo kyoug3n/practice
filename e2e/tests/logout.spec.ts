@@ -12,6 +12,6 @@ test("выход завершает сессию пользователя", asyn
   await expect(page.locator("#workspace")).toBeHidden();
 
   await page.reload();
-  await expect(page.locator("#registration")).toBeVisible();
+  await expect(page.locator("#login")).toBeVisible();
   await expect(page.locator("#workspace")).toBeHidden();
 });

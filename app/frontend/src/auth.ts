@@ -108,10 +108,10 @@ export function setupAuth(
       showWorkspace(await api.me());
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
-        showRegistration();
+        showLogin();
         return;
       }
-      showRegistration();
+      showLogin();
       actions.showError(error);
     }
   }

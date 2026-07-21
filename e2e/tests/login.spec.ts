@@ -7,7 +7,6 @@ test("зарегистрированный пользователь может �
 
   await page.context().clearCookies();
   await page.reload();
-  await page.click("#show-login");
   await login(page, credentials);
 });
 
@@ -17,7 +16,6 @@ test("показывает ошибку при неверном пароле", a
 
   await page.context().clearCookies();
   await page.reload();
-  await page.click("#show-login");
   await page.fill("#login-form input[name='username']", credentials.username);
   await page.fill("#login-form input[name='password']", "wrong-password");
   await page.click("#login-form button[type='submit']");
