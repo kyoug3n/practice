@@ -3,7 +3,7 @@
 POST {{base}}/auth/register
 Content-Type: application/json
 {
-  "username": "{{username}}-book",
+  "username": "{{username}}-k",
   "password": "correct-horse-battery-staple"
 }
 HTTP 201
