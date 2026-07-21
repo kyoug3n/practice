@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Recall\Domain\Grade;
 use Recall\Domain\PublicProfile;
 use Recall\Domain\Review;
 use Recall\Domain\ValueObject\Username;
@@ -49,11 +50,15 @@ final readonly class ProfileController
 
         $reviews = $this->reviews->all($user->id);
         [$practiceDays, $currentStreak, $longestStreak] = $this->reviewStats($reviews);
+        $reviewsCount = count(array_filter(
+            $reviews,
+            static fn(Review $review): bool => $review->grade !== Grade::Again,
+        ));
         $profile = new PublicProfile(
             username: $user->username,
             createdAt: $user->createdAt(),
             cardsCount: $this->cards->countForUser($user->id),
-            reviewsCount: count($reviews),
+            reviewsCount: $reviewsCount,
             practiceDays: $practiceDays,
             currentStreak: $currentStreak,
             longestStreak: $longestStreak,

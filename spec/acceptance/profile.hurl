@@ -36,6 +36,13 @@ Content-Type: application/json
 }
 HTTP 201
 
+POST {{base}}/reviews/{{card_id}}
+Content-Type: application/json
+{
+  "grade": "again"
+}
+HTTP 201
+
 POST {{base}}/auth/logout
 HTTP 204
 

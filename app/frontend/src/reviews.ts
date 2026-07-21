@@ -7,7 +7,7 @@ const GRADES: Grade[] = ["again", "hard", "good", "easy"];
 const GRADE_LABELS: Record<Grade, string> = {
   again: "Снова",
   hard: "Сложно",
-  good: "Хорошо",
+  good: "Средне",
   easy: "Легко",
 };
 
