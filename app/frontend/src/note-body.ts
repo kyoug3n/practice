@@ -10,6 +10,7 @@ export interface NoteBodyElements {
 export function createNoteBody(
   note: Note,
   linkedNotes: Note[] = [],
+  onLinkedNote?: (id: string) => void,
 ): NoteBodyElements {
   const body = document.createElement("div");
   body.className = "note-body";
@@ -34,9 +35,11 @@ export function createNoteBody(
     const list = document.createElement("div");
     list.className = "note-related-list";
     for (const linkedNote of relatedNotes) {
-      const title = document.createElement("span");
+      const title = document.createElement("button");
+      title.type = "button";
       title.className = "note-related-item";
       title.textContent = linkedNote.title;
+      title.addEventListener("click", () => onLinkedNote?.(linkedNote.id));
       list.append(title);
     }
     related.append(label, list);

@@ -231,11 +231,21 @@
 }
 
 .note-related-item {
+  min-height: 0;
+  margin: 0;
   padding: 0.2rem 0.5rem;
+  border: 0;
   border-radius: 999px;
   background: var(--app-highlight-background);
   color: var(--app-highlight-color);
+  cursor: pointer;
   font-size: 0.8rem;
+}
+
+.note-related-item:hover {
+  border: 0;
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
 }
 
 .notes-pagination {

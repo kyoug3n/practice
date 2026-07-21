@@ -19,3 +19,13 @@ export function animateListHeight(list: HTMLElement, render: () => void): void {
     });
   });
 }
+
+export function highlightNote(target: HTMLElement): void {
+  target.classList.remove("is-linked-target");
+  void target.offsetWidth;
+  target.classList.add("is-linked-target");
+  target.scrollIntoView({ behavior: "smooth", block: "center" });
+  window.setTimeout(() => {
+    target.classList.remove("is-linked-target");
+  }, 1100);
+}

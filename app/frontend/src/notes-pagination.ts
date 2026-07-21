@@ -10,7 +10,11 @@ export interface NotesPaginationElements {
 export function setupNotesPagination(
   elements: NotesPaginationElements,
   onPageChange: (page: number) => void,
-): { reset: () => void; update: (total: number) => number } {
+): {
+  reset: () => void;
+  update: (total: number) => number;
+  goTo: (page: number) => void;
+} {
   let currentPage = 0;
   let totalPages = 0;
 
@@ -23,21 +27,22 @@ export function setupNotesPagination(
     elements.next.disabled = totalPages === 0 || currentPage === lastPage;
   }
 
-  elements.previous.addEventListener("click", () => {
-    if (currentPage === 0) {
+  function goTo(page: number): void {
+    const lastPage = Math.max(totalPages - 1, 0);
+    const nextPage = Math.min(Math.max(page, 0), lastPage);
+    if (nextPage === currentPage) {
       return;
     }
-    currentPage -= 1;
+    currentPage = nextPage;
     sync();
     onPageChange(currentPage);
+  }
+
+  elements.previous.addEventListener("click", () => {
+    goTo(currentPage - 1);
   });
   elements.next.addEventListener("click", () => {
-    if (currentPage >= totalPages - 1) {
-      return;
-    }
-    currentPage += 1;
-    sync();
-    onPageChange(currentPage);
+    goTo(currentPage + 1);
   });
 
   return {
@@ -49,5 +54,6 @@ export function setupNotesPagination(
       sync();
       return currentPage;
     },
+    goTo,
   };
 }

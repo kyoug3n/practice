@@ -3,6 +3,7 @@ import "./profile.css";
 import "./workspace.css";
 import "./cards.css";
 import "./notes.css";
+import "./note-highlight.css";
 import "./create.css";
 import { setupAuth } from "./auth";
 import { setupCreateActions } from "./create";

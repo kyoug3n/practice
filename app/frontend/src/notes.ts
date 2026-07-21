@@ -2,7 +2,7 @@ import { api, type Note } from "./api";
 import { createAnimatedDisclosure } from "./disclosure";
 import { parseTags } from "./format";
 import { pencilIcon, trashIcon } from "./icons";
-import { animateListHeight } from "./notes-animation";
+import { animateListHeight, highlightNote } from "./notes-animation";
 import { createNoteBody } from "./note-body";
 import { createNoteEdit, type NoteEditView } from "./note-edit";
 import {
@@ -37,6 +37,21 @@ export function setupNotes(
   let activeTag: string | undefined;
   let notes: Note[] = [];
   let linkableNotes: Note[] = [];
+  function openLinkedNote(id: string): void {
+    const index = notes.findIndex((note) => note.id === id);
+    if (index < 0) {
+      return;
+    }
+    pagination.goTo(Math.floor(index / NOTES_PER_PAGE));
+    window.setTimeout(() => {
+      const target = Array.from(elements.noteList.children).find(
+        (element): element is HTMLElement =>
+          element instanceof HTMLElement && element.dataset.id === id,
+      );
+      if (!target) return;
+      highlightNote(target);
+    }, 240);
+  }
 
   function noteItem(note: Note): HTMLLIElement {
     const item = document.createElement("li");
@@ -53,7 +68,11 @@ export function setupNotes(
     tags.textContent = truncateNoteTags(note.tags);
     tags.title = note.tags.join(", ");
 
-    const { body, toggle: bodyToggle } = createNoteBody(note, linkableNotes);
+    const { body, toggle: bodyToggle } = createNoteBody(
+      note,
+      linkableNotes,
+      openLinkedNote,
+    );
 
     const edit = document.createElement("button");
     edit.type = "button";
