@@ -110,6 +110,7 @@ if (publicUsername !== null) {
       toggleCardEdit: needButton("#toggle-card-edit"),
       cardForm,
       onCreated: closeCreateForms,
+      onOpenNote: notes.open,
     },
     actions,
   );
@@ -117,7 +118,7 @@ if (publicUsername !== null) {
   const refreshAll = async (): Promise<void> => {
     await Promise.all([
       reviews.refreshStats(),
-      notes(),
+      notes.refresh(),
       reviews.refreshQueue(),
     ]);
   };

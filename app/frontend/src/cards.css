@@ -214,6 +214,7 @@
 }
 
 .card .reveal-answer {
+  display: block;
   min-height: 0;
   margin: 0.35rem 0 0;
   padding: 0;
@@ -222,6 +223,26 @@
   color: var(--pico-muted-color);
   font-size: 0.8rem;
   line-height: 1.2;
+}
+
+.card .open-source-note {
+  display: block;
+  min-height: 0;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--pico-muted-color);
+  font-size: 0.8rem;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.card .open-source-note:hover {
+  border: 0;
+  background: transparent;
+  color: var(--pico-primary-hover);
+  text-decoration: underline;
 }
 
 .card .reveal-answer:hover {

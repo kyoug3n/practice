@@ -20,6 +20,7 @@ export interface ReviewsElements {
   toggleCardEdit: HTMLButtonElement;
   cardForm: HTMLFormElement;
   onCreated: () => void;
+  onOpenNote: (id: string) => void;
 }
 
 export function setupReviews(
@@ -53,6 +54,15 @@ export function setupReviews(
     const reviewContent = document.createElement("div");
     reviewContent.className = "card-review-content";
 
+    const sourceNote = document.createElement("button");
+    sourceNote.type = "button";
+    sourceNote.className = "open-source-note";
+    sourceNote.textContent = "К исходной заметке";
+    sourceNote.dataset.testid = "open-source-note";
+    sourceNote.addEventListener("click", () => {
+      elements.onOpenNote(card.note_id);
+    });
+
     const back = document.createElement("p");
     back.className = "back";
     back.textContent = card.back;
@@ -65,13 +75,13 @@ export function setupReviews(
     const reveal = document.createElement("button");
     reveal.type = "button";
     reveal.className = "reveal-answer";
-    reveal.textContent = "(Показать ответ)";
+    reveal.textContent = "Показать ответ";
     reveal.dataset.testid = "reveal-answer";
     reveal.addEventListener("click", () => {
       const visible = !back.classList.contains("is-visible");
       back.classList.toggle("is-visible", visible);
       back.setAttribute("aria-hidden", String(!visible));
-      reveal.textContent = visible ? "(Скрыть ответ)" : "(Показать ответ)";
+      reveal.textContent = visible ? "Скрыть ответ" : "Показать ответ";
       if (visible) {
         window.requestAnimationFrame(syncAnswerHeight);
       }
@@ -97,7 +107,7 @@ export function setupReviews(
       });
       buttons.append(button);
     }
-    reviewContent.append(reveal, back, buttons);
+    reviewContent.append(sourceNote, reveal, back, buttons);
     review.append(reviewContent);
 
     const management = document.createElement("div");
@@ -163,7 +173,7 @@ export function setupReviews(
       back?.classList.remove("is-visible");
       back?.setAttribute("aria-hidden", "true");
       if (reveal) {
-        reveal.textContent = "(Показать ответ)";
+        reveal.textContent = "Показать ответ";
       }
     });
   }

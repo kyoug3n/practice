@@ -30,10 +30,7 @@ export interface NotesElements {
   onCreated: () => void;
 }
 
-export function setupNotes(
-  elements: NotesElements,
-  actions: UiActions,
-): () => Promise<void> {
+export function setupNotes(elements: NotesElements, actions: UiActions) {
   let activeTag: string | undefined;
   let notes: Note[] = [];
   let linkableNotes: Note[] = [];
@@ -246,5 +243,5 @@ export function setupNotes(
     await refreshNotes();
   });
 
-  return refreshNotes;
+  return { refresh: refreshNotes, open: openLinkedNote };
 }
