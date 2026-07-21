@@ -6,12 +6,14 @@ namespace Recall\Infrastructure\Persistence;
 
 use Cycle\ORM\Parser\Typecast;
 use Cycle\ORM\SchemaInterface;
+use Recall\Domain\Book;
 use Recall\Domain\Card;
 use Recall\Domain\Grade;
 use Recall\Domain\Note;
 use Recall\Domain\Review;
 use Recall\Domain\Session;
 use Recall\Domain\User;
+use Recall\Domain\ValueObject\BookId;
 use Recall\Domain\ValueObject\CardId;
 use Recall\Domain\ValueObject\CardText;
 use Recall\Domain\ValueObject\Day;
@@ -34,7 +36,7 @@ final class OrmSchema
     {
         $handler = [ValueObjectTypecast::class, Typecast::class];
 
-        return self::authenticationMap($handler) + [
+        return self::authenticationMap($handler) + self::bookMap($handler) + [
             Note::class => [
                 SchemaInterface::ROLE => 'note',
                 SchemaInterface::DATABASE => 'default',
@@ -48,6 +50,7 @@ final class OrmSchema
                     'tags' => 'tags',
                     'links' => 'links',
                     'updatedAt' => 'updated_at',
+                    'bookId' => 'book_id',
                     'userId' => 'user_id',
                 ],
                 SchemaInterface::TYPECAST => [
@@ -56,6 +59,7 @@ final class OrmSchema
                     'tags' => TagList::class,
                     'links' => NoteIdList::class,
                     'updatedAt' => 'datetime',
+                    'bookId' => BookId::class,
                     'userId' => UserId::class,
                 ],
                 SchemaInterface::SCHEMA => [],
@@ -161,6 +165,38 @@ final class OrmSchema
                     'id' => SessionId::class,
                     'userId' => UserId::class,
                     'expiresAt' => 'datetime',
+                ],
+                SchemaInterface::SCHEMA => [],
+                SchemaInterface::RELATIONS => [],
+            ],
+        ];
+    }
+
+    /**
+     * @param  list<class-string> $handler
+     * @return array<class-string, array<int, mixed>>
+     */
+    private static function bookMap(array $handler): array
+    {
+        return [
+            Book::class => [
+                SchemaInterface::ROLE => 'book',
+                SchemaInterface::DATABASE => 'default',
+                SchemaInterface::TABLE => 'books',
+                SchemaInterface::PRIMARY_KEY => 'id',
+                SchemaInterface::TYPECAST_HANDLER => $handler,
+                SchemaInterface::COLUMNS => [
+                    'id' => 'id',
+                    'title' => 'title',
+                    'author' => 'author',
+                    'openLibraryKey' => 'open_library_key',
+                    'coverId' => 'cover_id',
+                    'userId' => 'user_id',
+                ],
+                SchemaInterface::TYPECAST => [
+                    'id' => BookId::class,
+                    'title' => Title::class,
+                    'userId' => UserId::class,
                 ],
                 SchemaInterface::SCHEMA => [],
                 SchemaInterface::RELATIONS => [],

@@ -27,6 +27,16 @@ final class DatabaseMigrator
             )",
         );
         $db->execute(
+            "CREATE TABLE IF NOT EXISTS books (
+                id TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                author TEXT NOT NULL DEFAULT '',
+                open_library_key TEXT NULL,
+                cover_id INTEGER NULL,
+                user_id TEXT NULL CHECK (user_id IS NULL OR length(user_id) = 36)
+            )",
+        );
+        $db->execute(
             "CREATE TABLE IF NOT EXISTS notes (
                 id TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
@@ -34,6 +44,7 @@ final class DatabaseMigrator
                 tags TEXT NOT NULL DEFAULT '[]',
                 links TEXT NOT NULL DEFAULT '[]',
                 updated_at TEXT NOT NULL,
+                book_id TEXT NULL,
                 user_id TEXT NULL CHECK (user_id IS NULL OR length(user_id) = 36)
             )",
         );
@@ -62,12 +73,13 @@ final class DatabaseMigrator
         );
 
         self::addUserOwnershipColumns($db);
+        self::addNoteBookColumn($db);
     }
 
     /** Добавляет ownership-поля без пересборки уже выданной SQLite-базы. */
     private static function addUserOwnershipColumns(DatabaseInterface $db): void
     {
-        foreach (['notes', 'cards', 'reviews'] as $table) {
+        foreach (['books', 'notes', 'cards', 'reviews'] as $table) {
             if (!$db->table($table)->hasColumn('user_id')) {
                 $db->execute(
                     "ALTER TABLE $table ADD COLUMN user_id TEXT NULL CHECK (user_id IS NULL OR length(user_id) = 36)",
@@ -75,5 +87,14 @@ final class DatabaseMigrator
             }
             $db->execute("CREATE INDEX IF NOT EXISTS {$table}_user_id_idx ON $table (user_id)");
         }
+    }
+
+    /** Добавляет связь заметки с книгой в уже выданную SQLite-базу. */
+    private static function addNoteBookColumn(DatabaseInterface $db): void
+    {
+        if (!$db->table('notes')->hasColumn('book_id')) {
+            $db->execute('ALTER TABLE notes ADD COLUMN book_id TEXT NULL');
+        }
+        $db->execute('CREATE INDEX IF NOT EXISTS notes_book_id_idx ON notes (book_id)');
     }
 }

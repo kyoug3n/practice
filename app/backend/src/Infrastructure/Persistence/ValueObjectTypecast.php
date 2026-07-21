@@ -6,6 +6,7 @@ namespace Recall\Infrastructure\Persistence;
 
 use Cycle\ORM\Parser\CastableInterface;
 use Cycle\ORM\Parser\UncastableInterface;
+use Recall\Domain\ValueObject\BookId;
 use Recall\Domain\ValueObject\CardId;
 use Recall\Domain\ValueObject\CardText;
 use Recall\Domain\ValueObject\Day;
@@ -86,27 +87,12 @@ final class ValueObjectTypecast implements CastableInterface, UncastableInterfac
     /** @return array{0: callable(mixed): mixed, 1: callable(mixed): mixed}|null */
     private function pair(string $rule): ?array
     {
+        $identity = $this->identityPair($rule);
+        if ($identity !== null) {
+            return $identity;
+        }
+
         return match ($rule) {
-            NoteId::class => [
-                static fn(mixed $v): NoteId => NoteId::fromString(self::str($v)),
-                static fn(mixed $v): string => $v instanceof NoteId ? $v->toString() : self::str($v),
-            ],
-            CardId::class => [
-                static fn(mixed $v): CardId => CardId::fromString(self::str($v)),
-                static fn(mixed $v): string => $v instanceof CardId ? $v->toString() : self::str($v),
-            ],
-            ReviewId::class => [
-                static fn(mixed $v): ReviewId => ReviewId::fromString(self::str($v)),
-                static fn(mixed $v): string => $v instanceof ReviewId ? $v->toString() : self::str($v),
-            ],
-            UserId::class => [
-                static fn(mixed $v): UserId => UserId::fromString(self::str($v)),
-                static fn(mixed $v): string => $v instanceof UserId ? $v->toString() : self::str($v),
-            ],
-            SessionId::class => [
-                static fn(mixed $v): SessionId => SessionId::fromString(self::str($v)),
-                static fn(mixed $v): string => $v instanceof SessionId ? $v->toString() : self::str($v),
-            ],
             Username::class => [
                 static fn(mixed $v): Username => new Username(self::str($v)),
                 static fn(mixed $v): string => $v instanceof Username ? $v->value : self::str($v),
@@ -138,6 +124,38 @@ final class ValueObjectTypecast implements CastableInterface, UncastableInterfac
             NoteIdList::class => [
                 static fn(mixed $v): NoteIdList => NoteIdList::fromStrings(self::list($v)),
                 static fn(mixed $v): string => self::json($v instanceof NoteIdList ? $v->toStrings() : []),
+            ],
+            default => null,
+        };
+    }
+
+    /** @return array{0: callable(mixed): mixed, 1: callable(mixed): mixed}|null */
+    private function identityPair(string $rule): ?array
+    {
+        return match ($rule) {
+            BookId::class => [
+                static fn(mixed $v): BookId => BookId::fromString(self::str($v)),
+                static fn(mixed $v): string => $v instanceof BookId ? $v->toString() : self::str($v),
+            ],
+            CardId::class => [
+                static fn(mixed $v): CardId => CardId::fromString(self::str($v)),
+                static fn(mixed $v): string => $v instanceof CardId ? $v->toString() : self::str($v),
+            ],
+            NoteId::class => [
+                static fn(mixed $v): NoteId => NoteId::fromString(self::str($v)),
+                static fn(mixed $v): string => $v instanceof NoteId ? $v->toString() : self::str($v),
+            ],
+            ReviewId::class => [
+                static fn(mixed $v): ReviewId => ReviewId::fromString(self::str($v)),
+                static fn(mixed $v): string => $v instanceof ReviewId ? $v->toString() : self::str($v),
+            ],
+            SessionId::class => [
+                static fn(mixed $v): SessionId => SessionId::fromString(self::str($v)),
+                static fn(mixed $v): string => $v instanceof SessionId ? $v->toString() : self::str($v),
+            ],
+            UserId::class => [
+                static fn(mixed $v): UserId => UserId::fromString(self::str($v)),
+                static fn(mixed $v): string => $v instanceof UserId ? $v->toString() : self::str($v),
             ],
             default => null,
         };

@@ -62,7 +62,7 @@ final readonly class AuthenticationMiddleware implements MiddlewareInterface
         }
 
         return array_any(
-            ['/notes', '/cards', '/reviews'],
+            ['/notes', '/books', '/cards', '/reviews'],
             fn(string $prefix): bool => $path === $prefix || str_starts_with($path, "$prefix/"),
         );
     }

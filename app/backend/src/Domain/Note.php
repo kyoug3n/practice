@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Recall\Domain;
 
 use DateTimeImmutable;
+use Recall\Domain\ValueObject\BookId;
 use Recall\Domain\ValueObject\NoteId;
 use Recall\Domain\ValueObject\NoteIdList;
 use Recall\Domain\ValueObject\TagList;
@@ -21,6 +22,7 @@ class Note
         public TagList $tags,
         public NoteIdList $links,
         public DateTimeImmutable $updatedAt,
+        public ?BookId $bookId = null,
         public ?UserId $userId = null,
     ) {}
 
@@ -30,8 +32,9 @@ class Note
         TagList $tags,
         NoteIdList $links,
         DateTimeImmutable $now,
+        ?BookId $bookId = null,
     ): self {
-        return new self(NoteId::generate(), $title, $body, $tags, $links, $now);
+        return new self(NoteId::generate(), $title, $body, $tags, $links, $now, $bookId);
     }
 
     /** Момент создания берётся из UUIDv7 — отдельного поля не держим. */
@@ -40,12 +43,19 @@ class Note
         return $this->id->createdAt();
     }
 
-    public function revise(Title $title, string $body, TagList $tags, NoteIdList $links, DateTimeImmutable $now): void
-    {
+    public function revise(
+        Title $title,
+        string $body,
+        TagList $tags,
+        NoteIdList $links,
+        DateTimeImmutable $now,
+        ?BookId $bookId = null,
+    ): void {
         $this->title = $title;
         $this->body = $body;
         $this->tags = $tags;
         $this->links = $links;
         $this->updatedAt = $now;
+        $this->bookId = $bookId;
     }
 }

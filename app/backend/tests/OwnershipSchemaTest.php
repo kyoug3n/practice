@@ -24,11 +24,13 @@ final class OwnershipSchemaTest
             $this->createLegacySchema($path);
             $database = DatabaseContext::boot($path)->dbal->database('default');
 
-            foreach (['notes', 'cards', 'reviews'] as $table) {
+            foreach (['books', 'notes', 'cards', 'reviews'] as $table) {
                 $schema = $database->table($table);
                 Assert::true($schema->hasColumn('user_id'));
                 Assert::true($schema->hasIndex(['user_id']));
             }
+            Assert::true($database->table('notes')->hasColumn('book_id'));
+            Assert::true($database->table('notes')->hasIndex(['book_id']));
         } finally {
             unlink($path);
         }

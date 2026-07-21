@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Recall\Http\Input;
 
 use InvalidArgumentException;
+use Recall\Domain\ValueObject\BookId;
 use Recall\Domain\ValueObject\NoteIdList;
 use Recall\Domain\ValueObject\TagList;
 use Recall\Domain\ValueObject\Title;
@@ -20,6 +21,7 @@ final readonly class NoteInput
         public string $body,
         public TagList $tags,
         public NoteIdList $links,
+        public ?BookId $bookId,
     ) {}
 
     /** @param array<array-key, mixed> $data */
@@ -28,6 +30,7 @@ final readonly class NoteInput
         $errors = [];
         $title = null;
         $links = null;
+        $bookId = null;
 
         try {
             $title = Title::fromString(self::str($data['title'] ?? ''));
@@ -46,16 +49,32 @@ final readonly class NoteInput
             $errors['links'] = $e->getMessage();
         }
 
+        $rawBookId = self::nullableString($data['book_id'] ?? null);
+        if ($rawBookId !== null) {
+            try {
+                $bookId = BookId::fromString($rawBookId);
+            } catch (InvalidArgumentException $e) {
+                $errors['book_id'] = $e->getMessage();
+            }
+        }
+
         if ($errors !== [] || $title === null || $links === null) {
             throw new ValidationException('проверьте поля заметки', $errors);
         }
 
-        return new self($title, $body, TagList::fromStrings(self::list($data['tags'] ?? [])), $links);
+        return new self($title, $body, TagList::fromStrings(self::list($data['tags'] ?? [])), $links, $bookId);
     }
 
     private static function str(mixed $value): string
     {
         return is_scalar($value) ? (string) $value : '';
+    }
+
+    private static function nullableString(mixed $value): ?string
+    {
+        $value = trim(self::str($value));
+
+        return $value === '' ? null : $value;
     }
 
     /** @return list<mixed> */

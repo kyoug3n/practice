@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Recall\Domain\Note;
+use Recall\Domain\ValueObject\BookId;
 use Recall\Domain\ValueObject\NoteId;
 use Recall\Domain\ValueObject\Tag;
 use Recall\Domain\ValueObject\UserId;
@@ -16,12 +17,14 @@ use Recall\Http\CurrentUser;
 use Recall\Http\Input\NoteInput;
 use Recall\Http\Json;
 use Recall\Http\Serializer;
+use Recall\Infrastructure\Persistence\BookRepository;
 use Recall\Infrastructure\Persistence\NoteRepository;
 
 final readonly class NotesController
 {
     public function __construct(
         private NoteRepository $notes,
+        private BookRepository $books,
         private Serializer $serializer,
         private DateTimeImmutable $now,
     ) {}
@@ -51,8 +54,14 @@ final readonly class NotesController
     public function create(Request $request, Response $response): Response
     {
         $input = NoteInput::fromArray($this->body($request));
-        $note = Note::create($input->title, $input->body, $input->tags, $input->links, $this->now);
-        $this->notes->save(CurrentUser::userId($request), $note);
+        $userId = CurrentUser::userId($request);
+        $bookError = $this->bookError($response, $userId, $input->bookId);
+        if ($bookError !== null) {
+            return $bookError;
+        }
+
+        $note = Note::create($input->title, $input->body, $input->tags, $input->links, $this->now, $input->bookId);
+        $this->notes->save($userId, $note);
 
         return Json::write($response, $this->serializer->serialize($note), 201);
     }
@@ -67,7 +76,12 @@ final readonly class NotesController
         }
 
         $input = NoteInput::fromArray($this->body($request));
-        $note->revise($input->title, $input->body, $input->tags, $input->links, $this->now);
+        $bookError = $this->bookError($response, $userId, $input->bookId);
+        if ($bookError !== null) {
+            return $bookError;
+        }
+
+        $note->revise($input->title, $input->body, $input->tags, $input->links, $this->now, $input->bookId);
         $this->notes->save($userId, $note);
 
         return Json::write($response, $this->serializer->serialize($note));
@@ -117,6 +131,17 @@ final readonly class NotesController
         return $otherUsersNote
             ? Json::error($response, 'forbidden', 403)
             : Json::error($response, 'note not found', 404);
+    }
+
+    private function bookError(Response $response, UserId $userId, ?BookId $bookId): ?Response
+    {
+        if ($bookId === null || $this->books->find($userId, $bookId) !== null) {
+            return null;
+        }
+
+        return $this->books->belongsToAnotherUser($userId, $bookId)
+            ? Json::error($response, 'forbidden', 403)
+            : Json::error($response, 'book not found', 404);
     }
 
     /** @return array<array-key, mixed> */
