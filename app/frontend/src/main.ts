@@ -86,7 +86,7 @@ if (publicUsername !== null) {
     {
       noteForm,
       noteBookPicker: need("#note-book-picker"),
-      noteLinksContainer: need("#note-links"),
+      noteLinksContainer: need("#note-links .note-link-options"),
       tagFilterForm: needForm("#tag-filter-form"),
       toggleTagFilter: needButton("#toggle-tag-filter"),
       clearTagFilter: needButton("#clear-tag-filter"),

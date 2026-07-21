@@ -34,6 +34,7 @@ export function populateLinkOptions(
   notes: Note[],
   selected: string[] = [],
 ): void {
+  container.classList.toggle("has-many", notes.length > 2);
   if (notes.length === 0) {
     const empty = document.createElement("p");
     empty.className = "note-links-empty";
@@ -52,7 +53,9 @@ export function populateLinkOptions(
     option.dataset.selected = String(isSelected);
     option.setAttribute("aria-pressed", String(isSelected));
     option.setAttribute("aria-label", `Связать с заметкой: ${note.title}`);
-    option.textContent = note.title;
+    const title = document.createElement("span");
+    title.textContent = note.title;
+    option.append(title);
     option.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();

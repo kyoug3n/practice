@@ -77,11 +77,12 @@
 }
 
 .note-edit {
-  gap: 0.35rem;
+  gap: 0.5rem;
   grid-column: 1;
   grid-row: 1;
   max-height: 0;
   margin: 0;
+  padding-bottom: 0.25rem;
   overflow: hidden;
   opacity: 0;
   transition:

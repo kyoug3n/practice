@@ -80,12 +80,15 @@ export function createNoteEdit(
   linksLegend.textContent = "Связанные заметки";
   const linksContainer = document.createElement("div");
   linksContainer.className = "note-link-options";
+  const linksControl = document.createElement("div");
+  linksControl.className = "note-links-control";
+  linksControl.append(linksContainer);
   populateLinkOptions(
     linksContainer,
     linkedNotes.filter((linkedNote) => linkedNote.id !== note.id),
     note.links,
   );
-  linksFieldset.append(linksLegend, linksContainer);
+  linksFieldset.append(linksLegend, linksControl);
 
   const actionsBox = document.createElement("div");
   actionsBox.className = "note-edit-actions";
