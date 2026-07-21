@@ -15,6 +15,9 @@ import { profileUsername, setupProfile } from "./profile";
 import { setupReviews } from "./reviews";
 import { createUiActions } from "./ui";
 
+document.querySelector<HTMLElement>("#app")?.classList.add("app-ready");
+document.documentElement.classList.add("app-ready");
+
 function need(selector: string): HTMLElement {
   const element = document.querySelector<HTMLElement>(selector);
   if (!element) {
