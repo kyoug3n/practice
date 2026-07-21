@@ -11,6 +11,8 @@ import { truncateNoteTags, truncateNoteTitle } from "./note-text";
 import { NOTES_PER_PAGE, setupNotesPagination } from "./notes-pagination";
 import type { UiActions } from "./ui";
 
+const SCROLL_TOP_OFFSET = 24;
+
 export interface NotesElements {
   noteForm: HTMLFormElement;
   noteBookPicker: HTMLElement;
@@ -149,6 +151,24 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
           activeEdit = editView;
           item.append(editView.form);
           editView.open();
+          const openedEdit = editView;
+          const scroll = (): void => {
+            if (!openedEdit.form.isConnected) {
+              return;
+            }
+            const { top } = openedEdit.form.getBoundingClientRect();
+            if (
+              top < 0 ||
+              top + openedEdit.form.scrollHeight > window.innerHeight
+            ) {
+              window.scrollTo({
+                top: Math.max(0, window.scrollY + top - SCROLL_TOP_OFFSET),
+                behavior: "smooth",
+              });
+            }
+          };
+          window.requestAnimationFrame(scroll);
+          window.setTimeout(scroll, 240);
         })
         .catch(actions.showError);
     });

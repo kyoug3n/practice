@@ -1,5 +1,7 @@
 import { createAnimatedDisclosure } from "./disclosure";
 
+const SCROLL_TOP_OFFSET = 24;
+
 export interface CreateElements {
   noteButton: HTMLButtonElement;
   cardButton: HTMLButtonElement;
@@ -12,6 +14,24 @@ export function setupCreateActions(elements: CreateElements): () => void {
   const setNoteOpen = createAnimatedDisclosure(elements.noteForm, "is-open");
   const setCardOpen = createAnimatedDisclosure(elements.cardForm, "is-open");
   let openRequest = 0;
+
+  function scrollToFormStart(form: HTMLElement): void {
+    const scroll = (): void => {
+      if (!form.isConnected || form.hidden) {
+        return;
+      }
+      const { top } = form.getBoundingClientRect();
+      if (top >= 0 && top + form.scrollHeight <= window.innerHeight) {
+        return;
+      }
+      window.scrollTo({
+        top: Math.max(0, window.scrollY + top - SCROLL_TOP_OFFSET),
+        behavior: "smooth",
+      });
+    };
+    window.requestAnimationFrame(scroll);
+    window.setTimeout(scroll, 240);
+  }
 
   function closeNoteForm(): void {
     setNoteOpen(false);
@@ -44,6 +64,7 @@ export function setupCreateActions(elements: CreateElements): () => void {
       "input:not(:disabled), select:not(:disabled), textarea:not(:disabled)",
     );
     field?.focus();
+    scrollToFormStart(elements.cardForm);
   }
 
   elements.noteButton.addEventListener("click", () => {
@@ -62,6 +83,7 @@ export function setupCreateActions(elements: CreateElements): () => void {
       }
       setNoteOpen(true);
       elements.noteButton.setAttribute("aria-expanded", "true");
+      scrollToFormStart(elements.noteForm);
     });
   });
   elements.cardButton.addEventListener("click", () => {
