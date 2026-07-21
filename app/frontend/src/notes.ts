@@ -1,21 +1,19 @@
-import { api, type Note } from "./api";
+import { api, type Book, type Note } from "./api";
+import { createBookPicker, type BookPickerView } from "./book-picker";
 import { createAnimatedDisclosure } from "./disclosure";
-import { parseTags } from "./format";
 import { pencilIcon, trashIcon } from "./icons";
 import { animateListHeight, highlightNote } from "./notes-animation";
 import { createNoteBody } from "./note-body";
 import { createNoteEdit, type NoteEditView } from "./note-edit";
-import {
-  populateLinkOptions,
-  populateNoteOptions,
-  selectedLinkIds,
-} from "./note-options";
+import { populateLinkOptions, populateNoteOptions } from "./note-options";
+import { readNoteForm } from "./note-form";
 import { truncateNoteTags, truncateNoteTitle } from "./note-text";
 import { NOTES_PER_PAGE, setupNotesPagination } from "./notes-pagination";
 import type { UiActions } from "./ui";
 
 export interface NotesElements {
   noteForm: HTMLFormElement;
+  noteBookPicker: HTMLElement;
   noteLinksContainer: HTMLElement;
   tagFilterForm: HTMLFormElement;
   toggleTagFilter: HTMLButtonElement;
@@ -34,6 +32,12 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
   let activeTag: string | undefined;
   let notes: Note[] = [];
   let linkableNotes: Note[] = [];
+  let books: Book[] = [];
+  const noteBookPicker: BookPickerView = createBookPicker(
+    elements.noteBookPicker,
+    actions,
+  );
+
   function openLinkedNote(id: string): void {
     const index = notes.findIndex((note) => note.id === id);
     if (index < 0) {
@@ -49,7 +53,6 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
       highlightNote(target);
     }, 240);
   }
-
   function noteItem(note: Note): HTMLLIElement {
     const item = document.createElement("li");
     item.dataset.testid = "note";
@@ -64,7 +67,6 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
     tags.className = "note-tags";
     tags.textContent = truncateNoteTags(note.tags);
     tags.title = note.tags.join(", ");
-
     const { body, toggle: bodyToggle } = createNoteBody(
       note,
       linkableNotes,
@@ -76,7 +78,6 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
     edit.append(pencilIcon());
     edit.dataset.testid = "edit-note";
     edit.setAttribute("aria-label", `Изменить заметку: ${note.title}`);
-
     const remove = document.createElement("button");
     remove.type = "button";
     remove.append(trashIcon());
@@ -95,7 +96,6 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
     view.className = "note-view";
     view.append(title, tags, actionsBox, body);
     item.append(view);
-
     let editView: NoteEditView;
     edit.addEventListener("click", () => {
       view.classList.add("is-editing");
@@ -127,13 +127,13 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
           onSaved: refreshNotes,
         },
         linkableNotes,
+        books,
       );
       item.append(editView.form);
       editView.open();
     });
     return item;
   }
-
   function renderPage(
     page: number,
     animate = false,
@@ -154,7 +154,6 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
       list.replaceChildren(...visibleNotes.map(noteItem));
     });
   }
-
   const pagination = setupNotesPagination(
     {
       container: elements.notesPagination,
@@ -170,9 +169,13 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
     elements.tagFilterForm,
     "is-open",
   );
-
   async function refreshNotes(animate = false): Promise<void> {
-    const allNotes = await api.listNotes();
+    const [allNotes, savedBooks] = await Promise.all([
+      api.listNotes(),
+      api.listBooks(),
+    ]);
+    books = savedBooks;
+    noteBookPicker.setBooks(books);
     notes = activeTag === undefined ? allNotes : await api.listNotes(activeTag);
     linkableNotes = allNotes;
     const page = pagination.update(notes.length);
@@ -195,13 +198,12 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
     if (!submit) {
       return;
     }
-    const data = new FormData(elements.noteForm);
-    const input = {
-      title: actions.field(data, "title"),
-      body: actions.field(data, "body"),
-      tags: parseTags(actions.field(data, "tags")),
-      links: selectedLinkIds(elements.noteLinksContainer),
-    };
+    const input = readNoteForm(
+      elements.noteForm,
+      elements.noteLinksContainer,
+      actions,
+      noteBookPicker.selectedId(),
+    );
 
     submit.disabled = true;
     actions.clearStatus();
@@ -209,6 +211,7 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
       .createNote(input)
       .then(() => {
         elements.noteForm.reset();
+        noteBookPicker.clear();
         pagination.reset();
         return refreshNotes();
       })

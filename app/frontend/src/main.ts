@@ -84,6 +84,7 @@ if (publicUsername !== null) {
   const notes = setupNotes(
     {
       noteForm,
+      noteBookPicker: need("#note-book-picker"),
       noteLinksContainer: need("#note-links"),
       tagFilterForm: needForm("#tag-filter-form"),
       toggleTagFilter: needButton("#toggle-tag-filter"),

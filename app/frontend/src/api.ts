@@ -12,6 +12,23 @@ export interface Note {
   links: string[];
   created_at: string;
   updated_at: string;
+  book_id?: string | null;
+}
+
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  open_library_key: string | null;
+  cover_id: number | null;
+  created_at: string;
+}
+
+export interface BookSearchResult {
+  title: string;
+  author: string;
+  open_library_key: string;
+  cover_id: number | null;
 }
 
 export interface Card {
@@ -114,15 +131,33 @@ export const api = {
   },
   listNotes: (tag?: string) =>
     http<Note[]>(`/notes${tag ? `?tag=${encodeURIComponent(tag)}` : ""}`),
+  listBooks: () => http<Book[]>("/books"),
+  searchBooks: (query: string) =>
+    http<BookSearchResult[]>(
+      `/books/search?q=${encodeURIComponent(query.trim())}`,
+    ),
+  createBook: (input: {
+    title: string;
+    author: string;
+    open_library_key?: string | null;
+    cover_id?: number | null;
+  }) => http<Book>("/books", { method: "POST", body: JSON.stringify(input) }),
   createNote: (input: {
     title: string;
     body: string;
     tags: string[];
     links: string[];
+    book_id?: string;
   }) => http<Note>("/notes", { method: "POST", body: JSON.stringify(input) }),
   updateNote: (
     id: string,
-    input: { title: string; body: string; tags: string[]; links: string[] },
+    input: {
+      title: string;
+      body: string;
+      tags: string[];
+      links: string[];
+      book_id?: string;
+    },
   ) =>
     http<Note>(`/notes/${id}`, {
       method: "PUT",

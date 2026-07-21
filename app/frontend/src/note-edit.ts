@@ -1,4 +1,5 @@
-import { api, type Note } from "./api";
+import { api, type Book, type Note } from "./api";
+import { createBookPicker } from "./book-picker";
 import { createAnimatedDisclosure } from "./disclosure";
 import { parseTags } from "./format";
 import { populateLinkOptions, selectedLinkIds } from "./note-options";
@@ -28,6 +29,7 @@ export function createNoteEdit(
   actions: UiActions,
   callbacks: NoteEditCallbacks,
   linkedNotes: Note[],
+  books: Book[],
 ): NoteEditView {
   const form = document.createElement("form");
   form.className = "note-edit";
@@ -44,6 +46,14 @@ export function createNoteEdit(
   tags.name = "tags";
   tags.value = note.tags.join(", ");
   tags.setAttribute("aria-label", "Теги через запятую");
+
+  const bookPickerContainer = document.createElement("div");
+  const bookPicker = createBookPicker(
+    bookPickerContainer,
+    actions,
+    books,
+    note.book_id,
+  );
 
   const body = document.createElement("textarea");
   body.name = "body";
@@ -80,7 +90,14 @@ export function createNoteEdit(
   cancel.addEventListener("click", close);
   actionsBox.append(save, cancel);
 
-  form.append(title, tags, body, linksFieldset, actionsBox);
+  form.append(
+    title,
+    tags,
+    bookPickerContainer,
+    body,
+    linksFieldset,
+    actionsBox,
+  );
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     save.disabled = true;
@@ -91,6 +108,9 @@ export function createNoteEdit(
         body: body.value,
         tags: parseTags(tags.value),
         links: selectedLinkIds(linksContainer),
+        ...(bookPicker.selectedId() === undefined
+          ? {}
+          : { book_id: bookPicker.selectedId() }),
       })
       .then(() => {
         callbacks.onCloseStart(form);
