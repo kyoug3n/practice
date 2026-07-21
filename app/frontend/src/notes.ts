@@ -71,6 +71,7 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
       note,
       linkableNotes,
       openLinkedNote,
+      books,
     );
 
     const edit = document.createElement("button");
@@ -245,6 +246,5 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
     pagination.reset();
     await refreshNotes();
   });
-
   return { refresh: refreshNotes, open: openLinkedNote };
 }
