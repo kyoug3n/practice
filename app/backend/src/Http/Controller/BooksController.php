@@ -14,14 +14,39 @@ use Recall\Http\CurrentUser;
 use Recall\Http\Input\BookInput;
 use Recall\Http\Json;
 use Recall\Http\Serializer;
+use Recall\Infrastructure\OpenLibraryClient;
 use Recall\Infrastructure\Persistence\BookRepository;
+use RuntimeException;
 
 final readonly class BooksController
 {
     public function __construct(
         private BookRepository $books,
         private Serializer $serializer,
+        private OpenLibraryClient $catalog,
     ) {}
+
+    public function search(Request $request, Response $response): Response
+    {
+        $rawQuery = $request->getQueryParams()['q'] ?? null;
+        $query = is_string($rawQuery) ? trim($rawQuery) : '';
+        if (mb_strlen($query) < 2) {
+            return Json::error(
+                $response,
+                'поисковый запрос должен содержать минимум 2 символа',
+                422,
+                ['q' => 'минимум 2 символа'],
+            );
+        }
+
+        try {
+            $results = $this->catalog->search($query);
+        } catch (RuntimeException) {
+            return Json::error($response, 'каталог книг недоступен', 502);
+        }
+
+        return Json::write($response, array_map($this->serializer->serialize(...), $results));
+    }
 
     public function index(Request $request, Response $response): Response
     {

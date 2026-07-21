@@ -19,6 +19,7 @@ use Recall\Http\Json;
 use Recall\Http\Serializer;
 use Recall\Http\SessionCookie;
 use Recall\Http\ValidationException;
+use Recall\Infrastructure\OpenLibraryClient;
 use Recall\Infrastructure\Persistence\BookRepository;
 use Recall\Infrastructure\Persistence\CardRepository;
 use Recall\Infrastructure\Persistence\DatabaseContext;
@@ -56,7 +57,7 @@ $userRepo = new UserRepository($boot->orm);
 
 $serializer = new Serializer();
 $notes = new NotesController($noteRepo, $bookRepo, $serializer, $now);
-$books = new BooksController($bookRepo, $serializer);
+$books = new BooksController($bookRepo, $serializer, new OpenLibraryClient());
 $cards = new CardsController($cardRepo, $noteRepo, $serializer, $now);
 $reviews = new ReviewsController($cardRepo, $reviewRepo, $serializer, $now);
 $stats = new StatsController($cardRepo, $reviewRepo, $serializer, $now);
@@ -109,6 +110,7 @@ $app->get('/notes/{id}', $notes->show(...));
 $app->put('/notes/{id}', $notes->update(...));
 $app->delete('/notes/{id}', $notes->delete(...));
 
+$app->get('/books/search', $books->search(...));
 $app->get('/books', $books->index(...));
 $app->post('/books', $books->create(...));
 $app->get('/books/{id}', $books->show(...));
