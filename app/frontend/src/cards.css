@@ -193,10 +193,10 @@
 }
 
 .card .grade-buttons button[data-testid="grade-again"] {
-  width: 3rem;
-  min-width: 3rem;
-  height: 3rem;
-  min-height: 3rem;
+  width: 3.25rem;
+  min-width: 3.25rem;
+  height: 3.25rem;
+  min-height: 3.25rem;
   padding: 0;
   justify-self: start;
 }
