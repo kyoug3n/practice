@@ -112,25 +112,29 @@
   margin: 0;
 }
 
-.note-edit-actions {
+.note-edit-actions,
+.create-actions {
   display: grid;
   grid-template-columns: minmax(0, 60fr) minmax(0, 40fr);
   gap: 0.35rem;
 }
 
-.note-edit-actions button {
+.note-edit-actions button,
+.create-actions button {
   width: 100%;
   margin: 0;
   border: 0;
   font-weight: 700;
 }
 
-.note-edit-actions button[type="button"] {
+.note-edit-actions button[type="button"],
+.create-actions button[type="button"] {
   background: var(--app-highlight-background);
   color: var(--app-highlight-color);
 }
 
-.note-edit-actions button[type="button"]:hover {
+.note-edit-actions button[type="button"]:hover,
+.create-actions button[type="button"]:hover {
   border: 0;
   background: var(--app-highlight-hover-background);
   color: var(--app-highlight-color);

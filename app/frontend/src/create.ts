@@ -43,6 +43,13 @@ export function setupCreateActions(elements: CreateElements): () => void {
     elements.cardButton.setAttribute("aria-expanded", "false");
   }
 
+  elements.noteForm
+    .querySelector<HTMLButtonElement>("[data-create-cancel]")
+    ?.addEventListener("click", closeNoteForm);
+  elements.cardForm
+    .querySelector<HTMLButtonElement>("[data-create-cancel]")
+    ?.addEventListener("click", closeCardForm);
+
   async function openCardForm(): Promise<void> {
     const request = ++openRequest;
     const isOpen = elements.cardForm.classList.contains("is-open");

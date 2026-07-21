@@ -190,7 +190,10 @@
                 <div class="note-link-options"></div>
               </div>
             </fieldset>
-            <button type="submit">Добавить заметку</button>
+            <div class="create-actions">
+              <button type="submit">Добавить заметку</button>
+              <button type="button" data-create-cancel>Отмена</button>
+            </div>
           </form>
           <ul id="note-list"></ul>
           <p id="notes-empty" data-testid="notes-empty" hidden>
@@ -316,7 +319,10 @@
                 required
               ></textarea>
             </label>
-            <button type="submit">Создать карточку</button>
+            <div class="create-actions">
+              <button type="submit">Создать карточку</button>
+              <button type="button" data-create-cancel>Отмена</button>
+            </div>
           </form>
           <div id="queue"></div>
         </section>

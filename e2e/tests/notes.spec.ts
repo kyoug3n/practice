@@ -62,6 +62,19 @@ test("keeps note editing and creation menus mutually exclusive", async ({
   await expect(page.locator("#note-form")).toBeHidden();
 });
 
+test("cancels note and card creation forms", async ({ page }) => {
+  await page.goto("/");
+  await register(page);
+
+  await openCreateForm(page, "note");
+  await page.click("#note-form [data-create-cancel]");
+  await expect(page.locator("#note-form")).toBeHidden();
+
+  await openCreateForm(page, "card");
+  await page.click("#card-form [data-create-cancel]");
+  await expect(page.locator("#card-form")).toBeHidden();
+});
+
 test("notes truncate long text and use three-note pages", async ({ page }) => {
   await page.goto("/");
   await register(page);
