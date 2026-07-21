@@ -4,6 +4,7 @@ import "./workspace.css";
 import "./cards.css";
 import "./notes.css";
 import "./book-cover.css";
+import "./book-picker.css";
 import "./note-highlight.css";
 import "./create.css";
 import { setupAuth } from "./auth";
