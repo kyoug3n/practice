@@ -33,6 +33,9 @@ export function createBookPicker(
   search.textContent = "Найти";
   searchBox.append(query, search);
 
+  const pickerControls = document.createElement("div");
+  pickerControls.className = "book-picker-controls";
+
   const results = document.createElement("div");
   results.className = "book-picker-results";
   results.hidden = true;
@@ -50,7 +53,8 @@ export function createBookPicker(
   clear.title = "Сбросить выбранную книгу";
   selected.append(selectedText, clear);
 
-  container.replaceChildren(label, searchBox, results, selected);
+  pickerControls.append(searchBox, results, selected);
+  container.replaceChildren(label, pickerControls);
 
   let books = initialBooks;
   let selectedBook: Book | undefined;

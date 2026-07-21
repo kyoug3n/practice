@@ -134,6 +134,16 @@
   min-width: 0;
 }
 
+.book-picker-controls {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.35rem;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 0.75rem;
+  background: var(--pico-background-color);
+}
+
 .book-picker-search {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -150,6 +160,12 @@
 .book-picker-clear {
   border: 0;
   white-space: nowrap;
+}
+
+.book-picker-search button:hover {
+  border: 0;
+  background: var(--pico-primary-hover-background);
+  color: var(--pico-primary-inverse);
 }
 
 .book-picker-results {
@@ -192,7 +208,7 @@
   justify-content: space-between;
   gap: 0.5rem;
   min-width: 0;
-  padding: 0.4rem 0.5rem;
+  padding: 0.4rem 0.5rem 0.4rem 0.75rem;
   border-radius: 0.5rem;
   background: var(--app-highlight-background);
   color: var(--app-highlight-color);
