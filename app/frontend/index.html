@@ -27,14 +27,22 @@
             autocomplete="username"
             required
           />
-          <input
-            name="password"
-            type="password"
-            placeholder="Пароль"
-            aria-label="Пароль"
-            autocomplete="new-password"
-            required
-          />
+          <div class="password-field">
+            <input
+              name="password"
+              type="password"
+              placeholder="Пароль"
+              aria-label="Пароль"
+              autocomplete="new-password"
+              required
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              aria-label="Показать пароль"
+              aria-pressed="false"
+            ></button>
+          </div>
           <button type="submit">Зарегистрироваться</button>
         </form>
         <button type="button" id="show-login">Уже есть аккаунт? Войти</button>
@@ -50,14 +58,22 @@
             autocomplete="username"
             required
           />
-          <input
-            name="password"
-            type="password"
-            placeholder="Пароль"
-            aria-label="Пароль"
-            autocomplete="current-password"
-            required
-          />
+          <div class="password-field">
+            <input
+              name="password"
+              type="password"
+              placeholder="Пароль"
+              aria-label="Пароль"
+              autocomplete="current-password"
+              required
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              aria-label="Показать пароль"
+              aria-pressed="false"
+            ></button>
+          </div>
           <p
             id="login-error"
             class="auth-error"

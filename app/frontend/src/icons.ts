@@ -37,3 +37,15 @@ export function refreshIcon(): SVGSVGElement {
     "M20 11a8 8 0 0 0-14.9-3M4 5v4h4M4 13a8 8 0 0 0 14.9 3M20 19v-4h-4",
   );
 }
+
+export function eyeIcon(): SVGSVGElement {
+  return strokeIcon(
+    "M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Zm10-3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z",
+  );
+}
+
+export function eyeOffIcon(): SVGSVGElement {
+  return strokeIcon(
+    "M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M6.6 6.6A13.5 13.5 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 5.2A10.5 10.5 0 0 1 12 5c7 0 10 7 10 7a13.2 13.2 0 0 1-1.7 2.7",
+  );
+}

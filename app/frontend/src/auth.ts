@@ -1,4 +1,5 @@
 import { api, ApiError, type User } from "./api";
+import { eyeIcon, eyeOffIcon } from "./icons";
 import { errorMessage, type UiActions } from "./ui";
 
 export interface AuthElements {
@@ -22,6 +23,37 @@ export function setupAuth(
 ): void {
   let currentUser: User | null = null;
   let loginErrorAnimation = 0;
+
+  function setupPasswordToggle(form: HTMLFormElement): () => void {
+    const input = form.querySelector<HTMLInputElement>(
+      "input[name='password']",
+    );
+    const toggle = form.querySelector<HTMLButtonElement>(".password-toggle");
+    if (!input || !toggle) {
+      throw new Error("нет переключателя видимости пароля");
+    }
+
+    const setVisibility = (isVisible: boolean): void => {
+      input.type = isVisible ? "text" : "password";
+      toggle.replaceChildren(isVisible ? eyeOffIcon() : eyeIcon());
+      toggle.setAttribute(
+        "aria-label",
+        isVisible ? "Скрыть пароль" : "Показать пароль",
+      );
+      toggle.setAttribute("aria-pressed", String(isVisible));
+    };
+
+    toggle.addEventListener("click", () => {
+      setVisibility(input.type !== "text");
+    });
+    setVisibility(false);
+    return () => {
+      setVisibility(false);
+    };
+  }
+
+  const resetRegistrationPassword = setupPasswordToggle(elements.registerForm);
+  const resetLoginPassword = setupPasswordToggle(elements.loginForm);
 
   function clearLoginError(): void {
     loginErrorAnimation += 1;
@@ -83,6 +115,7 @@ export function setupAuth(
     elements.workspace.hidden = true;
     elements.userBar.hidden = true;
     renderCurrentUser();
+    resetRegistrationPassword();
     clearLoginError();
     actions.clearStatus();
   }
@@ -94,6 +127,7 @@ export function setupAuth(
     elements.workspace.hidden = true;
     elements.userBar.hidden = true;
     renderCurrentUser();
+    resetLoginPassword();
     clearLoginError();
     actions.clearStatus();
   }

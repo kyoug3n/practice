@@ -1,0 +1,119 @@
+#registration,
+#login {
+  max-width: 30rem;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--pico-card-background-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2rem rgba(91, 48, 40, 0.08);
+}
+
+#registration h2,
+#login h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--pico-color);
+}
+
+#registration form,
+#login form {
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.auth-error {
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
+  opacity: 0;
+  color: #8f3028;
+  font-size: 0.9rem;
+  text-align: center;
+  transition:
+    max-height 0.22s ease,
+    margin 0.22s ease,
+    opacity 0.18s ease;
+}
+
+.auth-error.is-visible {
+  max-height: 4rem;
+  margin: -0.5rem 0 1rem;
+  opacity: 1;
+}
+
+#registration form button:not(.password-toggle),
+#login form button:not(.password-toggle) {
+  margin-top: var(--pico-spacing);
+}
+
+#registration > button,
+#login > button {
+  width: 100%;
+  margin-bottom: 0;
+  border: 0;
+  background: var(--app-highlight-background);
+  box-shadow: none;
+  color: var(--app-highlight-color);
+  font-weight: 700;
+}
+
+#registration > button:hover,
+#login > button:hover {
+  border: 0;
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
+}
+
+.password-field {
+  position: relative;
+  min-width: 0;
+}
+
+.password-field input {
+  width: 100%;
+  margin: 0;
+  padding-right: 5rem;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--pico-muted-color);
+}
+
+.password-toggle svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.password-toggle:hover {
+  background: var(--app-highlight-hover-background);
+  color: var(--app-highlight-color);
+}
+
+.password-toggle:focus,
+.password-toggle:focus-visible {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+}
+
+@media (max-width: 576px) {
+  #registration,
+  #login {
+    margin-top: 1rem;
+    padding: 1.5rem;
+  }
+}

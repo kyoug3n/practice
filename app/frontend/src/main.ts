@@ -1,4 +1,5 @@
 import "./style.css";
+import "./auth.css";
 import "./profile.css";
 import "./workspace.css";
 import "./cards.css";
