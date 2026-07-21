@@ -7,6 +7,12 @@ export interface UiActions {
   onClick: (button: HTMLButtonElement, action: () => Promise<void>) => void;
 }
 
+export function errorMessage(error: unknown): string {
+  return error instanceof ApiError
+    ? `Ошибка: ${error.message}`
+    : "Что-то пошло не так";
+}
+
 export function createUiActions(statusBar: HTMLElement): UiActions {
   function field(form: FormData, name: string): string {
     const value = form.get(name);
@@ -14,10 +20,7 @@ export function createUiActions(statusBar: HTMLElement): UiActions {
   }
 
   function showError(error: unknown): void {
-    statusBar.textContent =
-      error instanceof ApiError
-        ? `Ошибка: ${error.message}`
-        : "Что-то пошло не так";
+    statusBar.textContent = errorMessage(error);
     statusBar.dataset.state = "error";
   }
 

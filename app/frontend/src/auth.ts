@@ -1,5 +1,5 @@
 import { api, ApiError, type User } from "./api";
-import type { UiActions } from "./ui";
+import { errorMessage, type UiActions } from "./ui";
 
 export interface AuthElements {
   registration: HTMLElement;
@@ -9,6 +9,7 @@ export interface AuthElements {
   currentUserBar: HTMLElement;
   registerForm: HTMLFormElement;
   loginForm: HTMLFormElement;
+  loginError: HTMLElement;
   showLoginButton: HTMLButtonElement;
   showRegistrationButton: HTMLButtonElement;
   logoutButton: HTMLButtonElement;
@@ -20,6 +21,36 @@ export function setupAuth(
   refreshAll: () => Promise<void>,
 ): void {
   let currentUser: User | null = null;
+  let loginErrorAnimation = 0;
+
+  function clearLoginError(): void {
+    loginErrorAnimation += 1;
+    elements.loginError.textContent = "";
+    elements.loginError.classList.remove("is-visible");
+    elements.loginError.setAttribute("aria-hidden", "true");
+  }
+
+  function showLoginError(error: unknown): void {
+    const message = errorMessage(error).replace(/^Ошибка:\s*/, "");
+    const formattedMessage = message
+      ? `${message.charAt(0).toLocaleUpperCase("ru-RU")}${message.slice(1)}`
+      : message;
+    if (
+      elements.loginError.classList.contains("is-visible") &&
+      elements.loginError.textContent === formattedMessage
+    ) {
+      return;
+    }
+
+    const animation = ++loginErrorAnimation;
+    elements.loginError.textContent = formattedMessage;
+    elements.loginError.setAttribute("aria-hidden", "false");
+    window.requestAnimationFrame(() => {
+      if (animation === loginErrorAnimation) {
+        elements.loginError.classList.add("is-visible");
+      }
+    });
+  }
 
   function renderCurrentUser(): void {
     if (currentUser) {
@@ -52,6 +83,7 @@ export function setupAuth(
     elements.workspace.hidden = true;
     elements.userBar.hidden = true;
     renderCurrentUser();
+    clearLoginError();
     actions.clearStatus();
   }
 
@@ -62,6 +94,7 @@ export function setupAuth(
     elements.workspace.hidden = true;
     elements.userBar.hidden = true;
     renderCurrentUser();
+    clearLoginError();
     actions.clearStatus();
   }
 
@@ -95,6 +128,7 @@ export function setupAuth(
 
     submit.disabled = true;
     actions.clearStatus();
+    clearLoginError();
     void api
       .register({
         username: actions.field(data, "username"),
@@ -123,7 +157,7 @@ export function setupAuth(
         password: actions.field(data, "password"),
       })
       .then(showWorkspace)
-      .catch(actions.showError)
+      .catch(showLoginError)
       .finally(() => (submit.disabled = false));
   });
 

@@ -22,6 +22,8 @@ test("показывает ошибку при неверном пароле", a
   await page.fill("#login-form input[name='password']", "wrong-password");
   await page.click("#login-form button[type='submit']");
 
-  await expect(page.locator("#status")).toContainText("неверный логин или пароль");
+  await expect(page.locator("#login-error")).toContainText(
+    "Неверный логин или пароль",
+  );
   await expect(page.locator("#login")).toBeVisible();
 });
