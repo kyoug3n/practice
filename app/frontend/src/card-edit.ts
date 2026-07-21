@@ -4,6 +4,19 @@ import type { UiActions } from "./ui";
 
 const CARD_EDIT_ANIMATION_DURATION = 220;
 
+function labeledField(
+  labelText: string,
+  control: HTMLInputElement | HTMLTextAreaElement,
+): HTMLLabelElement {
+  const field = document.createElement("label");
+  field.className = "card-field";
+  const label = document.createElement("span");
+  label.textContent = labelText;
+  field.append(label, control);
+
+  return field;
+}
+
 export interface CardEditView {
   form: HTMLFormElement;
   open: () => void;
@@ -60,7 +73,11 @@ export function createCardEdit(
   }
 
   cancel.addEventListener("click", close);
-  form.append(front, back, actionsBox);
+  form.append(
+    labeledField("Вопрос", front),
+    labeledField("Ответ", back),
+    actionsBox,
+  );
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     save.disabled = true;

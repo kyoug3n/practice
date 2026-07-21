@@ -7,6 +7,19 @@ import type { UiActions } from "./ui";
 
 const EDIT_ANIMATION_DURATION = 220;
 
+function labeledField(
+  labelText: string,
+  control: HTMLInputElement | HTMLTextAreaElement,
+): HTMLLabelElement {
+  const field = document.createElement("label");
+  field.className = "note-field";
+  const label = document.createElement("span");
+  label.textContent = labelText;
+  field.append(label, control);
+
+  return field;
+}
+
 export interface NoteEditView {
   form: HTMLFormElement;
   open: () => void;
@@ -91,10 +104,10 @@ export function createNoteEdit(
   actionsBox.append(save, cancel);
 
   form.append(
-    title,
-    tags,
+    labeledField("Заголовок", title),
+    labeledField("Теги", tags),
     bookPickerContainer,
-    body,
+    labeledField("Содержание", body),
     linksFieldset,
     actionsBox,
   );

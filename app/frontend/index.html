@@ -158,23 +158,32 @@
             <button type="button" id="clear-tag-filter">Сбросить</button>
           </form>
           <form id="note-form" hidden>
-            <input
-              name="title"
-              placeholder="Заголовок"
-              aria-label="Заголовок заметки"
-              required
-            />
-            <input
-              name="tags"
-              placeholder="Теги (через запятую)"
-              aria-label="Теги через запятую"
-            />
+            <label class="note-field">
+              <span>Заголовок</span>
+              <input
+                name="title"
+                placeholder="Заголовок"
+                aria-label="Заголовок заметки"
+                required
+              />
+            </label>
+            <label class="note-field">
+              <span>Теги</span>
+              <input
+                name="tags"
+                placeholder="Через запятую"
+                aria-label="Теги через запятую"
+              />
+            </label>
             <div id="note-book-picker"></div>
-            <textarea
-              name="body"
-              placeholder="Текст заметки"
-              aria-label="Текст заметки"
-            ></textarea>
+            <label class="note-field">
+              <span>Содержание</span>
+              <textarea
+                name="body"
+                placeholder="Текст заметки"
+                aria-label="Текст заметки"
+              ></textarea>
+            </label>
             <fieldset id="note-links" aria-label="Связанные заметки">
               <legend>Связанные заметки</legend>
               <div class="note-link-options"></div>
@@ -281,21 +290,30 @@
             </div>
           </div>
           <form id="card-form" hidden>
-            <select name="note_id" aria-label="Заметка для карточки" required>
-              <option value="">Выберите заметку</option>
-            </select>
-            <input
-              name="front"
-              placeholder="Вопрос"
-              aria-label="Вопрос карточки"
-              required
-            />
-            <textarea
-              name="back"
-              placeholder="Ответ карточки"
-              aria-label="Ответ карточки"
-              required
-            ></textarea>
+            <label class="card-field">
+              <span>Заметка</span>
+              <select name="note_id" aria-label="Заметка для карточки" required>
+                <option value="">Выберите заметку</option>
+              </select>
+            </label>
+            <label class="card-field">
+              <span>Вопрос</span>
+              <input
+                name="front"
+                placeholder="Вопрос"
+                aria-label="Вопрос карточки"
+                required
+              />
+            </label>
+            <label class="card-field">
+              <span>Ответ</span>
+              <textarea
+                name="back"
+                placeholder="Ответ карточки"
+                aria-label="Ответ карточки"
+                required
+              ></textarea>
+            </label>
             <button type="submit">Создать карточку</button>
           </form>
           <div id="queue"></div>
