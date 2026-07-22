@@ -11,6 +11,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Recall\Domain\Note;
 use Recall\Domain\ValueObject\BookId;
 use Recall\Domain\ValueObject\NoteId;
+use Recall\Domain\ValueObject\NoteIdList;
 use Recall\Domain\ValueObject\Tag;
 use Recall\Domain\ValueObject\UserId;
 use Recall\Http\CurrentUser;
@@ -59,6 +60,10 @@ final readonly class NotesController
         if ($bookError !== null) {
             return $bookError;
         }
+        $linkError = $this->linkError($response, $userId, $input->links);
+        if ($linkError !== null) {
+            return $linkError;
+        }
 
         $note = Note::create($input->title, $input->body, $input->tags, $input->links, $this->now, $input->bookId);
         $this->notes->save($userId, $note);
@@ -79,6 +84,10 @@ final readonly class NotesController
         $bookError = $this->bookError($response, $userId, $input->bookId);
         if ($bookError !== null) {
             return $bookError;
+        }
+        $linkError = $this->linkError($response, $userId, $input->links);
+        if ($linkError !== null) {
+            return $linkError;
         }
 
         $note->revise($input->title, $input->body, $input->tags, $input->links, $this->now, $input->bookId);
@@ -142,6 +151,21 @@ final readonly class NotesController
         return $this->books->belongsToAnotherUser($userId, $bookId)
             ? Json::error($response, 'forbidden', 403)
             : Json::error($response, 'book not found', 404);
+    }
+
+    private function linkError(Response $response, UserId $userId, NoteIdList $links): ?Response
+    {
+        foreach ($links->ids as $link) {
+            if ($this->notes->find($userId, $link) !== null) {
+                continue;
+            }
+
+            return $this->notes->belongsToAnotherUser($userId, $link)
+                ? Json::error($response, 'forbidden', 403)
+                : Json::error($response, 'note not found', 404);
+        }
+
+        return null;
     }
 
     /** @return array<array-key, mixed> */

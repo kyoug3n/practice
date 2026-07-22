@@ -37,6 +37,34 @@ Content-Type: application/json
 }
 HTTP 201
 
+POST {{base}}/notes
+Content-Type: application/json
+{
+  "title": "Bob private note",
+  "body": "Bob's own note."
+}
+HTTP 201
+[Captures]
+bob_note_id: jsonpath "$.id"
+
+POST {{base}}/notes
+Content-Type: application/json
+{
+  "title": "Bob cannot link Alice's note",
+  "body": "",
+  "links": ["{{note_id}}"]
+}
+HTTP 403
+
+PUT {{base}}/notes/{{bob_note_id}}
+Content-Type: application/json
+{
+  "title": "Bob cannot add Alice's link",
+  "body": "",
+  "links": ["{{note_id}}"]
+}
+HTTP 403
+
 GET {{base}}/notes/{{note_id}}
 HTTP 403
 
