@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Recall\Domain\ValueObject;
 
+use InvalidArgumentException;
+
 /** Ссылки заметки на другие заметки. */
 final readonly class NoteIdList
 {
+    private const string INVALID_LINK = 'ссылка на заметку должна быть UUID';
+
     /** @var list<NoteId> */
     public array $ids;
 
@@ -20,8 +24,14 @@ final readonly class NoteIdList
     {
         $ids = [];
         foreach ($raw as $value) {
-            if (is_string($value) && $value !== '') {
+            if (!is_string($value) || $value === '') {
+                throw new InvalidArgumentException(self::INVALID_LINK);
+            }
+
+            try {
                 $ids[] = NoteId::fromString($value);
+            } catch (InvalidArgumentException $e) {
+                throw new InvalidArgumentException(self::INVALID_LINK, $e->getCode(), previous: $e);
             }
         }
 

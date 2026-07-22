@@ -59,6 +59,27 @@ Content-Type: application/json
 }
 HTTP 422
 
+# Invalid note links are not silently discarded.
+POST {{base}}/notes
+Content-Type: application/json
+{
+  "title": "Empty link",
+  "links": [""]
+}
+HTTP 422
+[Asserts]
+jsonpath "$.details.links" contains "ссылка на заметку должна быть UUID"
+
+POST {{base}}/notes
+Content-Type: application/json
+{
+  "title": "Non-string link",
+  "links": [null]
+}
+HTTP 422
+[Asserts]
+jsonpath "$.details.links" contains "ссылка на заметку должна быть UUID"
+
 # Delete it.
 DELETE {{base}}/notes/{{note_id}}
 HTTP 204
