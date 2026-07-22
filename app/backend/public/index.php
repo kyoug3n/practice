@@ -16,6 +16,7 @@ use Recall\Http\Controller\ProfileController;
 use Recall\Http\Controller\ReviewsController;
 use Recall\Http\Controller\StatsController;
 use Recall\Http\Json;
+use Recall\Http\OriginProtectionMiddleware;
 use Recall\Http\Serializer;
 use Recall\Http\SessionCookie;
 use Recall\Http\ValidationException;
@@ -80,6 +81,7 @@ $configuredOrigin = getenv('RECALL_FRONTEND_ORIGIN');
 $frontendOrigin = is_string($configuredOrigin) && $configuredOrigin !== ''
     ? $configuredOrigin
     : 'http://localhost:5173';
+$app->add(new OriginProtectionMiddleware(new SessionCookie(), $frontendOrigin, $app->getResponseFactory()));
 $app->add(static function (ServerRequestInterface $request, RequestHandlerInterface $handler) use ($frontendOrigin): ResponseInterface {
     $response = $handler->handle($request);
     if ($request->getHeaderLine('Origin') !== $frontendOrigin) {
