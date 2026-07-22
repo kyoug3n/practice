@@ -41,8 +41,9 @@ final readonly class StatsController
         }
 
         $reviewDays = [];
+        $timezone = $this->now->getTimezone();
         foreach ($this->reviews->all($userId) as $review) {
-            $reviewDays[$review->createdAt()->format('Y-m-d')] = true;
+            $reviewDays[$review->createdAt()->setTimezone($timezone)->format('Y-m-d')] = true;
         }
         $streak = 0;
         $streakDay = $this->now;
