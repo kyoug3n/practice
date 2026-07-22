@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { login, register } from "./auth";
+import { login, newCredentials, openCreateForm, register } from "./auth";
 
 test("зарегистрированный пользователь может войти", async ({ page }) => {
   await page.goto("/");
@@ -44,4 +44,59 @@ test("переключает видимость пароля", async ({ page }) 
   const registrationToggle = page.locator("#register-form .password-toggle");
   await registrationToggle.click();
   await expect(registrationPassword).toHaveAttribute("type", "text");
+});
+
+test("не показывает workspace прошлого пользователя до обновления данных", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await register(page);
+
+  const privateTitle = `Private note ${Date.now()}`;
+  await openCreateForm(page, "note");
+  await page.fill("#note-form input[name='title']", privateTitle);
+  await page.click("#note-form button[type='submit']");
+  await expect(
+    page.locator("[data-testid='note']", { hasText: privateTitle }),
+  ).toBeVisible();
+
+  await page.click("#logout");
+  await expect(page.locator("#login")).toBeVisible();
+
+  let releaseNotes!: () => void;
+  const notesBlocked = new Promise<void>((resolve) => {
+    releaseNotes = resolve;
+  });
+  await page.route("**/notes", async (route) => {
+    if (route.request().method() === "GET") {
+      await notesBlocked;
+    }
+    await route.continue();
+  });
+
+  const credentials = newCredentials();
+  await page.click("#show-registration");
+  await page.fill(
+    "#register-form input[name='username']",
+    credentials.username,
+  );
+  await page.fill(
+    "#register-form input[name='password']",
+    credentials.password,
+  );
+  const notesRequest = page.waitForRequest(
+    (request) =>
+      request.method() === "GET" &&
+      new URL(request.url()).pathname === "/notes",
+  );
+  await page.click("#register-form button[type='submit']");
+  await notesRequest;
+
+  await expect(page.locator("#workspace")).toBeHidden();
+  releaseNotes();
+  await expect(page.locator("#workspace")).toBeVisible();
+  await expect(
+    page.locator("[data-testid='note']", { hasText: privateTitle }),
+  ).toHaveCount(0);
+  await page.unroute("**/notes");
 });

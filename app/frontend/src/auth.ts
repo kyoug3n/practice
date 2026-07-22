@@ -98,14 +98,24 @@ export function setupAuth(
     elements.currentUserBar.removeAttribute("href");
   }
 
-  function showWorkspace(user: User): void {
-    currentUser = user;
+  async function showWorkspace(user: User): Promise<void> {
+    currentUser = null;
     elements.registration.hidden = true;
     elements.login.hidden = true;
+    elements.workspace.hidden = true;
+    elements.userBar.hidden = true;
+    renderCurrentUser();
+    try {
+      await refreshAll();
+    } catch (error) {
+      showLogin();
+      throw error;
+    }
+    currentUser = user;
+    renderCurrentUser();
     elements.workspace.hidden = false;
     elements.userBar.hidden = false;
-    renderCurrentUser();
-    void refreshAll().then(actions.clearStatus, actions.showError);
+    actions.clearStatus();
   }
 
   function showRegistration(): void {
@@ -139,7 +149,7 @@ export function setupAuth(
     elements.userBar.hidden = true;
 
     try {
-      showWorkspace(await api.me());
+      await showWorkspace(await api.me());
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
         showLogin();
