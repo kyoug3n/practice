@@ -185,9 +185,9 @@ export function setupAuth(
         password: actions.field(data, "password"),
       })
       .then(showWorkspace)
-      .catch((error: unknown) =>
-        showAuthError(elements.registrationError, error),
-      )
+      .catch((error: unknown) => {
+        showAuthError(elements.registrationError, error);
+      })
       .finally(() => (submit.disabled = false));
   });
 
@@ -209,7 +209,9 @@ export function setupAuth(
         password: actions.field(data, "password"),
       })
       .then(showWorkspace)
-      .catch((error: unknown) => showAuthError(elements.loginError, error))
+      .catch((error: unknown) => {
+        showAuthError(elements.loginError, error);
+      })
       .finally(() => (submit.disabled = false));
   });
 
