@@ -142,16 +142,27 @@ $app->addRoutingMiddleware();
 
 $errors = $app->addErrorMiddleware(false, false, false);
 $errors->setDefaultErrorHandler(
-    static function (ServerRequestInterface $request, Throwable $exception) use ($app): ResponseInterface {
+    static function (ServerRequestInterface $request, Throwable $exception) use ($app, $frontendOrigin): ResponseInterface {
         $response = $app->getResponseFactory()->createResponse();
 
-        return match (true) {
+        $response = match (true) {
             $exception instanceof HttpNotFoundException => Json::error($response, 'route not found', 404),
             $exception instanceof HttpMethodNotAllowedException => Json::error($response, 'method not allowed', 405),
             $exception instanceof ValidationException => Json::error($response, $exception->getMessage(), 422, $exception->details()),
             $exception instanceof InvalidArgumentException => Json::error($response, $exception->getMessage(), 422),
             default => Json::error($response, 'internal error', 500),
         };
+
+        if ($request->getHeaderLine('Origin') !== $frontendOrigin) {
+            return $response;
+        }
+
+        return $response
+            ->withHeader('Access-Control-Allow-Origin', $frontendOrigin)
+            ->withHeader('Access-Control-Allow-Credentials', 'true')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+            ->withHeader('Access-Control-Allow-Headers', 'Content-Type')
+            ->withHeader('Vary', 'Origin');
     },
 );
 
