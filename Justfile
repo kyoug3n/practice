@@ -28,9 +28,9 @@ dev: _env
 up: _env
     {{ compose }} up -d
     @echo "ожидание бэкенда {{ base }}"
-    @for i in $(seq 1 90); do curl -sf {{ base }}/health >/dev/null 2>&1 && break || sleep 1; done
+    @for i in $(seq 1 90); do if curl -sf {{ base }}/health >/dev/null 2>&1; then exit 0; fi; sleep 1; done; echo "бэкенд не ответил за 90 секунд" >&2; exit 1
     @echo "ожидание фронтенда {{ front }}"
-    @for i in $(seq 1 90); do curl -sf {{ front }} >/dev/null 2>&1 && break || sleep 1; done
+    @for i in $(seq 1 90); do if curl -sf {{ front }} >/dev/null 2>&1; then exit 0; fi; sleep 1; done; echo "фронтенд не ответил за 90 секунд" >&2; exit 1
 
 # Остановить приложение и удалить его тома.
 down:
