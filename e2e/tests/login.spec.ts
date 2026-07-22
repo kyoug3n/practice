@@ -26,6 +26,20 @@ test("показывает ошибку при неверном пароле", a
   await expect(page.locator("#login")).toBeVisible();
 });
 
+test("показывает ошибку регистрации внутри формы", async ({ page }) => {
+  await page.goto("/");
+  await page.click("#show-registration");
+  await page.fill("#register-form input[name='username']", "bad username");
+  await page.fill("#register-form input[name='password']", "password");
+  await page.click("#register-form button[type='submit']");
+
+  const error = page.locator("#registration-error");
+  await expect(error).toContainText("Проверьте поля регистрации");
+  await expect(error).not.toContainText("Ошибка:");
+  await expect(error).toBeVisible();
+  await expect(page.locator("#registration")).toBeVisible();
+});
+
 test("переключает видимость пароля", async ({ page }) => {
   await page.goto("/");
 

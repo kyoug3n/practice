@@ -145,6 +145,7 @@ if (publicUsername !== null) {
       currentUserBar: need("#current-user"),
       registerForm: needForm("#register-form"),
       loginForm: needForm("#login-form"),
+      registrationError: need("#registration-error"),
       loginError: need("#login-error"),
       showLoginButton: needButton("#show-login"),
       showRegistrationButton: needButton("#show-registration"),

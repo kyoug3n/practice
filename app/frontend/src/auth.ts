@@ -10,6 +10,7 @@ export interface AuthElements {
   currentUserBar: HTMLElement;
   registerForm: HTMLFormElement;
   loginForm: HTMLFormElement;
+  registrationError: HTMLElement;
   loginError: HTMLElement;
   showLoginButton: HTMLButtonElement;
   showRegistrationButton: HTMLButtonElement;
@@ -22,7 +23,7 @@ export function setupAuth(
   refreshAll: () => Promise<void>,
 ): void {
   let currentUser: User | null = null;
-  let loginErrorAnimation = 0;
+  let authErrorAnimation = 0;
 
   function setupPasswordToggle(form: HTMLFormElement): () => void {
     const input = form.querySelector<HTMLInputElement>(
@@ -55,31 +56,36 @@ export function setupAuth(
   const resetRegistrationPassword = setupPasswordToggle(elements.registerForm);
   const resetLoginPassword = setupPasswordToggle(elements.loginForm);
 
-  function clearLoginError(): void {
-    loginErrorAnimation += 1;
-    elements.loginError.textContent = "";
-    elements.loginError.classList.remove("is-visible");
-    elements.loginError.setAttribute("aria-hidden", "true");
+  function clearAuthError(element: HTMLElement): void {
+    authErrorAnimation += 1;
+    element.textContent = "";
+    element.classList.remove("is-visible");
+    element.setAttribute("aria-hidden", "true");
   }
 
-  function showLoginError(error: unknown): void {
+  function clearAuthErrors(): void {
+    clearAuthError(elements.registrationError);
+    clearAuthError(elements.loginError);
+  }
+
+  function showAuthError(element: HTMLElement, error: unknown): void {
     const message = errorMessage(error).replace(/^Ошибка:\s*/, "");
     const formattedMessage = message
       ? `${message.charAt(0).toLocaleUpperCase("ru-RU")}${message.slice(1)}`
       : message;
     if (
-      elements.loginError.classList.contains("is-visible") &&
-      elements.loginError.textContent === formattedMessage
+      element.classList.contains("is-visible") &&
+      element.textContent === formattedMessage
     ) {
       return;
     }
 
-    const animation = ++loginErrorAnimation;
-    elements.loginError.textContent = formattedMessage;
-    elements.loginError.setAttribute("aria-hidden", "false");
+    const animation = ++authErrorAnimation;
+    element.textContent = formattedMessage;
+    element.setAttribute("aria-hidden", "false");
     window.requestAnimationFrame(() => {
-      if (animation === loginErrorAnimation) {
-        elements.loginError.classList.add("is-visible");
+      if (animation === authErrorAnimation) {
+        element.classList.add("is-visible");
       }
     });
   }
@@ -126,7 +132,7 @@ export function setupAuth(
     elements.userBar.hidden = true;
     renderCurrentUser();
     resetRegistrationPassword();
-    clearLoginError();
+    clearAuthErrors();
     actions.clearStatus();
   }
 
@@ -138,7 +144,7 @@ export function setupAuth(
     elements.userBar.hidden = true;
     renderCurrentUser();
     resetLoginPassword();
-    clearLoginError();
+    clearAuthErrors();
     actions.clearStatus();
   }
 
@@ -172,14 +178,16 @@ export function setupAuth(
 
     submit.disabled = true;
     actions.clearStatus();
-    clearLoginError();
+    clearAuthErrors();
     void api
       .register({
         username: actions.field(data, "username"),
         password: actions.field(data, "password"),
       })
       .then(showWorkspace)
-      .catch(actions.showError)
+      .catch((error: unknown) =>
+        showAuthError(elements.registrationError, error),
+      )
       .finally(() => (submit.disabled = false));
   });
 
@@ -201,7 +209,7 @@ export function setupAuth(
         password: actions.field(data, "password"),
       })
       .then(showWorkspace)
-      .catch(showLoginError)
+      .catch((error: unknown) => showAuthError(elements.loginError, error))
       .finally(() => (submit.disabled = false));
   });
 

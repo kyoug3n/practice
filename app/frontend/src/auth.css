@@ -38,7 +38,7 @@
 
 .auth-error.is-visible {
   max-height: 4rem;
-  margin: -0.5rem 0 1rem;
+  margin: 1.5rem 0 0.5rem;
   opacity: 1;
 }
 
