@@ -41,6 +41,7 @@ test("keeps note editing and creation menus mutually exclusive", async ({
     await openCreateForm(page, "note");
     await page.fill("#note-form input[name='title']", title);
     await page.click("#note-form button[type='submit']");
+    await expect(page.locator("#note-form")).toBeHidden();
   }
 
   const notes = page.locator("[data-testid='note']");
