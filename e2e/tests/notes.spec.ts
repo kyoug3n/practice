@@ -155,3 +155,44 @@ test("the tag filter is hidden behind its toolbar button", async ({ page }) => {
   await expect(filter).toBeHidden();
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
 });
+
+test("переходит к связанной заметке за пределами фильтра", async ({ page }) => {
+  await page.goto("/");
+  await register(page);
+
+  const noteByTitle = (title: string) =>
+    page.locator("[data-testid='note']").filter({
+      has: page.locator(".note-title", { hasText: title }),
+    });
+
+  const targetTitle = `Filtered target ${Date.now()}`;
+  await openCreateForm(page, "note");
+  await page.fill("#note-form input[name='title']", targetTitle);
+  await page.fill("#note-form input[name='tags']", "target");
+  await page.click("#note-form button[type='submit']");
+  const target = noteByTitle(targetTitle);
+  await expect(target).toBeVisible();
+  const targetId = await target.getAttribute("data-id");
+  expect(targetId).not.toBeNull();
+
+  const sourceTitle = `Filtered source ${Date.now()}`;
+  await openCreateForm(page, "note");
+  await page.fill("#note-form input[name='title']", sourceTitle);
+  await page.fill("#note-form input[name='tags']", "source");
+  await page.locator(`#note-links button[data-note-link='${targetId}']`).click();
+  await page.click("#note-form button[type='submit']");
+  await expect(page.locator("#note-form")).toBeHidden();
+
+  await page.click("#toggle-tag-filter");
+  await page.fill("#tag-filter-form input[name='tag']", "source");
+  await page.click("#tag-filter-form button[type='submit']");
+  await expect(noteByTitle(sourceTitle)).toBeVisible();
+  await expect(page.locator("[data-testid='note']")).toHaveCount(1);
+
+  const source = noteByTitle(sourceTitle);
+  await source.locator("[data-testid='toggle-note-body']").click();
+  await source.locator(".note-related-item").click();
+
+  await expect(page.locator("#tag-filter-form input[name='tag']")).toHaveValue("");
+  await expect(noteByTitle(targetTitle)).toBeVisible();
+});

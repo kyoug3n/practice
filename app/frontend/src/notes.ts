@@ -37,8 +37,21 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
     actions,
   );
 
-  function openLinkedNote(id: string): void {
-    const index = notes.findIndex((note) => note.id === id);
+  function clearActiveTag(): void {
+    const input = elements.tagFilterForm.elements.namedItem("tag");
+    if (input instanceof HTMLInputElement) {
+      input.value = "";
+    }
+    activeTag = undefined;
+    pagination.reset();
+  }
+  async function navigateToLinkedNote(id: string): Promise<void> {
+    let index = notes.findIndex((note) => note.id === id);
+    if (index < 0 && activeTag !== undefined) {
+      clearActiveTag();
+      await refreshNotes();
+      index = notes.findIndex((note) => note.id === id);
+    }
     if (index < 0) {
       return;
     }
@@ -51,6 +64,9 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
       if (!target) return;
       highlightNote(target);
     }, 240);
+  }
+  function openLinkedNote(id: string): void {
+    void navigateToLinkedNote(id).catch(actions.showError);
   }
   function noteItem(note: Note): HTMLLIElement {
     return createNoteItem({
@@ -167,12 +183,7 @@ export function setupNotes(elements: NotesElements, actions: UiActions) {
   });
 
   actions.onClick(elements.clearTagFilter, async () => {
-    const input = elements.tagFilterForm.elements.namedItem("tag");
-    if (input instanceof HTMLInputElement) {
-      input.value = "";
-    }
-    activeTag = undefined;
-    pagination.reset();
+    clearActiveTag();
     await refreshNotes();
   });
   function closeEditMenus(): Promise<void> {
