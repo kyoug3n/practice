@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Recall\Http\Controller;
 
+use Cycle\Database\Exception\StatementException\ConstrainException;
 use DateTimeImmutable;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -29,12 +30,12 @@ final readonly class AuthController
     public function register(Request $request, Response $response): Response
     {
         $input = RegistrationInput::fromArray($this->body($request));
-        if ($this->users->findByUsername($input->username) !== null) {
+        $user = User::register($input->username, $input->password);
+        try {
+            $this->users->save($user);
+        } catch (ConstrainException) {
             return Json::error($response, 'логин уже занят', 409, ['username' => 'выберите другой логин']);
         }
-
-        $user = User::register($input->username, $input->password);
-        $this->users->save($user);
         $credentials = Session::start($user->id, $this->now);
         $this->sessions->save($credentials->session);
 
